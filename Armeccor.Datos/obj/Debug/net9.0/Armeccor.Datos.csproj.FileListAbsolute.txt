@@ -1,0 +1,15 @@
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor.Datos\bin\Debug\net9.0\Armeccor.Datos.deps.json
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor.Datos\bin\Debug\net9.0\Armeccor.Datos.dll
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor.Datos\bin\Debug\net9.0\Armeccor.Datos.pdb
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor.Datos\obj\Debug\net9.0\Armeccor.Datos.csproj.AssemblyReference.cache
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor.Datos\obj\Debug\net9.0\Armeccor.Datos.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor.Datos\obj\Debug\net9.0\Armeccor.Datos.AssemblyInfoInputs.cache
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor.Datos\obj\Debug\net9.0\Armeccor.Datos.AssemblyInfo.cs
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor.Datos\obj\Debug\net9.0\Armeccor.Datos.csproj.CoreCompileInputs.cache
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor.Datos\obj\Debug\net9.0\Armeccor.Datos.sourcelink.json
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor.Datos\obj\Debug\net9.0\Armeccor.Datos.dll
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor.Datos\obj\Debug\net9.0\refint\Armeccor.Datos.dll
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor.Datos\obj\Debug\net9.0\Armeccor.Datos.pdb
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor.Datos\obj\Debug\net9.0\ref\Armeccor.Datos.dll
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor.Datos\bin\Debug\net9.0\Armeccor.Datos.runtimeconfig.json
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor.Datos\obj\Debug\net9.0\Armeccor.Datos.genruntimeconfig.cache

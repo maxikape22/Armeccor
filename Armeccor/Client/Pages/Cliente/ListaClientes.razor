@@ -1,0 +1,113 @@
+﻿@page "/ListaClientes"
+@inject HttpClient Http
+
+<h3>Gestión de Clientes</h3>
+
+@if (clientes == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>DNI</th>
+                <th>Dirección</th>
+                <th>Teléfono</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in clientes)
+            {
+                <tr>
+                    <td>@c.Nombre</td>
+                    <td>@c.DNI</td>
+                    <td>@c.Dirección</td>
+                    <td>@c.Telefono</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" @onclick="() => Editar(c)">Editar</button>
+                        <button class="btn btn-danger btn-sm" @onclick="() => Eliminar(c.DNI)">Borrar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<hr />
+<h4>@(editando ? "Editar Cliente" : "Nuevo Cliente")</h4>
+<div class="mb-3">
+    <input class="form-control" placeholder="Nombre" @bind="cliente.Nombre" />
+</div>
+<div class="mb-3">
+    <input class="form-control" placeholder="DNI" @bind="cliente.DNI" />
+</div>
+<div class="mb-3">
+    <input class="form-control" placeholder="Dirección" @bind="cliente.Dirección" />
+</div>
+<div class="mb-3">
+    <input class="form-control" placeholder="Teléfono" @bind="cliente.Telefono" />
+</div>
+<button class="btn btn-primary" @onclick="Guardar">Guardar</button>
+<button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+
+@code {
+    private List<Cliente>? clientes;
+    private Cliente cliente = new Cliente();
+    private bool editando = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        clientes = await Http.GetFromJsonAsync<List<Cliente>>("api/Clientes");
+    }
+
+    private async Task Guardar()
+    {
+        if (editando)
+        {
+            await Http.PutAsJsonAsync($"api/Clientes/{cliente.Nombre}", cliente);
+        }
+        else
+        {
+            await Http.PostAsJsonAsync("api/Clientes", cliente);
+        }
+
+        clientes = await Http.GetFromJsonAsync<List<Cliente>>("api/Clientes");
+        cliente = new Cliente();
+        editando = false;
+    }
+
+    private void Editar(Cliente c)
+    {
+        cliente = new Cliente
+        {
+            Nombre = c.Nombre,
+            DNI = c.DNI,
+            Dirección = c.Dirección,
+            Telefono = c.Telefono
+        };
+        editando = true;
+    }
+
+    private async Task Eliminar(int id)
+    {
+        await Http.DeleteAsync($"api/Clientes/{id}");
+        clientes = await Http.GetFromJsonAsync<List<Cliente>>("api/Clientes");
+    }
+
+    private void Cancelar()
+    {
+        cliente = new Cliente();
+        editando = false;
+    }
+
+    public class Cliente
+    {
+        public string? Nombre { get; set; }
+        public int DNI { get; set; }
+        public string? Dirección { get; set; }
+        public int Telefono { get; set; }
+    }
+}

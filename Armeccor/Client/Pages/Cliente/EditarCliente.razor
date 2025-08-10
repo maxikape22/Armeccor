@@ -1,0 +1,91 @@
+﻿@page "/api/Clientes/EditarCliente/{clienteId:int}"
+@inject IHttpServicio http
+@inject NavigationManager navigationManager
+<h3>Editar Tipo de Documento</h3>
+
+<h1>@pepe</h1>
+
+<EditForm Model="cliente" OnValidSubmit="Grabar">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label>Nombre</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@cliente.Nombre" />
+            <ValidationMessage For="@(() => cliente.Nombre)" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Nombre</label>
+        <div>
+            <InputNumber class="form-control" @bind-Value="@cliente.DNI" />
+            <ValidationMessage For="@(() => cliente.DNI)" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Dirección</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@cliente.Dirección" />
+            <ValidationMessage For="@(() => cliente.Dirección)" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Telefono</label>
+        <div>
+            <InputNumber class="form-control" @bind-Value="@cliente.Telefono" />
+            <ValidationMessage For="@(() => cliente.Telefono)" />
+        </div>
+    </div>
+
+    <br />
+    <button class="btn btn-primary" type="submit">Aceptar</button>
+    <button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+</EditForm>
+
+@code {
+    [Parameter] public int clienteId { get; set; }
+    private Cliente cliente = new Cliente();
+
+    string pepe = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await Mostrar();
+    }
+
+    private async Task Mostrar()
+    {
+        var respuesta = await http.Get<Cliente>($"api/Clientes/{clienteId}");
+
+        if (!respuesta.Error)
+        {
+            cliente = respuesta.Respuesta;
+        }
+        else
+        {
+            navigationManager.NavigateTo("/api/ListaClientes");
+        }
+    }
+
+
+
+    private async Task Grabar()
+    {
+        //tDocumento.Personas = new List<Persona>();
+
+        var httpRespuesta = await http.Put<Cliente>($"api/TDocumentos/{clienteId}", cliente);
+        if (httpRespuesta.Error)
+        {
+            var body = httpRespuesta.HttpResponseMessage;
+        }
+        navigationManager.NavigateTo("/api/ListaClientes");
+    }
+
+    private void Cancelar()
+    {
+        navigationManager.NavigateTo("/api/ListaClientes");
+    }
+}

@@ -1,0 +1,61 @@
+﻿@page "/api/Clientes/AgregarCliente"
+@inject HttpClient http
+@inject NavigationManager navigationManager
+
+<h3>Nuevo cliente</h3>
+
+<EditForm Model="@cliente" OnValidSubmit="Grabar">
+    <DataAnnotationsValidator />
+
+    <div class="form-group">
+        <label>Nombre</label>
+        <InputText class="form-control" @bind-Value="cliente.Nombre" />
+        <ValidationMessage For="@(() => cliente.Nombre)" />
+    </div>
+
+    <div class="form-group">
+        <label>DNI</label>
+        <InputNumber class="form-control" @bind-Value="cliente.DNI" />
+        <ValidationMessage For="@(() => cliente.DNI)" />
+    </div>
+
+    <div class="form-group">
+        <label>Dirección</label>
+        <InputText class="form-control" @bind-Value="cliente.Dirección" />
+        <ValidationMessage For="@(() => cliente.DNI)" />
+    </div>
+
+    <div class="form-group">
+        <label>Telefono</label>
+        <InputNumber class="form-control" @bind-Value="cliente.Telefono" />
+        <ValidationMessage For="@(() => cliente.Telefono)" />
+    </div>
+
+    <br />
+    <button class="btn btn-primary" type="submit">Aceptar</button>
+    <button class="btn btn-secondary" type="button" @onclick="Cancelar">Cancelar</button>
+</EditForm>
+
+@code {
+    private Cliente cliente = new Cliente();
+
+    private async Task Grabar()
+    {
+        var response = await http.PostAsJsonAsync("api/Clientes", cliente);
+        if (response.IsSuccessStatusCode)
+        {
+            navigationManager.NavigateTo("/api/ListaClientes");
+        }
+        else
+        {
+            // Manejar error
+            var errorMsg = await response.Content.ReadAsStringAsync();
+            Console.WriteLine("Error al guardar cliente: " + errorMsg);
+        }
+    }
+
+    private void Cancelar()
+    {
+        navigationManager.NavigateTo("/api/ListaClientes");
+    }
+}

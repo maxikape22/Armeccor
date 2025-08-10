@@ -1,0 +1,12 @@
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor\Shared\bin\Debug\net9.0\Armeccor.Shared.deps.json
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor\Shared\bin\Debug\net9.0\Armeccor.Shared.dll
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor\Shared\bin\Debug\net9.0\Armeccor.Shared.pdb
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor\Shared\obj\Debug\net9.0\Armeccor.Shared.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor\Shared\obj\Debug\net9.0\Armeccor.Shared.AssemblyInfoInputs.cache
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor\Shared\obj\Debug\net9.0\Armeccor.Shared.AssemblyInfo.cs
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor\Shared\obj\Debug\net9.0\Armeccor.Shared.csproj.CoreCompileInputs.cache
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor\Shared\obj\Debug\net9.0\Armeccor.Shared.sourcelink.json
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor\Shared\obj\Debug\net9.0\Armeccor.Shared.dll
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor\Shared\obj\Debug\net9.0\refint\Armeccor.Shared.dll
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor\Shared\obj\Debug\net9.0\Armeccor.Shared.pdb
+C:\Users\BERSERKER\source\repos\Armeccor\Armeccor\Shared\obj\Debug\net9.0\ref\Armeccor.Shared.dll
