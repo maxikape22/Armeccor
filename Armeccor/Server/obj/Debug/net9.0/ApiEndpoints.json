@@ -81,26 +81,5 @@
       }
     ],
     "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Armeccor.Server.Controllers.ClientesController",
-    "Method": "PutByDni",
-    "RelativePath": "api/Clientes/dni/{dni}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "dni",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "cliente",
-        "Type": "Armeccor.Datos.Entidades.Cliente",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
   }
 ]

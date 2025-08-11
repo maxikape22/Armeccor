@@ -1,6 +1,5 @@
 ﻿using Armeccor.Datos;
 using Armeccor.Datos.Entidades;
-using Armeccor.Datos.Entidades;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -61,34 +60,9 @@ namespace Armeccor.Server.Controllers
             }
 
             clienteExistente.Nombre = cliente.Nombre;
-
-            try
-            {
-                context.Clientes.Update(clienteExistente);
-                context.SaveChanges();
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                return BadRequest($"No se pudo actualizar el cliente: {e.Message}");
-            }
-        }
-
-
-        [HttpPut("dni/{dni}")]
-        public ActionResult PutByDni(int dni, [FromBody] Cliente cliente)
-        {
-            var clienteExistente = context.Clientes.Where(c => c.DNI == dni).FirstOrDefault();
-
-            if (clienteExistente == null)
-            {
-                return NotFound("No se encontró el cliente con el DNI especificado.");
-            }
-
-            clienteExistente.Nombre = cliente.Nombre;
             clienteExistente.DNI = cliente.DNI;
-            clienteExistente.Dirección = cliente.Dirección;
             clienteExistente.Telefono = cliente.Telefono;
+            clienteExistente.Dirección = cliente.Dirección;
 
             try
             {
@@ -101,5 +75,35 @@ namespace Armeccor.Server.Controllers
                 return BadRequest($"No se pudo actualizar el cliente: {e.Message}");
             }
         }
+
+
+
+        //[HttpPut("dni/{dni}")]
+        //public ActionResult PutByDni(int dni, [FromBody] Cliente cliente)
+        //{
+        //    var clienteExistente = context.Clientes.Where(c => c.DNI == dni).FirstOrDefault();
+
+        //    if (clienteExistente == null)
+        //    {
+        //        return NotFound("No se encontró el cliente con el DNI especificado.");
+        //    }
+
+        //    clienteExistente.Nombre = cliente.Nombre;
+        //    clienteExistente.DNI = cliente.DNI;
+        //    clienteExistente.Dirección = cliente.Dirección;
+        //    clienteExistente.Telefono = cliente.Telefono;
+
+        //    try
+        //    {
+        //        context.Clientes.Update(clienteExistente);
+        //        context.SaveChanges();
+        //        return Ok();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return BadRequest($"No se pudo actualizar el cliente: {e.Message}");
+        //    }
+        //}
+
     }
 }

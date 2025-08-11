@@ -1,7 +1,7 @@
 ﻿@page "/api/Clientes/EditarCliente/{clienteId:int}"
 @inject IHttpServicio http
 @inject NavigationManager navigationManager
-<h3>Editar Tipo de Documento</h3>
+<h3>Editar cliente</h3>
 
 <h1>@pepe</h1>
 
@@ -44,7 +44,8 @@
     <button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
 </EditForm>
 
-@code {
+@code
+{
     [Parameter] public int clienteId { get; set; }
     private Cliente cliente = new Cliente();
 
@@ -70,13 +71,9 @@
         }
     }
 
-
-
     private async Task Grabar()
     {
-        //tDocumento.Personas = new List<Persona>();
-
-        var httpRespuesta = await http.Put<Cliente>($"api/TDocumentos/{clienteId}", cliente);
+        var httpRespuesta = await http.Put<Cliente>($"api/Clientes/{clienteId}", cliente);
         if (httpRespuesta.Error)
         {
             var body = httpRespuesta.HttpResponseMessage;

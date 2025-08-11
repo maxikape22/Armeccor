@@ -1,4 +1,4 @@
-﻿@page "/ListaClientes"
+﻿@page "/api/Clientes"
 @inject HttpClient Http
 
 <h3>Gestión de Clientes</h3>
@@ -28,8 +28,8 @@ else
                     <td>@c.Telefono</td>
                     <td>
                         <button class="btn btn-warning btn-sm" @onclick="() => Editar(c)">Editar</button>
-                        <button class="btn btn-danger btn-sm" @onclick="() => Eliminar(c.DNI)">Borrar</button>
-                    </td>
+@*                         <button class="btn btn-danger btn-sm" @onclick="() => Eliminar(c.DNI)">Borrar</button>
+ *@                    </td>
                 </tr>
             }
         </tbody>
@@ -53,7 +53,8 @@ else
 <button class="btn btn-primary" @onclick="Guardar">Guardar</button>
 <button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
 
-@code {
+@code 
+{
     private List<Cliente>? clientes;
     private Cliente cliente = new Cliente();
     private bool editando = false;
@@ -67,7 +68,7 @@ else
     {
         if (editando)
         {
-            await Http.PutAsJsonAsync($"api/Clientes/{cliente.Nombre}", cliente);
+            await Http.PutAsJsonAsync($"api/Clientes/{cliente.Id}", cliente);
         }
         else
         {
@@ -83,6 +84,7 @@ else
     {
         cliente = new Cliente
         {
+            Id = c.Id,
             Nombre = c.Nombre,
             DNI = c.DNI,
             Dirección = c.Dirección,
@@ -103,11 +105,11 @@ else
         editando = false;
     }
 
-    public class Cliente
-    {
-        public string? Nombre { get; set; }
-        public int DNI { get; set; }
-        public string? Dirección { get; set; }
-        public int Telefono { get; set; }
-    }
+    // public class Cliente
+    // {
+    //     public string? Nombre { get; set; }
+    //     public int DNI { get; set; }
+    //     public string? Dirección { get; set; }
+    //     public int Telefono { get; set; }
+    // }
 }
