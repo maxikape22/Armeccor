@@ -11,7 +11,7 @@
         "projectName": "Armeccor.Datos",
         "projectPath": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj",
         "packagesPath": "C:\\Users\\BERSERKER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor.Datos\\obj\\",
+        "outputPath": "C:\\Users\\BERSERKER\\source\\repos\\Armeccor\\Armeccor.Datos\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -124,8 +124,8 @@
               "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj": {
                 "projectPath": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj"
               },
-              "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor\\Shared\\Armeccor.Shared.csproj": {
-                "projectPath": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor\\Shared\\Armeccor.Shared.csproj"
+              "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj": {
+                "projectPath": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj"
               }
             }
           }
@@ -228,8 +228,8 @@
               "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor\\Client\\Armeccor.Client.csproj": {
                 "projectPath": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor\\Client\\Armeccor.Client.csproj"
               },
-              "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor\\Shared\\Armeccor.Shared.csproj": {
-                "projectPath": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor\\Shared\\Armeccor.Shared.csproj"
+              "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj": {
+                "projectPath": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj"
               }
             }
           }
@@ -250,6 +250,10 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[12.0.0, )"
+            },
             "Microsoft.AspNetCore.Components.WebAssembly.Server": {
               "target": "Package",
               "version": "[9.0.8, )"
@@ -292,14 +296,14 @@
         }
       }
     },
-    "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor\\Shared\\Armeccor.Shared.csproj": {
+    "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor\\Shared\\Armeccor.Shared.csproj",
-        "projectName": "Armeccor.Shared",
-        "projectPath": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor\\Shared\\Armeccor.Shared.csproj",
+        "projectUniqueName": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj",
+        "projectName": "DTO",
+        "projectPath": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj",
         "packagesPath": "C:\\Users\\BERSERKER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\BERSERKER\\source\\repos\\Armeccor\\Armeccor\\Shared\\obj\\",
+        "outputPath": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\DTO\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

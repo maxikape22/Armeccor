@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Armeccor.Server", "Armeccor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Armeccor.Client", "Armeccor\Client\Armeccor.Client.csproj", "{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Armeccor.Shared", "Armeccor\Shared\Armeccor.Shared.csproj", "{82C114B6-BC05-47D2-99F3-0523F6F0409F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTO", "DTO\DTO.csproj", "{DF55E7A1-78C9-43CE-A698-EDBB79564752}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{82C114B6-BC05-47D2-99F3-0523F6F0409F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{82C114B6-BC05-47D2-99F3-0523F6F0409F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{82C114B6-BC05-47D2-99F3-0523F6F0409F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{82C114B6-BC05-47D2-99F3-0523F6F0409F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF55E7A1-78C9-43CE-A698-EDBB79564752}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF55E7A1-78C9-43CE-A698-EDBB79564752}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF55E7A1-78C9-43CE-A698-EDBB79564752}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF55E7A1-78C9-43CE-A698-EDBB79564752}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

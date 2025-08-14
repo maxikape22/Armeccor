@@ -13,11 +13,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Armeccor.Datos\Armeccor.Datos.csproj" />
-		<ProjectReference Include="..\Shared\Armeccor.Shared.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Pages\Ordenes\" />
+		<ProjectReference Include="..\..\DTO\DTO.csproj" />
 	</ItemGroup>
 
 </Project>

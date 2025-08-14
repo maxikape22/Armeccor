@@ -13,6 +13,6 @@ namespace Armeccor.Datos.Entidades
         public string Dirección { get; set; }
         [Required]
         public int Telefono { get; set; }
-      //  public List<Orden> Ordenes { get; set; }
+        public HashSet<Orden> Ordenes { get; set; }
     }
 }

@@ -1,0 +1,239 @@
+﻿@page "/ordenes/nueva"
+@using DTO.ObjetosDTO
+@inject HttpClient http
+@inject NavigationManager navigationManager
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Crear Orden</PageTitle>
+
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,.1);
+        background-color: #fff;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input[type="text"], .form-group input[type="number"], .form-group select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+
+    .btn-submit {
+        background-color: #28a745;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background-color .3s ease;
+    }
+
+        .btn-submit:hover {
+            background-color: #218838;
+        }
+
+    .validation-summary ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 15px 0;
+        color: #dc3545;
+        border: 1px solid #dc3545;
+        background-color: #f8d7da;
+        border-radius: 4px;
+        padding: 10px;
+    }
+
+    .validation-message {
+        color: #dc3545;
+        font-size: .9em;
+        margin-top: 5px;
+        display: block;
+    }
+</style>
+
+<div class="form-container">
+    <h3>Crear Orden</h3>
+
+    <EditForm Model="@nuevaOrden" OnValidSubmit="Grabar" OnInvalidSubmit="HandleInvalidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="codigoOrden">Código:</label>
+            <InputText id="codigoOrden" class="form-control" @bind-Value="nuevaOrden.CodigoOrden" />
+            <ValidationMessage For="@(() => nuevaOrden.CodigoOrden)" />
+        </div>
+
+        <div class="form-group">
+            <label for="nroOT">Nº OT:</label>
+            <InputNumber id="nroOT" class="form-control" @bind-Value="nuevaOrden.NroOT" />
+            <ValidationMessage For="@(() => nuevaOrden.NroOT)" />
+        </div>
+
+        <div class="form-group">
+            @* <label for="prioridad">Prioridad:</label>
+            <InputText id="prioridad" class="form-control" @bind-Value="nuevaOrden.Prioridad" />
+            <ValidationMessage For="@(() => nuevaOrden.Prioridad)" /> *@
+
+
+
+            <InputSelect @bind-Value="nuevaOrden.Prioridad">
+                <option value="">-- Seleccionar prioridad --</option>
+                <option value="Alta">Alta</option>
+                <option value="Media">Media</option>
+                <option value="Baja">Baja</option>
+            </InputSelect>
+        </div>
+
+        <div class="form-group">
+            @* <label for="estado">Estado:</label>
+            <InputText id="estado" class="form-control" @bind-Value="nuevaOrden.Estado" />
+            <ValidationMessage For="@(() => nuevaOrden.Estado)" />
+ *@
+            <InputSelect @bind-Value="nuevaOrden.Estado">
+                <option value="">-- Seleccionar estado --</option>
+                <option value="Abierto">Abierto</option>
+                <option value="Cerrado">Cerrado</option>
+                <option value="Procesando">Procesando</option>
+                <option value="Iniciando">Iniciando</option>
+            </InputSelect>
+        </div>
+
+      @*   <div class="form-group">
+            <label for="IdCliente">Cliente:</label>
+            @if (clientes == null)
+            {
+                <p>Cargando clientes...</p>
+            }
+            else if (!clientes.Any())
+            {
+                <p>No hay clientes disponibles.</p>
+            }
+            else
+            {
+                <InputSelect id="idCliente" class="form-control" @bind-Value="nuevaOrden.IdCliente">
+                    <option value="0">-- Seleccione --</option>
+                    @foreach (var cliente in clientes)
+                    {
+                        <option value="@cliente.DNI">@cliente.Nombre</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => nuevaOrden.IdCliente)" />
+            }
+        </div>  *@
+
+       @*  <div class="form-group">
+            <label for="cliente id">Id del cliente:</label>
+            <InputNumber id="clienteid" class="form-control" @bind-Value="nuevaOrden.IdCliente" />
+            <ValidationMessage For="@(() => nuevaOrden.IdCliente)" />
+        </div> *@
+
+
+        <div class="form-group">
+            <label for="idCliente">Cliente:</label>
+            @if (clientes == null || !clientes.Any())
+            {
+                <p>Cargando clientes...</p>
+            }
+            else
+            {
+                <InputSelect id="idCliente" class="form-control" @bind-Value="nuevaOrden.IdCliente">
+                    <option value="0">-- Seleccione un cliente --</option>
+                    @foreach (var cliente in clientesDict)
+                    {
+                        <option value="@cliente.Key">@cliente.Value</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => nuevaOrden.IdCliente)" />
+            }
+        </div>
+
+
+        <button class="btn btn-primary btn-submit" type="submit">Aceptar</button>
+        <button class="btn btn-secondary" type="button" @onclick="Cancelar">Cancelar</button>
+    </EditForm>
+</div>
+
+@code
+{
+    private CrearOrdenDTO nuevaOrden = new CrearOrdenDTO();
+    private List<CrearClienteDTO> clientes;
+    private Dictionary<int, string> clientesDict = new Dictionary<int, string>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadClientes();
+    }
+
+    private async Task LoadClientes()
+    {
+        try
+        {
+            clientes = await http.GetFromJsonAsync<List<CrearClienteDTO>>("api/Clientes");
+            // Mapear Id ficticio (puede ser DNI o índice) a Nombre para mostrar
+            clientesDict = clientes.Select((c, index) => new { Id = index + 1, c.Nombre })
+                                   .ToDictionary(x => x.Id, x => x.Nombre);
+        }
+        catch (Exception ex)
+        {
+            clientes = new List<CrearClienteDTO>();
+            clientesDict = new Dictionary<int, string>();
+            Console.WriteLine($"Error al cargar clientes: {ex.Message}");
+            await JSRuntime.InvokeVoidAsync("alert", $"Error al cargar clientes: {ex.Message}");
+            clientes = new List<CrearClienteDTO>();
+        }
+    }
+
+    private async Task Grabar()
+    {
+        try
+        {
+            var response = await http.PostAsJsonAsync("api/Ordenes", nuevaOrden);
+            if (response.IsSuccessStatusCode)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", "Orden creada!");
+                navigationManager.NavigateTo("/ListaOrdenes");
+            }
+            else
+            {
+                var errorMsg = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("Error al guardar: " + errorMsg);
+                await JSRuntime.InvokeVoidAsync("alert", $"Error: {errorMsg}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error inesperado: " + ex.Message);
+            await JSRuntime.InvokeVoidAsync("alert", $"Error: {ex.Message}");
+        }
+    }
+
+    private void HandleInvalidSubmit()
+    {
+        JSRuntime.InvokeVoidAsync("alert", "Revise errores.");
+    }
+
+    private void Cancelar()
+    {
+        navigationManager.NavigateTo("/ListaOrdenes");
+    }
+}

@@ -1,10 +1,10 @@
 using Armeccor.Datos;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -12,11 +12,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 //builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("conn"));
-
 });
+
+builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -28,14 +30,7 @@ builder.Services.AddControllersWithViews()
                                       .ReferenceHandler = ReferenceHandler
                                       .IgnoreCycles);
 
-//builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-//    .AddEntityFrameworkStores<ApplicationDbContext>();
 
-//builder.Services.AddIdentityServer()
-//    .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
-
-//builder.Services.AddAuthentication()
-//    .AddIdentityServerJwt();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
