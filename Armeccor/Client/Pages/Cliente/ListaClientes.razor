@@ -1,6 +1,7 @@
 ﻿@page "/api/Clientes"
 @inject HttpClient Http
 
+
 <h3>Gestión de Clientes</h3>
 
 @if (clientes == null)
@@ -16,6 +17,7 @@ else
                 <th>DNI</th>
                 <th>Dirección</th>
                 <th>Teléfono</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -24,12 +26,11 @@ else
                 <tr>
                     <td>@c.Nombre</td>
                     <td>@c.DNI</td>
-                    <td>@c.Dirección</td>
+                    <td>@c.Direccion</td>
                     <td>@c.Telefono</td>
                     <td>
                         <button class="btn btn-warning btn-sm" @onclick="() => Editar(c)">Editar</button>
-@*                         <button class="btn btn-danger btn-sm" @onclick="() => Eliminar(c.DNI)">Borrar</button>
- *@                    </td>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -42,10 +43,10 @@ else
     <input class="form-control" placeholder="Nombre" @bind="cliente.Nombre" />
 </div>
 <div class="mb-3">
-    <input class="form-control" placeholder="DNI" @bind="cliente.DNI" />
+    <input class="form-control" placeholder="DNI" type="number" @bind="cliente.DNI" />
 </div>
 <div class="mb-3">
-    <input class="form-control" placeholder="Dirección" @bind="cliente.Dirección" />
+    <input class="form-control" placeholder="Dirección" @bind="cliente.Direccion" />
 </div>
 <div class="mb-3">
     <input class="form-control" placeholder="Teléfono" @bind="cliente.Telefono" />
@@ -53,7 +54,7 @@ else
 <button class="btn btn-primary" @onclick="Guardar">Guardar</button>
 <button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
 
-@code 
+@code
 {
     private List<Cliente>? clientes;
     private Cliente cliente = new Cliente();
@@ -87,7 +88,7 @@ else
             Id = c.Id,
             Nombre = c.Nombre,
             DNI = c.DNI,
-            Dirección = c.Dirección,
+            Direccion = c.Direccion,
             Telefono = c.Telefono
         };
         editando = true;
@@ -104,12 +105,4 @@ else
         cliente = new Cliente();
         editando = false;
     }
-
-    // public class Cliente
-    // {
-    //     public string? Nombre { get; set; }
-    //     public int DNI { get; set; }
-    //     public string? Dirección { get; set; }
-    //     public int Telefono { get; set; }
-    // }
 }

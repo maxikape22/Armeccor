@@ -5,6 +5,191 @@
     "version": "v1"
   },
   "paths": {
+    "/api/Areas": {
+      "get": {
+        "tags": [
+          "Areas"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CrearAreaDTO"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CrearAreaDTO"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CrearAreaDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Areas"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearAreaDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearAreaDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearAreaDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrearAreaDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrearAreaDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrearAreaDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Areas/{id}": {
+      "get": {
+        "tags": [
+          "Areas"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrearAreaDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrearAreaDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrearAreaDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Areas"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Areas"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearAreaDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearAreaDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearAreaDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Clientes/{id}": {
       "put": {
         "tags": [
@@ -165,6 +350,191 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/Entregas": {
+      "get": {
+        "tags": [
+          "Entregas"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CrearEntregaDTO"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CrearEntregaDTO"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CrearEntregaDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Entregas"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearEntregaDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearEntregaDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearEntregaDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrearEntregaDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrearEntregaDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrearEntregaDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Entregas/{id}": {
+      "get": {
+        "tags": [
+          "Entregas"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrearEntregaDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrearEntregaDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrearEntregaDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Entregas"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Entregas"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearEntregaDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearEntregaDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearEntregaDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -353,6 +723,90 @@
           }
         }
       }
+    },
+    "/api/Planos": {
+      "get": {
+        "tags": [
+          "Plano"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Plano"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Plano"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Plano"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Plano"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Plano"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Plano"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Plano"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Plano"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Plano"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Plano"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -371,9 +825,33 @@
         },
         "additionalProperties": false
       },
+      "CrearAreaDTO": {
+        "required": [
+          "estado",
+          "nombreArea",
+          "tiempo"
+        ],
+        "type": "object",
+        "properties": {
+          "nombreArea": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "tiempo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "estado": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
       "CrearClienteDTO": {
         "required": [
-          "dirección",
+          "direccion",
           "dni",
           "nombre",
           "telefono"
@@ -388,7 +866,7 @@
             "type": "integer",
             "format": "int32"
           },
-          "dirección": {
+          "direccion": {
             "minLength": 1,
             "type": "string"
           },
@@ -399,22 +877,40 @@
         },
         "additionalProperties": false
       },
+      "CrearEntregaDTO": {
+        "type": "object",
+        "properties": {
+          "medioDePago": {
+            "type": "string",
+            "nullable": true
+          },
+          "entregado": {
+            "type": "boolean"
+          },
+          "idOrden": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "CrearOrdenDTO": {
         "required": [
-          "codigoOrden",
+          "descripcion",
           "estado",
-          "nroOT",
-          "prioridad"
+          "nombreOrden"
         ],
         "type": "object",
         "properties": {
-          "codigoOrden": {
-            "maxLength": 50,
+          "nroOT": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nombreOrden": {
             "minLength": 1,
             "type": "string"
           },
-          "prioridad": {
-            "maxLength": 50,
+          "descripcion": {
             "minLength": 1,
             "type": "string"
           },
@@ -423,87 +919,95 @@
             "minLength": 1,
             "type": "string"
           },
-          "fechaCreacion": {
+          "fechaInicio": {
             "type": "string",
             "format": "date-time"
           },
-          "nroOT": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "idCliente": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "EntregaDetalleDTO": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
+          "fechaPactada": {
+            "type": "string",
+            "format": "date-time"
           },
           "fechaEntrega": {
             "type": "string",
             "format": "date-time"
-          }
-        },
-        "additionalProperties": false
-      },
-      "InsumoOrdenDetalleDTO": {
-        "type": "object",
-        "properties": {
-          "idInsumo": {
+          },
+          "areaId": {
             "type": "integer",
             "format": "int32"
           },
-          "nombreInsumo": {
-            "type": "string",
+          "clienteId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "planoId": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
-          },
-          "cantidad": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false
       },
       "OrdenDetalleDTO": {
+        "required": [
+          "descripcion",
+          "estado",
+          "nombreOrden"
+        ],
         "type": "object",
         "properties": {
           "id": {
             "type": "integer",
             "format": "int32"
           },
-          "codigoOrden": {
-            "type": "string",
-            "nullable": true
-          },
-          "prioridad": {
-            "type": "string",
-            "nullable": true
-          },
-          "estado": {
-            "type": "string",
-            "nullable": true
-          },
-          "fechaCreacion": {
-            "type": "string",
-            "format": "date-time"
-          },
           "nroOT": {
             "type": "integer",
             "format": "int32"
+          },
+          "nombreOrden": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "descripcion": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "estado": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string"
+          },
+          "fechaInicio": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fechaPactada": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fechaEntrega": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "areaId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "clienteId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "planoId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           },
           "nombreCliente": {
             "type": "string",
             "nullable": true
           },
-          "idCliente": {
-            "type": "integer",
-            "format": "int32"
+          "nombreArea": {
+            "type": "string",
+            "nullable": true
           },
           "areasDeLaOrden": {
             "type": "array",
@@ -512,44 +1016,37 @@
             },
             "nullable": true
           },
-          "piezasDeLaOrden": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PiezaDetalleDTO"
-            },
-            "nullable": true
-          },
           "entregasDeLaOrden": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/EntregaDetalleDTO"
-            },
-            "nullable": true
-          },
-          "insumosDeLaOrden": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/InsumoOrdenDetalleDTO"
+              "$ref": "#/components/schemas/CrearEntregaDTO"
             },
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "PiezaDetalleDTO": {
+      "Plano": {
+        "required": [
+          "rutaSVG"
+        ],
         "type": "object",
         "properties": {
           "id": {
             "type": "integer",
             "format": "int32"
           },
-          "nombrePieza": {
+          "rutaSVG": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "rutaOriginal": {
             "type": "string",
             "nullable": true
           },
-          "precio": {
-            "type": "number",
-            "format": "double"
+          "fechaCreacion": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false

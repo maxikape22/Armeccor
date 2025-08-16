@@ -1,0 +1,182 @@
+﻿@page "/api/Areas"
+@inject HttpClient Http
+@inject NavigationManager navigationManager
+@inject IHttpServicio httpServicio
+@using Microsoft.AspNetCore.Components.Forms
+@inject IJSRuntime jSRuntime
+
+
+<h3>Gestión de Áreas</h3>
+
+@if (areas == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Tiempo</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var a in areas)
+            {
+                <tr>
+                    <td>@a.NombreArea</td>
+                    <td>@a.Tiempo</td>
+                    <td>@a.Estado</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" @onclick="() => Eliminar(a.Id)">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<hr />
+<h4>@(editando ? "Editar Área" : "Nueva Área")</h4>
+
+<div class="mb-3">
+@*     <input class="form-control" placeholder="Nombre" @bind="area.NombreArea" />
+ *@
+    <InputSelect class="form-control" @bind-Value="area.NombreArea">
+        <option value="">-- Seleccione el área: --</option>
+        <option value="Recepción y Almacenamiento de Materiales">Recepción y Almacenamiento de Materiales</option>
+        <option value="Corte y Preparación">Corte y Preparación</option>
+        <option value="Mecanizado">Mecanizado</option>
+        <option value="Plegado y Conformado">Plegado y Conformado</option>
+        <option value="Soldadura y Ensamblaje">Soldadura y Ensamblaje</option>
+        <option value="Tratamientos Térmicos y Superficiales">Tratamientos Térmicos y Superficiales</option>
+        <option value="Tratamientos Térmicos y Superficiales">Tratamientos Térmicos y Superficiales</option>
+        <option value="Montaje y Ajuste Final">Montaje y Ajuste Final</option>
+        <option value="Control de Calidad">Control de Calidad</option>
+        <option value="Mantenimiento">Mantenimiento</option>
+        <option value="Oficina Técnica/Ingeniería">Oficina Técnica/Ingeniería</option>
+        <option value="Logística y Expedición">Logística y Expedición</option>
+
+    </InputSelect>
+</div>
+<div class="mb-3">
+    <input class="form-control" placeholder="Tiempo" @bind="area.Tiempo" type="number" />
+</div>
+<div class="mb-3">
+    <InputSelect class="form-control" @bind-Value="area.Estado">
+        <option value="">-- Seleccione estado: --</option>
+        <option value="Iniciada">Iniciada</option>
+        <option value="Terminada">Terminada</option>
+        <option value="Detenida">Detenida</option>
+        <option value="Procesada">Procesada</option>
+    </InputSelect>
+</div>
+
+<button class="btn btn-primary" @onclick="Guardar">Guardar</button>
+<button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+
+
+@code {
+    private List<Area> areas = new();
+    private Area area = new();
+    private bool editando = false;
+    private Area? areaBorrar;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Cargar();
+        // Inicializar el área para evitar nulls
+        area = new Area();
+    }
+
+    private async Task Cargar()
+    {
+        // El controlador devuelve entidades Area en GET, así que mapeamos a List<Area>
+        areas = await Http.GetFromJsonAsync<List<Area>>("api/Areas") ?? new();
+    }
+
+    // Llama esto desde tu botón "Editar(a)" si lo tenés
+    private void Editar(Area a)
+    {
+        area = new Area
+        {
+            Id = a.Id,
+            NombreArea = a.NombreArea,
+            Tiempo = a.Tiempo,
+            Estado = a.Estado
+        };
+        editando = true;
+    }
+
+    private async Task Guardar()
+    {
+        HttpResponseMessage resp;
+
+        // Para enviar al API usamos el DTO de creación/edición
+        var dto = new CrearAreaDTO
+        {
+            NombreArea = area.NombreArea,
+            Tiempo = area.Tiempo,
+            Estado = area.Estado
+        };
+
+        if (editando)
+        {
+            // EDITAR -> PUT api/Areas/{id}
+            resp = await Http.PutAsJsonAsync($"api/Areas/{area.Id}", dto);
+        }
+        else
+        {
+            // CREAR -> POST api/Areas
+            resp = await Http.PostAsJsonAsync("api/Areas", dto);
+        }
+
+        if (!resp.IsSuccessStatusCode)
+        {
+            var err = await resp.Content.ReadAsStringAsync();
+            Console.WriteLine($"Error al guardar área: {err}");
+        }
+        await Cargar();
+        area = new Area();
+        editando = false;
+
+    }
+
+    // Guarda la referencia a borrar (si usás modal de confirmación)
+    private void Borrar(Area a)
+    {
+        areaBorrar = a;
+        // abrir modal de confirmación si corresponde
+    }
+
+    // Confirmación de borrado (podés llamarlo con id directo desde el botón)
+    private async Task Eliminar(int id)
+    {
+        var resp = await Http.DeleteAsync($"api/Areas/{id}");
+        if (!resp.IsSuccessStatusCode)
+        {
+            var err = await resp.Content.ReadAsStringAsync();
+            Console.WriteLine($"Error al borrar área: {err}");
+        }
+
+        await Cargar();
+        Cancelar();
+    }
+
+    private void Cancelar()
+    {
+        // area = new Area();
+        // editando = false;
+        // // Si no querés navegar, podés quitar esta línea
+        // navigationManager.NavigateTo("/api/ListaAreas");
+
+        //para hacer que funcione la carga del area y subarea
+
+        area = new Area();
+        editando = false;
+        // No redirijas si quieres que el usuario se quede en la misma página de gestión.
+        // navigationManager.NavigateTo("/api/ListaAreas");
+    }
+}

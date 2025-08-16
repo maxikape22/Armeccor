@@ -1,0 +1,271 @@
+﻿@page "/entregas/nueva"
+@page "/entregas/editar/{Id:int}"
+@using DTO.ObjetosDTO @* Para CrearEntregaDTO *@
+@using Armeccor.Datos.Entidades @* Para la entidad Entrega (necesario para cargar y mapear en edición) *@
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@inject HttpClient Http
+@using Microsoft.AspNetCore.Components.Forms
+@using System.Text.Json // Para trabajar con JsonElement
+@using System.Linq // Para métodos LINQ como Any()
+
+<PageTitle>@(EntregaId.HasValue ? "Editar Entrega" : "Crear Entrega")</PageTitle>
+
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,.1);
+        background-color: #fff;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+
+    .form-check { /* Estilo para el checkbox */
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+        margin-bottom: 15px;
+    }
+    .form-check-input {
+        margin-right: 10px;
+        width: 1.2em;
+        height: 1.2em;
+    }
+    .form-check-label {
+        margin-bottom: 0;
+    }
+
+    .btn-submit {
+        background-color: #28a745;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background-color .3s ease;
+    }
+
+        .btn-submit:hover {
+            background-color: #218838;
+        }
+
+    .validation-summary ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 15px 0;
+        color: #dc3545;
+        border: 1px solid #dc3545;
+        background-color: #f8d7da;
+        border-radius: 4px;
+        padding: 10px;
+    }
+
+    .validation-message {
+        color: #dc3545;
+        font-size: .9em;
+        margin-top: 5px;
+        display: block;
+    }
+</style>
+
+<div class="form-container">
+    <h3>@(EntregaId.HasValue ? "Editar Entrega" : "Crear Entrega")</h3>
+
+    <EditForm Model="@entrega" OnValidSubmit="Grabar" OnInvalidSubmit="HandleInvalidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="ordenId">Orden de Trabajo (Fecha de Entrega):</label>
+            @if (ordenesParaDropdown == null)
+            {
+                <p>Cargando órdenes...</p>
+            }
+            else if (!ordenesParaDropdown.Any())
+            {
+                <p>No hay órdenes disponibles para asociar.</p>
+            }
+            else
+            {
+                <InputSelect id="ordenId" class="form-control" @bind-Value="entrega.IdOrden">
+                    <option value="0" disabled selected>-- Seleccione una Orden --</option>
+                    @foreach (var ordenJson in ordenesParaDropdown)
+                    {
+                        @* Accedemos a las propiedades del JsonElement *@
+                        var id = ordenJson.GetProperty("Id").GetInt32();
+                        var fechaEntrega = ordenJson.GetProperty("FechaEntrega").GetDateTime();
+                        <option value="@id">OT ID: @id | Fecha: @fechaEntrega.ToShortDateString()</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => entrega.IdOrden)" />
+            }
+        </div>
+
+        <div class="form-group">
+            <label for="medioDePago">Medio de Pago:</label>
+            <InputSelect id="medioDePago" class="form-control" @bind-Value="entrega.MedioDePago">
+                <option value="">-- Seleccione un medio de pago --</option>
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta">Tarjeta</option>
+                <option value="Transferencia">Transferencia</option>
+            </InputSelect>
+            <ValidationMessage For="@(() => entrega.MedioDePago)" />
+        </div>
+
+        <div class="form-check">
+            <InputCheckbox class="form-check-input" @bind-Value="entrega.Entregado" id="entregado" />
+            <label class="form-check-label" for="entregado">Entregado</label>
+            <ValidationMessage For="@(() => entrega.Entregado)" />
+        </div>
+
+        <button class="btn btn-primary btn-submit" type="submit">Aceptar</button>
+        <button class="btn btn-secondary" type="button" @onclick="Cancelar">Cancelar</button>
+    </EditForm>
+</div>
+
+@code {
+    [Parameter]
+    public int? EntregaId { get; set; } // Para edición: recibe el ID de la entrega a editar
+
+    private CrearEntregaDTO entrega = new CrearEntregaDTO();
+    // Ahora cargaremos una lista de JsonElement para manejar el tipo anónimo del controlador
+    private List<JsonElement>? ordenesParaDropdown; 
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadOrdenesParaDropdown();
+
+        if (EntregaId.HasValue)
+        {
+            // Modo edición: cargar los datos de la entrega existente
+            await LoadEntregaParaEdicion(EntregaId.Value);
+        }
+        else
+        {
+            // Modo creación: inicializar el DTO
+            entrega.IdOrden = 0; // Para que el placeholder del dropdown funcione con la validación [Range(1,...)]
+            entrega.MedioDePago = string.Empty; // Asegurar que el medio de pago esté inicializado para el dropdown
+        }
+    }
+
+    private async Task LoadOrdenesParaDropdown()
+    {
+        try
+        {
+            // Llama al endpoint en EntregasController que devuelve un tipo anónimo
+            // Usamos GetAsync y luego parseamos con JsonDocument para mayor flexibilidad
+            var response = await Http.GetAsync("api/Entregas/fechas-ordenes-dropdown");
+            response.EnsureSuccessStatusCode(); // Lanza excepción si la respuesta no es 2xx
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            using var document = JsonDocument.Parse(jsonString);
+            ordenesParaDropdown = document.RootElement.EnumerateArray().ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar órdenes para el dropdown: {ex.Message}");
+            await JSRuntime.InvokeVoidAsync("alert", $"Error al cargar órdenes: {ex.Message}");
+            ordenesParaDropdown = new List<JsonElement>(); // Asegura que la lista no sea null
+        }
+    }
+
+    private async Task LoadEntregaParaEdicion(int id)
+    {
+        try
+        {
+            // Carga la entidad Entrega completa para editar.
+            var loadedEntrega = await Http.GetFromJsonAsync<Entrega>($"api/Entregas/{id}");
+            if (loadedEntrega != null)
+            {
+                // Mapea la entidad cargada al DTO para el formulario
+                entrega = new CrearEntregaDTO
+                {
+                    MedioDePago = loadedEntrega.MedioDePago,
+                    Entregado = loadedEntrega.Entregado,
+                    IdOrden = loadedEntrega.OrdenId
+                };
+            }
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"No se encontró la entrega con ID: {id}. Redirigiendo a la lista.");
+                NavigationManager.NavigateTo("/entregas"); // Vuelve a la lista
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar entrega para edición: {ex.Message}");
+            await JSRuntime.InvokeVoidAsync("alert", $"Error al cargar entrega para edición: {ex.Message}. Redirigiendo a la lista.");
+            NavigationManager.NavigateTo("/entregas"); // Vuelve a la lista
+        }
+    }
+
+    private async Task Grabar()
+    {
+        HttpResponseMessage response;
+        try
+        {
+            if (EntregaId.HasValue)
+            {
+                // Modo edición (PUT)
+                response = await Http.PutAsJsonAsync($"api/Entregas/{EntregaId.Value}", entrega);
+            }
+            else
+            {
+                // Modo creación (POST)
+                response = await Http.PostAsJsonAsync("api/Entregas", entrega);
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", "Entrega guardada con éxito!");
+                NavigationManager.NavigateTo("/entregas"); // Vuelve a la lista de entregas
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("Error al guardar entrega: " + errorContent);
+                await JSRuntime.InvokeVoidAsync("alert", $"Error al guardar entrega: {response.StatusCode} - {errorContent}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error inesperado al enviar la entrega: {ex.Message}");
+            await JSRuntime.InvokeVoidAsync("alert", $"Ocurrió un error inesperado: {ex.Message}");
+        }
+    }
+
+    private void HandleInvalidSubmit()
+    {
+        JSRuntime.InvokeVoidAsync("alert", "Por favor, corrija los errores del formulario antes de continuar.");
+    }
+
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/entregas"); // Vuelve a la lista de entregas
+    }
+}
+

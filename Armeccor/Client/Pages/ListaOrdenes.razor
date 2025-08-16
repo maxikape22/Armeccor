@@ -160,10 +160,10 @@
     <div class="sidebar">
         <h3>ARme design</h3>
         <hr />
-        <a href="/clientes">CLIENTES</a>
-        <a href="/ordenes">ÓRDENES DE TRABAJO</a>
-        <a href="/insumos">INSUMOS</a>
-        <a href="/entregas">ENTREGAS</a>
+        <a href="/Clientes">Clientes</a>
+        <a href="/Ordenes">Ordenes de trabajo</a>
+        <a href="/Insumos">Insumos</a>
+        <a href="/Entregas">Entregas</a>
     </div>
 
     <div class="content-area">
@@ -203,12 +203,14 @@
                 <thead>
                     <tr>
                         <th>Nº de OT</th>
-                        <th>Código</th>
+                        <th>Nombre de la orden</th>
+                        <th>Descripción</th>
                         <th>Estado</th>
-                        <th>Prioridad</th>
-                        <th>Fecha Creación</th>
+                        <th>Fecha de inicio</th>                    
+                        <th>Fecha pactada</th>
+                        <th>Fecha de entrega</th>
                         <th>Cliente</th>
-                        <th>Área Actual</th>
+                        <th>Área actual</th>
                         <th>Acción</th>
                     </tr>
                 </thead>
@@ -217,14 +219,14 @@
                     {
                         <tr>
                             <td>@orden.NroOT</td>
-                            <td>@orden.CodigoOrden</td>
+                            <td>@orden.NombreOrden</td>
+                            <td>@orden.Descripcion</td>
                             <td>@orden.Estado</td>
-                            <td>@orden.Prioridad</td>
-                            <td>@orden.FechaCreacion.ToShortDateString()</td>
-                            <td>
-                                @orden.NombreCliente
-                               
-                            </td>
+                            <td>@orden.FechaInicio.ToShortDateString()</td>
+                            <td>@orden.FechaPactada.ToShortDateString()</td>
+                            <td>@orden.FechaEntrega.ToShortDateString()</td>
+                            <td>@orden.NombreCliente</td>
+                            <td>@orden.NombreArea</td>
                             <td>@GetAreaActual(orden)</td>
                             <td>
                                 <button class="btn-action" @onclick="(() => ChangeOrderStatus(orden.Id, orden))" title="Cambiar Estado"><i class="fas fa-edit"></i></button>
@@ -288,7 +290,6 @@
         filteredOrders = orders
             .Where(o =>
                 (string.IsNullOrWhiteSpace(searchText) ||
-                 o.CodigoOrden.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
                  o.NroOT.ToString().Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
                  o.Estado.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
                  (o.NombreCliente != null && o.NombreCliente.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
@@ -315,12 +316,16 @@
         {
             var updateDto = new CrearOrdenDTO
             {
-                CodigoOrden = currentOrden.CodigoOrden,
-                Prioridad = currentOrden.Prioridad,
-                Estado = newStatus,
-                FechaCreacion = currentOrden.FechaCreacion,
                 NroOT = currentOrden.NroOT,
-                IdCliente = currentOrden.IdCliente
+                NombreOrden = currentOrden.NombreOrden,
+                Descripcion = currentOrden.Descripcion,
+                Estado = newStatus,
+                FechaInicio = currentOrden.FechaInicio,
+                FechaPactada = currentOrden.FechaPactada,
+                FechaEntrega = currentOrden.FechaEntrega,
+                AreaId = currentOrden.AreaId,
+                ClienteId = currentOrden.ClienteId,
+                PlanoId = currentOrden.PlanoId
             };
 
             var response = await Http.PutAsJsonAsync($"api/Ordenes/{id}", updateDto);

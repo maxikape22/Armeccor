@@ -1,10 +1,11 @@
-﻿
+﻿using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Armeccor.Client.Servicios
 {
-    public class HttpServicio : IHttpServicio
+    public class HttpServicio:IHttpServicio
     {
         private readonly HttpClient http;
 
@@ -12,14 +13,14 @@ namespace Armeccor.Client.Servicios
         {
             this.http = http;
         }
-        public async Task<HttpRespuesta<T>> Get<T>(string url)
+        public async Task<HttpRespuesta<T>> Get<T>(string url) //https://localhost:7253/api/Ordenes
         {
-
             var response = await http.GetAsync(url);
+
             if (response.IsSuccessStatusCode)
             {
+                var respuesta = await DesSerializar<T>(response);
 
-                var respuesta = await DeserializarRepuesta<T>(response);
                 return new HttpRespuesta<T>(respuesta, false, response);
             }
             else
@@ -28,63 +29,59 @@ namespace Armeccor.Client.Servicios
             }
         }
 
-
-
-        public async Task<HttpRespuesta<object>> Post<T>(string url, T enviar)
+        public async Task<HttpRespuesta<object>> Post<T>(string url, T entidad)
         {
+            var enviarJson = JsonSerializer.Serialize(entidad);
 
-            try
+            var enviarContent = new StringContent(enviarJson,
+                                Encoding.UTF8,
+                                "application/json");
+
+            var response = await http.PostAsync(url, enviarContent);
+            if (response.IsSuccessStatusCode)
             {
-                var enviarJson = JsonSerializer.Serialize(enviar);
-                var enviarContent = new StringContent(enviarJson,
-                                                     Encoding.UTF8,
-                                                     "application/json");
-                var respuesta = await http.PostAsync(url, enviarContent);
-                return new HttpRespuesta<object>(null,
-                                                 !respuesta.IsSuccessStatusCode,
-                                                 respuesta);
-
+                var respuesta = await DesSerializar<object>(response);
+                return new HttpRespuesta<object>(respuesta, false, response);
             }
-            catch (Exception e)
+            else
             {
-
-                throw;
+                return new HttpRespuesta<object>(default, true, response);
             }
         }
 
-        public async Task<HttpRespuesta<object>> Put<T>(string url, T enviar)
+        public async Task<HttpRespuesta<object>> Put<T>(string url, T entidad)
         {
-            try
+            var enviarJson = JsonSerializer.Serialize(entidad);
+
+            var enviarContent = new StringContent(enviarJson,
+                                Encoding.UTF8,
+                                "application/json");
+
+            var response = await http.PutAsync(url, enviarContent);
+            if (response.IsSuccessStatusCode)
             {
-                var enviarJson = JsonSerializer.Serialize(enviar);
-                var enviarContent = new StringContent(enviarJson,
-                                                      Encoding.UTF8,
-                                                      "application/json");
-                var respuesta = await http.PutAsync(url, enviarContent);
-                return new HttpRespuesta<object>(null,
-                                                 !respuesta.IsSuccessStatusCode,
-                                                 respuesta);
+                //var respuesta = await DesSerializar<object>(response);
+                return new HttpRespuesta<object>(null, false, response);
             }
-            catch (Exception e) { throw; }
+            else
+            {
+                return new HttpRespuesta<object>(default, true, response);
+            }
         }
 
         public async Task<HttpRespuesta<object>> Delete(string url)
-
         {
             var respuesta = await http.DeleteAsync(url);
             return new HttpRespuesta<object>(null,
                                              !respuesta.IsSuccessStatusCode,
                                              respuesta);
-
         }
 
-
-        private async Task<T> DeserializarRepuesta<T>(HttpResponseMessage response)
+        private async Task<T?> DesSerializar<T>(HttpResponseMessage response)
         {
             var respuestaStr = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<T>(respuestaStr,
                 new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
-
     }
 }

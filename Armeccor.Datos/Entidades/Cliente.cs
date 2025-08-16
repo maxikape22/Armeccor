@@ -8,11 +8,11 @@ namespace Armeccor.Datos.Entidades
         [Required]
         public string Nombre { get; set; }
         [Required]
-        public  int DNI { get; set; }
+        public int DNI { get; set; }
         [Required]
-        public string Dirección { get; set; }
+        public string Direccion { get; set; }
         [Required]
-        public int Telefono { get; set; }
-        public HashSet<Orden> Ordenes { get; set; }
+        public string Telefono { get; set; }
+        public ICollection<Orden> Ordenes { get; set; }
     }
 }

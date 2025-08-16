@@ -1,27 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DTO.ObjetosDTO
 {
-    // DTO.ObjetosDTO/OrdenDetalleDTO.cs (y sus DTOs anidados)
     public class OrdenDetalleDTO
     {
         public int Id { get; set; }
-        public string CodigoOrden { get; set; }
-        public string Prioridad { get; set; }
-        public string Estado { get; set; }
-        public DateTime FechaCreacion { get; set; }
         public int NroOT { get; set; }
-
+        [Required]
+        public string NombreOrden { get; set; }
+        [Required]
+        public string Descripcion { get; set; }
+        [Required, MaxLength(50)]
+        public string Estado { get; set; }
+        public DateTime FechaInicio { get; set; } = DateTime.Now;
+        public DateTime FechaPactada { get; set; } = DateTime.Now;
+        public DateTime FechaEntrega { get; set; } = DateTime.Now;
+        public int AreaId { get; set; }
+        public int ClienteId { get; set; }
+        public int? PlanoId { get; set; } // puede ser null si no se cargó aún
         public string NombreCliente { get; set; } // Aplanado del Cliente
-        public int IdCliente { get; set; }
+        public string NombreArea { get; set; } //Aplanado de Area
         public List<AreaOrdenDetalleDTO> AreasDeLaOrden { get; set; }
-        public List<PiezaDetalleDTO> PiezasDeLaOrden { get; set; }
-        public List<EntregaDetalleDTO> EntregasDeLaOrden { get; set; }
-        public List<InsumoOrdenDetalleDTO> InsumosDeLaOrden { get; set; }
+        public List<CrearEntregaDTO> EntregasDeLaOrden { get; set; }
     }
 
 }

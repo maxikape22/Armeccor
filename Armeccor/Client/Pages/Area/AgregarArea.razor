@@ -1,0 +1,61 @@
+﻿@page "/api/Areas/AgregarArea"
+@inject HttpClient http
+@inject NavigationManager navigationManager
+
+
+<h3>Nuevo área</h3>
+
+<EditForm Model="@area" OnValidSubmit="Grabar">
+    <DataAnnotationsValidator />
+
+    <div class="form-group">
+        <label>Nombre del Área</label>
+        <InputText class="form-control" @bind-Value="area.NombreArea" />
+        <ValidationMessage For="@(() => area.NombreArea)" />
+    </div>
+
+    <div class="form-group">
+        <label>Tiempo</label>
+        <InputNumber class="form-control" @bind-Value="area.Tiempo" />
+        <ValidationMessage For="@(() => area.Tiempo)" />
+    </div>
+
+    <div class="form-group">
+        <label>Estado</label>
+        <InputSelect class="form-control" @bind-Value="area.Estado">
+            <option value="">-- Seleccionar estado --</option>
+            <option value="Iniciada">Iniciada</option>
+            <option value="Terminada">Terminada</option>
+            <option value="Detenida">Detenida</option>
+            <option value="Procesada">Procesada</option>
+        </InputSelect>
+        <ValidationMessage For="@(() => area.Estado)" />
+    </div>
+
+    <br />
+    <button class="btn btn-primary" type="submit">Aceptar</button>
+    <button class="btn btn-secondary" type="button" @onclick="Cancelar">Cancelar</button>
+</EditForm>
+
+@code {
+    private CrearAreaDTO area = new CrearAreaDTO();
+
+    private async Task Grabar()
+    {
+        var response = await http.PostAsJsonAsync("api/Areas", area);
+        if (response.IsSuccessStatusCode)
+        {
+            navigationManager.NavigateTo("/api/ListaAreas");
+        }
+        else
+        {
+            var errorMsg = await response.Content.ReadAsStringAsync();
+            Console.WriteLine("Error al guardar área: " + errorMsg);
+        }
+    }
+
+    private void Cancelar()
+    {
+        navigationManager.NavigateTo("/api/ListaAreas");
+    }
+}

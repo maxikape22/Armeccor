@@ -11,5 +11,4 @@ namespace DTO.ObjetosDTO
         public int IdArea { get; set; }
         public string NombreArea { get; set; }
     }
-
 }

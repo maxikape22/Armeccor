@@ -4,6 +4,8 @@ using AutoMapper;
 using DTO.ObjetosDTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Armeccor.Server.Controllers
 {
@@ -140,20 +142,34 @@ namespace Armeccor.Server.Controllers
         }
 
         // --- Método GET para obtener TODAS las órdenes (lista con detalles relacionados) ---
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<OrdenDetalleDTO>>> GetOrdenes() // Tipo de retorno cambiado a OrdenDetalleDTO
+        //{
+        //    var ordenes = await context.Ordenes
+        //        .Include(o => o.Cliente)
+        //        //.Include(o => o.AreaOrdenes).ThenInclude(ao => ao.Area)
+        //        .Include(o => o.Plano)
+        //        .Include(o => o.Entregas)
+        //        .ToListAsync();
+
+        //    // Mapea la lista de entidades a una lista de OrdenDetalleDTO
+        //    return Ok(_mapper.Map<IEnumerable<OrdenDetalleDTO>>(ordenes));
+        //}
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrdenDetalleDTO>>> GetOrdenes() // Tipo de retorno cambiado a OrdenDetalleDTO
+        public async Task<ActionResult<IEnumerable<OrdenDetalleDTO>>> GetOrdenes()
         {
             var ordenes = await context.Ordenes
                 .Include(o => o.Cliente)
-                .Include(o => o.AreaOrdenes).ThenInclude(ao => ao.Area)
-                .Include(o => o.Piezas)
+                .Include(o => o.Area) // Relación intermedia
+                    .ThenInclude(ao => ao.Ordenes) // Trae los datos de Area
+                .Include(o => o.Plano)
                 .Include(o => o.Entregas)
-                .Include(o => o.InsumosOrden).ThenInclude(io => io.Insumo)
                 .ToListAsync();
 
-            // Mapea la lista de entidades a una lista de OrdenDetalleDTO
             return Ok(_mapper.Map<IEnumerable<OrdenDetalleDTO>>(ordenes));
         }
+
 
         // --- Método GET para obtener una Orden por ID con sus detalles relacionados (con DTO) ---
         [HttpGet("{id:int}")]
@@ -161,10 +177,9 @@ namespace Armeccor.Server.Controllers
         {
             var orden = await context.Ordenes
                 .Include(o => o.Cliente)
-                .Include(o => o.AreaOrdenes).ThenInclude(ao => ao.Area)
-                .Include(o => o.Piezas)
+                //  .Include(o => o.AreaOrdenes).ThenInclude(ao => ao.Area)
+                .Include(o => o.Plano)
                 .Include(o => o.Entregas)
-                .Include(o => o.InsumosOrden).ThenInclude(io => io.Insumo)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
             if (orden is null)
@@ -178,12 +193,17 @@ namespace Armeccor.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<CrearOrdenDTO>> PostOrden(CrearOrdenDTO crearOrdenDTO)
         {
-            var clienteExiste = await context.Clientes.AnyAsync(c => c.Id == crearOrdenDTO.IdCliente);
+            var clienteExiste = await context.Clientes.AnyAsync(c => c.Id == crearOrdenDTO.ClienteId);
+            var areaExiste = await context.Areas.AnyAsync(a => a.Id == crearOrdenDTO.AreaId);
             if (!clienteExiste)
             {
-                return BadRequest($"El Cliente con ID {crearOrdenDTO.IdCliente} no existe.");
+                return BadRequest($"El Cliente con ID {crearOrdenDTO.ClienteId} no existe.");
             }
 
+            if (!areaExiste)
+            {
+                return BadRequest($"El Área con ID {crearOrdenDTO.AreaId} no existe.");
+            }
 
             var orden = _mapper.Map<Orden>(crearOrdenDTO);
 

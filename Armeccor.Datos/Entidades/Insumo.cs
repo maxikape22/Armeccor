@@ -7,7 +7,7 @@ namespace Armeccor.Datos.Entidades
         public int Id { get; set; }
         [Required, MaxLength(100)]
         public string Nombre { get; set; }
-        public int CantidadDisponible { get; set; }
-        public HashSet<InsumoOrden> InsumosOrden { get; set; }
+        public int CantDisponible { get; set; }
+        public ICollection<InsumoOrden> InsumosOrden { get; set; }
     }
 }

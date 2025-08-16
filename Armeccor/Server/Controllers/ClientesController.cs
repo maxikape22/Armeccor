@@ -4,6 +4,8 @@ using AutoMapper;
 using DTO.ObjetosDTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Armeccor.Server.Controllers
 {
@@ -62,8 +64,8 @@ namespace Armeccor.Server.Controllers
 
         [HttpGet] 
         public async Task<ActionResult<IEnumerable<CrearClienteDTO>>> GetClientes() 
-        {            var clientes = await context.Clientes.ToListAsync();
-
+        {          
+            var clientes = await context.Clientes.ToListAsync();
             //return _mapper.Map<IEnumerable<CrearClienteDTO>>(clientes);
             return Ok(clientes);
         }

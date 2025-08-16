@@ -10,7 +10,7 @@ namespace DTO.ObjetosDTO
         [Required(ErrorMessage = "El documento del cliente es obligatorio.")]
         public int DNI { get; set; }
         [Required(ErrorMessage = "La dirección del cliente es obligatoria.")]
-        public string Dirección { get; set; }
+        public string Direccion { get; set; }
         [Required(ErrorMessage = "El telefono del cliente es obligatorio.")]
         public int Telefono { get; set; }
     }

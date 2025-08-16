@@ -1,6 +1,6 @@
 ﻿@page "/api/Clientes/EditarCliente/{clienteId:int}"
-@inject IHttpServicio http
 @inject NavigationManager navigationManager
+@inject HttpClient http
 <h3>Editar cliente</h3>
 
 <h1>@pepe</h1>
@@ -26,15 +26,15 @@
     <div class="form-group">
         <label>Dirección</label>
         <div>
-            <InputText class="form-control" @bind-Value="@cliente.Dirección" />
-            <ValidationMessage For="@(() => cliente.Dirección)" />
+            <InputText class="form-control" @bind-Value="@cliente.Direccion" />
+            <ValidationMessage For="@(() => cliente.Direccion)" />
         </div>
     </div>
 
     <div class="form-group">
         <label>Telefono</label>
         <div>
-            <InputNumber class="form-control" @bind-Value="@cliente.Telefono" />
+            <InputText class="form-control" @bind-Value="@cliente.Telefono" />
             <ValidationMessage For="@(() => cliente.Telefono)" />
         </div>
     </div>
@@ -59,25 +59,13 @@
 
     private async Task Mostrar()
     {
-        var respuesta = await http.Get<Cliente>($"api/Clientes/{clienteId}");
-
-        if (!respuesta.Error)
-        {
-            cliente = respuesta.Respuesta;
-        }
-        else
-        {
-            navigationManager.NavigateTo("/api/ListaClientes");
-        }
+        var respuesta = await http.GetFromJsonAsync<Cliente>($"api/Clientes/{clienteId}");
+        navigationManager.NavigateTo("/api/ListaClientes");  
     }
 
     private async Task Grabar()
     {
-        var httpRespuesta = await http.Put<Cliente>($"api/Clientes/{clienteId}", cliente);
-        if (httpRespuesta.Error)
-        {
-            var body = httpRespuesta.HttpResponseMessage;
-        }
+        var httpRespuesta = await http.PutAsJsonAsync<Cliente>($"api/Clientes/{clienteId}", cliente);
         navigationManager.NavigateTo("/api/ListaClientes");
     }
 

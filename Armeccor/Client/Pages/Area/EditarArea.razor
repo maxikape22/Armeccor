@@ -1,0 +1,65 @@
+﻿@page "/api/Clientes/EditarArea/{AreaId:int}"
+@inject NavigationManager navigationManager
+@inject HttpClient http
+
+<EditForm Model="area" OnValidSubmit="Grabar">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label>Nombre del área</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@Area.NombreArea" />
+            <ValidationMessage For="@(() => Area.NombreArea)" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Tiempo</label>
+        <div>
+            <InputNumber class="form-control" @bind-Value="@Area.Tiempo" />
+            <ValidationMessage For="@(() => Area.Tiempo)" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Dirección</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@Area.Estado" />
+            <ValidationMessage For="@(() => Area.Estado)" />
+        </div>
+    </div>
+
+    <br />
+    <button class="btn btn-primary" type="submit">Aceptar</button>
+    <button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+</EditForm>
+
+
+@code
+{
+    [Parameter] public int AreaId { get; set; }
+    private Area Area = new Area();
+    string area = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await Mostrar();
+    }
+
+    private async Task Mostrar()
+    {
+        var respuesta = await http.GetFromJsonAsync<Area>($"api/Areas/{AreaId}");
+        navigationManager.NavigateTo("/api/Areas");
+    }
+
+    private async Task Grabar()
+    {
+        var httpRespuesta = await http.PutAsJsonAsync<Area>($"api/Areas/{AreaId}", Area);
+        navigationManager.NavigateTo("/api/Areas");
+    }
+
+    private void Cancelar()
+    {
+        navigationManager.NavigateTo("/api/ListaAreas");
+    }
+}

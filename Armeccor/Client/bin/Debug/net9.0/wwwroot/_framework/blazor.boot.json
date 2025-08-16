@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "Armeccor.Client",
   "resources": {
-    "hash": "sha256-rzeo2+zGIbpB8xULUyQngbxeZEx1KU2UWv2/fdWTsFU=",
+    "hash": "sha256-fFywiM9pZBzluUrczcYNOywIU5ZCo2+vrW6ImyaA3sw=",
     "fingerprinting": {
       "Azure.Core.92q6rqqhly.wasm": "Azure.Core.wasm",
       "Azure.Identity.b6ekoqlu3w.wasm": "Azure.Identity.wasm",
@@ -230,12 +230,12 @@
       "icudt_CJK.tjcz0u77k5.dat": "icudt_CJK.dat",
       "icudt_EFIGS.tptq2av103.dat": "icudt_EFIGS.dat",
       "icudt_no_CJK.lfu7j35m59.dat": "icudt_no_CJK.dat",
-      "Armeccor.Datos.6m9i6gas6u.wasm": "Armeccor.Datos.wasm",
-      "DTO.7rx0flaus6.wasm": "DTO.wasm",
-      "Armeccor.Datos.2p6fqa79zo.pdb": "Armeccor.Datos.pdb",
-      "DTO.gv03kc4ehl.pdb": "DTO.pdb",
-      "Armeccor.Client.wmmbp9km7i.wasm": "Armeccor.Client.wasm",
-      "Armeccor.Client.pf7pjmy3az.pdb": "Armeccor.Client.pdb"
+      "Armeccor.Datos.gkffbg6z96.wasm": "Armeccor.Datos.wasm",
+      "DTO.hgrti7uxgq.wasm": "DTO.wasm",
+      "Armeccor.Datos.f39y0s1srj.pdb": "Armeccor.Datos.pdb",
+      "DTO.erl63zn02r.pdb": "DTO.pdb",
+      "Armeccor.Client.kxkz9381nm.wasm": "Armeccor.Client.wasm",
+      "Armeccor.Client.3uyehnvyt1.pdb": "Armeccor.Client.pdb"
     },
     "jsModuleNative": {
       "dotnet.native.50iqa8w3ys.js": "sha256-pQdXuxfVeqYHOwd5HUM2ERd7OnXirj9JTF37b6OdTAc="
@@ -474,14 +474,14 @@
       "WindowsBase.361km0836k.wasm": "sha256-FacUCEIJYTnbOWgX/R9QP2QnurqRZwRIkDAH0N9z69s=",
       "mscorlib.qiu3j3msqk.wasm": "sha256-QvztpxTOEw4aMIl7zP3QtsPLNv/IWaK5wq22J4ReGrA=",
       "netstandard.lp03u0xxi4.wasm": "sha256-WVQsxULiAiEbyXLKolS7txnWVT82SsvsuMe4jJ+SqqI=",
-      "Armeccor.Datos.6m9i6gas6u.wasm": "sha256-LqckBnkDlp4GDw2BBCTKeFaF9Gy2Kgfx2WoNg30UHHk=",
-      "DTO.7rx0flaus6.wasm": "sha256-463mn+u0sgVFEADWatkzdBDNW/hZozO0KMPvRV707qY=",
-      "Armeccor.Client.wmmbp9km7i.wasm": "sha256-qHvBkI85rKX0xdgJjvy44LGuW9eVOsAHbo32zUXiiOQ="
+      "Armeccor.Datos.gkffbg6z96.wasm": "sha256-kEfdiGe9+Y8RadVP3ZtnokLG+F8/kue5xs2mOidHnTA=",
+      "DTO.hgrti7uxgq.wasm": "sha256-v+HgP6hvtrXcFyUhkSgqlNazPjY9DltrN2dlBsYUzBI=",
+      "Armeccor.Client.kxkz9381nm.wasm": "sha256-SFZaO+ThBSiOSLRHidKGgmcYBH90QKVZOXE2NFD9CV8="
     },
     "pdb": {
-      "Armeccor.Datos.2p6fqa79zo.pdb": "sha256-Wr7js9fVV2WhV4FrYB0ZeB6fFMf+kAXvvMkBH49XDiM=",
-      "DTO.gv03kc4ehl.pdb": "sha256-LCu75zP5yrlF3CWmzEO/sSN3SH4JtCHekKGHSWXv9zw=",
-      "Armeccor.Client.pf7pjmy3az.pdb": "sha256-5dyjQJUGLddQ7kS/dhNigF7Yf7+wlyqGpbyHCDnh+fM="
+      "Armeccor.Datos.f39y0s1srj.pdb": "sha256-dZ0YKV9ejU3FRbyCl6xZrsZzsndfSNJmJ7S17iiSUg4=",
+      "DTO.erl63zn02r.pdb": "sha256-Vo3BWNzDQ5qU5T6RHGuaptqU1RQHEQkwLOK7zivBAgA=",
+      "Armeccor.Client.3uyehnvyt1.pdb": "sha256-24SLcsxh3I4gPdJWPSlpe0EVomZavqkkUeXJSJPgcY4="
     }
   },
   "cacheBootResources": true,
