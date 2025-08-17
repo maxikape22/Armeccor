@@ -203,7 +203,7 @@
   },
   {
     "ContainingType": "Armeccor.Server.Controllers.EntregasController",
-    "Method": "GetEntregas",
+    "Method": "GetEntregasConOrdenAsync",
     "RelativePath": "api/Entregas",
     "HttpMethod": "GET",
     "IsController": true,
@@ -211,7 +211,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[DTO.ObjetosDTO.CrearEntregaDTO, DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[DTO.ObjetosDTO.EntregaDetalleDTO, DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -223,7 +223,7 @@
   },
   {
     "ContainingType": "Armeccor.Server.Controllers.EntregasController",
-    "Method": "PostArea",
+    "Method": "PostEntrega",
     "RelativePath": "api/Entregas",
     "HttpMethod": "POST",
     "IsController": true,
@@ -275,7 +275,7 @@
   },
   {
     "ContainingType": "Armeccor.Server.Controllers.EntregasController",
-    "Method": "DeleteArea",
+    "Method": "DeleteEntrega",
     "RelativePath": "api/Entregas/{id}",
     "HttpMethod": "DELETE",
     "IsController": true,

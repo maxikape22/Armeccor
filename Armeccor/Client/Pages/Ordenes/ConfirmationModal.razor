@@ -1,0 +1,169 @@
+﻿@* <div class="modal fade show" tabindex="-1" style="display: @(IsVisible ? "block" : "none")">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmación</h5>
+                <button type="button" class="btn-close" @onclick="() => Close(false)"></button>
+            </div>
+            <div class="modal-body">
+                @Message
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" @onclick="() => Close(false)">Cancelar</button>
+                <button type="button" class="btn btn-primary" @onclick="() => Close(true)">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Message { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnResult { get; set; } // El evento que devolverá el resultado
+
+    public bool IsVisible { get; private set; }
+
+    public void Show(string message)
+    {
+        Message = message;
+        IsVisible = true;
+        StateHasChanged();
+    }
+
+    private async Task Close(bool confirmed)
+    {
+        IsVisible = false;
+        await OnResult.InvokeAsync(confirmed); // Invoca el evento con el resultado
+        StateHasChanged();
+    }
+}
+ *@
+
+
+@inherits ComponentBase
+
+@if (IsVisible)
+{
+    <div class="modal-backdrop" @onclick="Cancel"></div>
+    <div class="modal">
+        <div class="modal-header">
+            <h4>Confirmación</h4>
+        </div>
+        <div class="modal-body">
+            <p>@Message</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" @onclick="Cancel">Cancelar</button>
+            <button class="btn btn-danger" @onclick="Confirm">Eliminar</button>
+        </div>
+    </div>
+}
+
+@code 
+{
+    [Parameter] public EventCallback<bool> OnConfirm { get; set; }
+    [Parameter] public  EventCallback caca { get; set; }
+
+
+    public bool IsVisible { get; private set; }
+    public string Message { get; private set; } = string.Empty;
+    public int CurrentItemId { get; private set; }
+
+    public async Task ShowAsync(string message, int itemId)
+    {
+        Message = message;
+        CurrentItemId = itemId;
+        IsVisible = true;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Hide()
+    {
+        IsVisible = false;
+        StateHasChanged(); // Forzar la actualización del estado del componente
+    }
+
+    private async Task Confirm()
+    {
+        Hide(); // <-- AGREGADO Y DESCOMENTADO
+        await OnConfirm.InvokeAsync(true);
+    }
+
+    private async Task Cancel()
+    {
+        Hide(); // <-- AGREGADO
+        await OnConfirm.InvokeAsync(false);
+    }
+    // private async Task Confirm()
+    // {
+    //     IsVisible = false;
+    //     await OnConfirm.InvokeAsync(true);
+    // }
+
+    // private async Task Cancel()
+    // {
+    //     IsVisible = false;
+    //     await OnConfirm.InvokeAsync(false);
+    // }
+}
+
+<style>
+    .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.5);
+        z-index: 999;
+    }
+
+    .modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        border-radius: 10px;
+        width: 380px;
+        max-width: 90vw;
+        z-index: 1000;
+        box-shadow: 0 10px 30px rgba(0,0,0,.2);
+    }
+
+    .modal-header, .modal-footer {
+        padding: 12px 16px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #eee;
+    }
+
+    .modal-body {
+        padding: 16px;
+    }
+
+    .modal-footer {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+        border-top: 1px solid #eee;
+    }
+
+    .btn {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    .btn-secondary {
+        background: #e9ecef;
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        color: #fff;
+    }
+</style>
+

@@ -19,7 +19,7 @@ namespace Armeccor.Datos.Entidades
         public DateTime FechaInicio { get; set; } = DateTime.Now;
         public DateTime FechaPactada { get; set; } = DateTime.Now;
         public DateTime FechaEntrega { get; set; } = DateTime.Now;
-        public int AreaId { get; set; }
+        public int? AreaId { get; set; }
         public Area Area { get; set; }
         public int ClienteId { get; set; }
         public Cliente Cliente { get; set; }

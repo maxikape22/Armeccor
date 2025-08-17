@@ -1,1 +1,135 @@
-﻿
+﻿@page "/api/Entregas"
+@inject HttpClient Http
+@inject NavigationManager Nav
+
+<h3>Listado de entregas</h3>
+
+<div class="toolbar mb-3">
+    <input type="text" class="form-control me-2" placeholder="Buscar medio de pago..."
+           @bind="search" @bind:event="oninput" style="max-width:280px" />
+
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="chkEntregado" @bind="filtroEntregado" />
+        <label class="form-check-label" for="chkEntregado">Entregado</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="chkNoEntregado" @bind="filtroNoEntregado" />
+        <label class="form-check-label" for="chkNoEntregado">No entregado</label>
+    </div>
+
+    <button class="btn btn-primary ms-3" @onclick="@(() => Nav.NavigateTo("/entregas/nueva"))">
+        + Agregar entrega
+    </button>
+    </div>
+
+
+@if (loading)
+{
+    <div class="alert alert-info">Cargando entregas...</div>
+}
+else if (!string.IsNullOrEmpty(error))
+{
+    <div class="alert alert-danger">Error: @error</div>
+}
+else if (entregas is null || !entregas.Any())
+{
+    <div class="alert alert-warning">No hay entregas registradas.</div>
+}
+else
+{
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Fecha de entrega</th>
+                <th>Entregado</th>
+                <th>Medio de pago</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var e in Filtrar(entregas))
+            {
+                <tr>
+                    <td>@e.FechaEntrega.ToShortDateString()</td>
+                    <td>@(e.Entregado ? "Sí" : "No")</td>
+                    <td>@e.MedioDePago</td>
+                    <td>
+                        <button class="btn btn-sm btn-danger" @onclick="() => Eliminar(e.Id)">
+                            🗑
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<EntregaDetalleDTO>? entregas;
+    private List<CrearEntregaDTO> EntregaDTOs;
+    private bool loading = true;
+    private string? error;
+    private string search = string.Empty;
+    private bool filtroEntregado = true;
+    private bool filtroNoEntregado = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarEntregas();
+    }
+
+    private async Task CargarEntregas()
+    {
+        try
+        {
+            entregas = await Http.GetFromJsonAsync<List<EntregaDetalleDTO>>("api/Entregas");
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+        loading = false;
+    }
+
+    private IEnumerable<EntregaDetalleDTO> Filtrar(IEnumerable<EntregaDetalleDTO> lista)
+    {
+        var query = lista;
+
+        if (!string.IsNullOrWhiteSpace(search))
+            query = query.Where(e => e.MedioDePago.Contains(search, StringComparison.OrdinalIgnoreCase));
+
+        if (!filtroEntregado)
+            query = query.Where(e => !e.Entregado);
+
+        if (!filtroNoEntregado)
+            query = query.Where(e => e.Entregado);
+
+        return query;
+    }
+
+    private async Task Eliminar(int id)
+    {
+        var resp = await Http.DeleteAsync($"api/Entregas/{id}");
+        if (resp.IsSuccessStatusCode)
+        {
+            entregas = entregas?.Where(e => e.Id != id).ToList();
+        }
+    }
+
+    //DTO local para el listado
+    // public class EntregaDetalleDTO
+    // {
+    //     public int Id { get; set; }
+    //     public DateTime FechaEntrega { get; set; }
+    //     public bool Entregado { get; set; }
+    //     public string MedioDePago { get; set; } = string.Empty;
+    // }
+}
+
+<style>
+    .toolbar {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+    }
+</style>

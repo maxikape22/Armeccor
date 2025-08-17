@@ -367,7 +367,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CrearEntregaDTO"
+                    "$ref": "#/components/schemas/EntregaDetalleDTO"
                   }
                 }
               },
@@ -375,7 +375,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CrearEntregaDTO"
+                    "$ref": "#/components/schemas/EntregaDetalleDTO"
                   }
                 }
               },
@@ -383,7 +383,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CrearEntregaDTO"
+                    "$ref": "#/components/schemas/EntregaDetalleDTO"
                   }
                 }
               }
@@ -942,6 +942,27 @@
           "planoId": {
             "type": "integer",
             "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EntregaDetalleDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fechaEntrega": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "entregado": {
+            "type": "boolean"
+          },
+          "medioDePago": {
+            "type": "string",
             "nullable": true
           }
         },

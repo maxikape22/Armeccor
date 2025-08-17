@@ -1,6 +1,7 @@
 ﻿using Armeccor.Datos.Entidades;
 using AutoMapper;
 using DTO.ObjetosDTO;
+using System;
 
 namespace Armeccor.Server.Mapeos
 {
@@ -20,17 +21,17 @@ namespace Armeccor.Server.Mapeos
 
             //CreateMap<Orden, OrdenDetalleDTO>()
             //.ForMember(dest => dest.NombreCliente, opt => opt.MapFrom(src => src.Cliente.Nombre)); // Mapea el nombre del cliente
-                                                                                                   // .ForMember para otras propiedades anidadas si las necesitas aplanadas
-                                                                                                   // Asegúrate de mapear también las colecciones:
-                                                                                                   // .ForMember(dest => dest.AreasDeLaOrden, opt => opt.MapFrom(src => src.AreaOrdenes));
-                                                                                                   // ... y así sucesivamente para Piezas, Entregas, InsumosOrden
+            // .ForMember para otras propiedades anidadas si las necesitas aplanadas
+            // Asegúrate de mapear también las colecciones:
+            // .ForMember(dest => dest.AreasDeLaOrden, opt => opt.MapFrom(src => src.AreaOrdenes));
+            // ... y así sucesivamente para Piezas, Entregas, InsumosOrden
 
             //CreateMap<Orden, OrdenDetalleDTO>()
             //    .ForAllMembers(opts => opts
             //    .Condition((src, dest, srcMember) => srcMember != null));
 
 
-            CreateMap<Orden,OrdenDetalleDTO>()
+            CreateMap<Orden, OrdenDetalleDTO>()
                 .ForMember(dest => dest.NombreCliente, opt => opt.MapFrom(src => src.Cliente.Nombre))
                 .ForMember(dest => dest.NombreArea, opt => opt.MapFrom(src => src.Area.NombreArea));
             //CreateMap<Orden, OrdenDetalleDTO>()
@@ -104,10 +105,46 @@ namespace Armeccor.Server.Mapeos
             #endregion
 
             //CreateMap<CrearEntregaDTO, Entrega>().ReverseMap();
+
             CreateMap<CrearEntregaDTO, Entrega>()
                 .ForMember(dest => dest.OrdenId, opt => opt
                 .MapFrom(src => src.IdOrden)).ReverseMap();
 
+
+
+            // Entrega -> EntregaDetalleDTO --> MAPEO DEFINITIVO PARA LA FECHA
+
+            //CreateMap<Entrega, EntregaDetalleDTO>()
+            //               .ForMember(dest => dest.FechaEntrega, opt => opt
+            //               .MapFrom(src => src.Orden.FechaEntrega));
+
+
+            //CreateMap<Entrega, EntregaDetalleDTO>()
+            //    .ForMember(dest => dest.FechaEntrega, opt => opt
+            //    .MapFrom(src => src.Orden.FechaEntrega)).ReverseMap();
+
+
+            CreateMap<Entrega, EntregaDetalleDTO>()
+                .ForMember(dest => dest.FechaEntrega, opt => opt
+                .MapFrom(src =>src.Orden != null ? src.Orden.FechaEntrega : DateTime.MinValue))
+                .ReverseMap();
+
+            //CreateMap<CrearEntregaDTO, EntregaDetalleDTO>().ForMember(dest => dest.FechaEntrega, opt => opt
+            //    .MapFrom(src => src.IdOrden)).ReverseMap();
+
+            //.ForMember(dest => dest.Entregado, opt => opt
+            //.MapFrom(src => src.Entregado));
+
+
+            //CreateMap<Entrega, EntregaDetalleDTO>()
+            //  .ForMember(dest => dest.FechaEntrega,
+            //  opt => opt
+            //  .MapFrom(src => src.Orden != null ? src.Orden.FechaEntrega : DateTime.MinValue))
+            //  .ForMember(dest => dest.Entregado, opt => opt
+            //  .MapFrom(src => src.Entregado ? "Sí" : "No"))
+            //  .ForMember(dest => dest.MedioDePago, opt => opt
+            //  .MapFrom(src => src.MedioDePago)).ReverseMap();
         }
+
     }
 }

@@ -147,7 +147,7 @@ namespace Armeccor.Datos.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AreaId")
+                    b.Property<int?>("AreaId")
                         .HasColumnType("int");
 
                     b.Property<int>("ClienteId")
@@ -223,7 +223,7 @@ namespace Armeccor.Datos.Migrations
                     b.HasOne("Armeccor.Datos.Entidades.Orden", "Orden")
                         .WithMany("Entregas")
                         .HasForeignKey("OrdenId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Orden");
@@ -253,13 +253,12 @@ namespace Armeccor.Datos.Migrations
                     b.HasOne("Armeccor.Datos.Entidades.Area", "Area")
                         .WithMany("Ordenes")
                         .HasForeignKey("AreaId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Armeccor.Datos.Entidades.Cliente", "Cliente")
                         .WithMany("Ordenes")
                         .HasForeignKey("ClienteId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Armeccor.Datos.Entidades.Plano", "Plano")

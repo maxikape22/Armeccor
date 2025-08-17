@@ -1,7 +1,8 @@
-﻿@page "/api/Ordenes"
+﻿@page "/Ordenes"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
+@inject NavigationManager navigationManager
 
 <PageTitle>Órdenes</PageTitle>
 
@@ -75,38 +76,38 @@
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            width: 200px;
+            width: 260px;
         }
 
-    .header-right .status-select {
-        margin-right: 15px;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        background-color: white;
-        cursor: pointer;
-    }
-
-    .header-right .btn-new-order {
-        background-color: #4CAF50;
-        color: white;
-        padding: 8px 15px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 0.9em;
-        display: flex;
-        align-items: center;
-        transition: background-color 0.3s;
-    }
-
-        .header-right .btn-new-order i {
-            margin-right: 5px;
+        .header-right .status-select {
+            margin-right: 15px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: white;
+            cursor: pointer;
         }
 
-        .header-right .btn-new-order:hover {
-            background-color: #45a049;
+        .header-right .btn-new-order {
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s;
         }
+
+            .header-right .btn-new-order i {
+                margin-right: 5px;
+            }
+
+            .header-right .btn-new-order:hover {
+                background-color: #45a049;
+            }
 
     .order-table {
         width: 100%;
@@ -151,8 +152,10 @@
                 color: #c82333;
             }
 
-    /* Import de Font Awesome (generalmente va en wwwroot/index.html o app.css global) */
-    /* Lo incluimos aquí como solución final para asegurar que se cargue */
+    .btn-action[disabled] {
+        opacity: .5;
+        cursor: not-allowed;
+    }
 </style>
 @* --- FIN ESTILOS CSS INTEGRADOS --- *@
 
@@ -160,21 +163,27 @@
     <div class="sidebar">
         <h3>ARme design</h3>
         <hr />
-        <a href="/Clientes">Clientes</a>
-        <a href="/Ordenes">Ordenes de trabajo</a>
-        <a href="/Insumos">Insumos</a>
-        <a href="/Entregas">Entregas</a>
+        <a href="/api/Clientes">Clientes</a>
+        <a href="/api/Areas">Areas</a>
+        <a href="/api/Ordenes">Ordenes de trabajo</a>
+        <a href="/api/Insumos">Insumos</a>
+        <a href="/api/Entregas">Entregas</a>
     </div>
 
     <div class="content-area">
         <div class="header">
             <div class="header-left">
                 <i class="fas fa-search"></i>
-                <input type="text" @bind-value="searchText" @oninput="FilterOrders" placeholder="Buscar"/>
+                <!-- 🔎 Filtra SOLO por Nombre de la orden o Descripción -->
+                <input type="text"
+                       placeholder="Buscar por nombre o descripción"
+                       @bind="SearchText"
+                       @bind:event="oninput" />
             </div>
             <h2>ÓRDENES</h2>
             <div class="header-right">
-                <select @bind="selectedStatus" @bind:event="onchange" class="status-select">
+                <!-- ✅ Filtro por estado (case-insensitive) -->
+                <select @bind="SelectedStatus" @bind:event="onchange" class="status-select">
                     <option value="">Estado</option>
                     <option value="Abierto">Abierto</option>
                     <option value="Cerrado">Cerrado</option>
@@ -206,10 +215,11 @@
                         <th>Nombre de la orden</th>
                         <th>Descripción</th>
                         <th>Estado</th>
-                        <th>Fecha de inicio</th>                    
+                        <th>Fecha de inicio</th>
                         <th>Fecha pactada</th>
                         <th>Fecha de entrega</th>
                         <th>Cliente</th>
+                        <th>Área (DTO)</th>
                         <th>Área actual</th>
                         <th>Acción</th>
                     </tr>
@@ -226,14 +236,42 @@
                             <td>@orden.FechaPactada.ToShortDateString()</td>
                             <td>@orden.FechaEntrega.ToShortDateString()</td>
                             <td>@orden.NombreCliente</td>
+
+                            <!-- Conservamos ambas columnas como tenías -->
                             <td>@orden.NombreArea</td>
+
                             <td>@GetAreaActual(orden)</td>
                             <td>
-                                <button class="btn-action" @onclick="(() => ChangeOrderStatus(orden.Id, orden))" title="Cambiar Estado"><i class="fas fa-edit"></i></button>
-                                <button class="btn-action" @onclick="(() => ViewAreaDetails(orden.Id))" title="Ver Área"><i class="fas fa-map-marker-alt"></i></button>
-                                <button class="btn-action" @onclick="(() => ViewPlans(orden.Id))" title="Ver Planos"><i class="fas fa-file-alt"></i></button>
-                                <button class="btn-action" @onclick="(() => ViewSupplies(orden.Id))" title="Ver Insumos"><i class="fas fa-boxes"></i></button>
-                                <button class="btn-action btn-delete" @onclick="(() => DeleteOrder(orden.Id))" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
+                                <button class="btn btn-danger btn-sm" @onclick="() => DeleteOrder(orden.Id)">Eliminar</button>
+                            </td>
+                            <td>
+                                <button class="btn-action" @onclick="(() => ChangeOrderStatus(orden.Id, orden))" title="Cambiar Estado">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-action" @onclick="(() => ViewAreaDetails(orden.Id))" title="Ver Área">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </button>
+                                <button class="btn-action" @onclick="(() => ViewPlans(orden.Id))" title="Ver Planos">
+                                    <i class="fas fa-file-alt"></i>
+                                </button>
+                                <button class="btn-action" @onclick="(() => ViewSupplies(orden.Id))" title="Ver Insumos">
+                                    <i class="fas fa-boxes"></i>
+                                </button>
+
+                                <!-- 🗑️ Botón eliminar funcionando -->
+                                <button class="btn-action btn-delete"
+                                        disabled="@(isDeletingId == orden.Id)"
+                                        @onclick="(() => DeleteOrder(orden.Id))"
+                                        title="Eliminar">
+                                    @if (isDeletingId == orden.Id)
+                                    {
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-trash-alt"></i>
+                                    }
+                                </button>
                             </td>
                         </tr>
                     }
@@ -249,11 +287,26 @@
 @code {
     private List<OrdenDetalleDTO>? orders;
     private List<OrdenDetalleDTO>? filteredOrders;
-    private string searchText = string.Empty;
-    private string selectedStatus = string.Empty;
     private bool isLoading = true;
-
+    private OrdenDetalleDTO ordenDetalleDTO = new OrdenDetalleDTO();
+    private EntregaDetalleDTO entregaDetalleDTO = new EntregaDetalleDTO();
     private ConfirmationModal? confirmationModal;
+    private int? isDeletingId = null;
+
+    // ✅ Propiedades con setter que dispara el filtro
+    private string _searchText = string.Empty;
+    private string SearchText
+    {
+        get => _searchText;
+        set { _searchText = value ?? string.Empty; FilterOrders(); }
+    }
+
+    private string _selectedStatus = string.Empty;
+    private string SelectedStatus
+    {
+        get => _selectedStatus;
+        set { _selectedStatus = value ?? string.Empty; FilterOrders(); }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -287,20 +340,46 @@
             return;
         }
 
+        // 🔎 SOLO Nombre de la orden o Descripción (insensible a mayús/acentos)
+        string term = Normalize(SearchText);
+
         filteredOrders = orders
             .Where(o =>
-                (string.IsNullOrWhiteSpace(searchText) ||
-                 o.NroOT.ToString().Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
-                 o.Estado.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
-                 (o.NombreCliente != null && o.NombreCliente.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
-                 (o.AreasDeLaOrden != null && o.AreasDeLaOrden.Any(a => a.NombreArea != null && a.NombreArea.Contains(searchText, StringComparison.OrdinalIgnoreCase)))) &&
-                (string.IsNullOrWhiteSpace(selectedStatus) ||
-                 o.Estado.Equals(selectedStatus, StringComparison.OrdinalIgnoreCase)))
+            {
+                bool textOk =
+                    string.IsNullOrWhiteSpace(term) ||
+                    Normalize(o.NombreOrden).Contains(term) ||
+                    Normalize(o.Descripcion).Contains(term);
+
+                bool estadoOk =
+                    string.IsNullOrWhiteSpace(SelectedStatus) ||
+                    Normalize(o.Estado) == Normalize(SelectedStatus);
+
+                return textOk && estadoOk;
+            })
             .ToList();
+    }
+
+    private static string Normalize(string? input)
+    {
+        if (string.IsNullOrWhiteSpace(input)) return string.Empty;
+        var formD = input.ToUpperInvariant().Normalize(System.Text.NormalizationForm.FormD);
+        var sb = new System.Text.StringBuilder(formD.Length);
+        foreach (var ch in formD)
+        {
+            var uc = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch);
+            if (uc != System.Globalization.UnicodeCategory.NonSpacingMark)
+                sb.Append(ch);
+        }
+        return sb.ToString().Normalize(System.Text.NormalizationForm.FormC);
     }
 
     private string GetAreaActual(OrdenDetalleDTO orden)
     {
+        // Si tu DTO trae NombreArea, lo mostramos; si además hay AreasDeLaOrden, mostramos la primera como "actual".
+        if (!string.IsNullOrWhiteSpace(orden.NombreArea))
+            return orden.AreasDeLaOrden?.FirstOrDefault()?.NombreArea ?? orden.NombreArea;
+
         return orden.AreasDeLaOrden?.FirstOrDefault()?.NombreArea ?? "N/A";
     }
 
@@ -331,8 +410,11 @@
             var response = await Http.PutAsJsonAsync($"api/Ordenes/{id}", updateDto);
             if (response.IsSuccessStatusCode)
             {
+                // Refrescamos local sin otro GET
+                var o = orders?.FirstOrDefault(x => x.Id == id);
+                if (o is not null) o.Estado = newStatus;
+                FilterOrders();
                 await JSRuntime.InvokeVoidAsync("alert", "Estado de la orden actualizado con éxito.");
-                await LoadOrders();
             }
             else
             {
@@ -357,13 +439,17 @@
         JSRuntime.InvokeVoidAsync("alert", $"Ver insumos para la Orden ID: {id}");
     }
 
+    
+
+    // 🗑️ Flujo de eliminación con modal
     private async Task DeleteOrder(int id)
     {
         if (confirmationModal != null)
         {
-            await confirmationModal.ShowAsync($"¿Está seguro que desea eliminar la orden ID: {id}?", id);
+            await confirmationModal.ShowAsync($"¿Está seguro que desea eliminar la orden de fecha: {ordenDetalleDTO.FechaEntrega}?", id);
         }
     }
+
 
     private async Task ConfirmDelete(bool confirmed)
     {
@@ -371,17 +457,74 @@
         {
             await ExecuteDelete(confirmationModal.CurrentItemId);
         }
+        // Si el usuario cancela, no se hace nada o puedes llamar a Cancelar() aquí
+        else
+        {
+            Cancelar();
+        }
     }
+
+    // private async Task ConfirmDelete(bool confirmed)
+    // {
+    //     if (confirmed && confirmationModal != null)
+    //     {
+    //         await ExecuteDelete(confirmationModal.CurrentItemId);
+    //     }
+    // }
+
+    // private async Task ExecuteDelete(int idToDelete)
+    // {
+    //     try
+    //     {
+    //         isDeletingId = idToDelete;
+
+    //         var response = await Http.DeleteAsync($"api/Ordenes/{idToDelete}");
+    //         if (response.IsSuccessStatusCode)
+    //         {
+    //             // Actualizamos la lista local y re-filtramos
+    //             orders?.RemoveAll(o => o.Id == idToDelete);
+    //             FilterOrders();
+    //             await JSRuntime.InvokeVoidAsync("alert", "Orden eliminada con éxito.");
+    //         }
+    //         else
+    //         {
+    //             var errorContent = await response.Content.ReadAsStringAsync();
+    //             await JSRuntime.InvokeVoidAsync("alert", $"Error al eliminar la orden: {response.StatusCode} - {errorContent}");
+    //         }
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         Console.WriteLine($"Error al eliminar: {ex.Message}");
+    //         await JSRuntime.InvokeVoidAsync("alert", $"Ocurrió un error al intentar eliminar la orden: {ex.Message}");
+    //     }
+    //     finally
+    //     {
+    //         isDeletingId = null;
+    //     }
+    // }
+
+
+    
 
     private async Task ExecuteDelete(int idToDelete)
     {
         try
         {
+            isDeletingId = idToDelete;
+
+            // Oculta el modal de confirmación antes de cualquier otra acción
+            if (confirmationModal != null)
+            {
+                await confirmationModal.HideAsync();
+            }
+
             var response = await Http.DeleteAsync($"api/Ordenes/{idToDelete}");
+
             if (response.IsSuccessStatusCode)
             {
+                // La eliminación fue exitosa. Recargamos la página para resetear la UI.
                 await JSRuntime.InvokeVoidAsync("alert", "Orden eliminada con éxito.");
-                await LoadOrders();
+                navigationManager.NavigateTo("https://localhost:7253/Ordenes", true); // <--- Esta es la clave
             }
             else
             {
@@ -394,5 +537,45 @@
             Console.WriteLine($"Error al eliminar: {ex.Message}");
             await JSRuntime.InvokeVoidAsync("alert", $"Ocurrió un error al intentar eliminar la orden: {ex.Message}");
         }
+        finally
+        {
+            isDeletingId = null;
+        }
     }
+
+    // Remueve o no uses este método, ya que la navegación ahora está en ExecuteDelete
+    private void Cancelar()
+    {
+        navigationManager.NavigateTo("/api/ListaOrdenes");
+    }
+
+
+    // private CrearOrdenDTO crearOrdenDTO = new CrearOrdenDTO();
+
+    // private async Task Eliminar(int id)
+    // {
+    //     var resp = await Http.DeleteAsync($"api/Ordenes/{id}");
+
+    //     if (confirmationModal != null)
+    //     {
+    //         await confirmationModal.ShowAsync($"¿Está seguro que desea eliminar la orden: {id}", id);
+    //     }
+    //     // if (!resp.IsSuccessStatusCode)
+    //     // {
+    //     //     var err = await resp.Content.ReadAsStringAsync();
+    //     //     Console.WriteLine($"Error al borrar la orden: {err}");
+    //     // }
+
+    //     //await LoadOrders();
+    //     //Cancelar();
+    // }
+
+
+   
+    
+
+    // private void Cancelar()
+    // {
+    //     navigationManager.NavigateTo("/api/ListaOrdenes");
+    // }
 }

@@ -68,6 +68,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT3JkZW5lc1xBZ3JlZ2FyT3JkZW4ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Ordenes/ConfirmationModal.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT3JkZW5lc1xDb25maXJtYXRpb25Nb2RhbC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Ordenes/ModalConfirmacion.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT3JkZW5lc1xNb2RhbENvbmZpcm1hY2lvbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Shared/ConfirmationModal.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXENvbmZpcm1hdGlvbk1vZGFsLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
