@@ -1,8 +1,8 @@
-﻿@page "/api/Clientes/EditarArea/{AreaId:int}"
+﻿@page "/api/Areas/Editar/{AreaId:int}"
 @inject NavigationManager navigationManager
 @inject HttpClient http
 
-<EditForm Model="area" OnValidSubmit="Grabar">
+<EditForm Model="Area" OnValidSubmit="Grabar">
     <DataAnnotationsValidator />
     <div class="form-group">
         <label>Nombre del área</label>
@@ -21,11 +21,15 @@
     </div>
 
     <div class="form-group">
-        <label>Dirección</label>
-        <div>
-            <InputText class="form-control" @bind-Value="@Area.Estado" />
-            <ValidationMessage For="@(() => Area.Estado)" />
-        </div>
+        <label>Estado</label>
+        <InputSelect class="form-control" @bind-Value="Area.Estado">
+            <option value="">-- Seleccionar estado --</option>
+            <option value="Iniciada">Iniciada</option>
+            <option value="Terminada">Terminada</option>
+            <option value="Detenida">Detenida</option>
+            <option value="Procesada">Procesada</option>
+        </InputSelect>
+        <ValidationMessage For="@(() => Area.Estado)" />
     </div>
 
     <br />
@@ -38,18 +42,24 @@
 {
     [Parameter] public int AreaId { get; set; }
     private Area Area = new Area();
-    string area = "";
 
     protected override async Task OnInitializedAsync()
     {
+        // await base.OnInitializedAsync();
+        // await Mostrar();
         await base.OnInitializedAsync();
-        await Mostrar();
+
+        // Obtiene el área de la API usando el AreaId del parámetro de ruta.
+        var respuesta = await http.GetFromJsonAsync<Area>($"api/Areas/{AreaId}");
+
+        // Asigna la respuesta a la propiedad 'Area' para que el formulario se llene con esos datos.
+        Area = respuesta;
+
     }
 
     private async Task Mostrar()
     {
         var respuesta = await http.GetFromJsonAsync<Area>($"api/Areas/{AreaId}");
-        navigationManager.NavigateTo("/api/Areas");
     }
 
     private async Task Grabar()

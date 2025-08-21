@@ -1,8 +1,19 @@
 ﻿@page "/api/Clientes"
 @inject HttpClient Http
-
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
 
 <h3>Gestión de Clientes</h3>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="input-group" style="width: 48%;">
+        <input class="form-control" placeholder="Buscar por nombre del cliente..." @bind="filtroNombre"/>
+        <button class="btn btn-primary" @onclick="BuscarPorNombre">Buscar</button>
+    </div>
+    <div>
+        <button class="btn btn-success" @onclick="IrANuevoCliente">+ Nuevo Cliente</button>
+    </div>
+</div>
 
 @if (clientes == null)
 {
@@ -29,7 +40,12 @@ else
                     <td>@c.Direccion</td>
                     <td>@c.Telefono</td>
                     <td>
-                        <button class="btn btn-warning btn-sm" @onclick="() => Editar(c)">Editar</button>
+                        <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => IrAEditarCliente(c.Id)">
+                            Editar
+                        </button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => ConfirmarEliminar(c.Id, c.Nombre)">
+                            Eliminar
+                        </button>
                     </td>
                 </tr>
             }
@@ -37,32 +53,49 @@ else
     </table>
 }
 
-<hr />
-<h4>@(editando ? "Editar Cliente" : "Nuevo Cliente")</h4>
-<div class="mb-3">
-    <input class="form-control" placeholder="Nombre" @bind="cliente.Nombre" />
-</div>
-<div class="mb-3">
-    <input class="form-control" placeholder="DNI" type="number" @bind="cliente.DNI" />
-</div>
-<div class="mb-3">
-    <input class="form-control" placeholder="Dirección" @bind="cliente.Direccion" />
-</div>
-<div class="mb-3">
-    <input class="form-control" placeholder="Teléfono" @bind="cliente.Telefono" />
-</div>
-<button class="btn btn-primary" @onclick="Guardar">Guardar</button>
-<button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
-
 @code
 {
-    private List<Cliente>? clientes;
+    private List<Cliente> clientes;
     private Cliente cliente = new Cliente();
     private bool editando = false;
+    private string filtroNombre = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         clientes = await Http.GetFromJsonAsync<List<Cliente>>("api/Clientes");
+    }
+
+    private async Task ConfirmarEliminar(int id, string nombre)
+    {
+        var confirm = await JS.InvokeAsync<bool>("confirm", $"¿Estás seguro de eliminar el cliente {nombre}?");
+        if (confirm)
+        {
+            await EliminarCliente(id);
+        }
+    }
+
+    private async Task EliminarCliente(int id)
+    {
+        try
+        {
+            var resp = await Http.DeleteAsync($"/api/Clientes/{id}");
+            if (resp.IsSuccessStatusCode)
+            {
+                clientes.RemoveAll(a => a.Id == id);
+                await JS.InvokeVoidAsync("alert", "Cliente eliminado.");
+            }
+            else
+            {
+                var body = await resp.Content.ReadAsStringAsync();
+                Console.WriteLine($"Error al eliminar el cliente: {resp.StatusCode} - {body}");
+                await JS.InvokeVoidAsync("alert", $"Error al eliminar cliente: {resp.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al eliminar cliente: {ex.Message}");
+            await JS.InvokeVoidAsync("alert", "Error al eliminar cliente. Ver consola.");
+        }
     }
 
     private async Task Guardar()
@@ -81,28 +114,32 @@ else
         editando = false;
     }
 
-    private void Editar(Cliente c)
+    private void IrANuevoCliente()
     {
-        cliente = new Cliente
+        Navigation.NavigateTo("/api/Clientes/AgregarCliente");
+    }
+
+    public void IrAEditarCliente(int id)
+    {
+        Navigation.NavigateTo($"/api/Clientes/EditarCliente/{id}");
+    }
+
+    public async Task BuscarPorNombre()
+    {
+        if (string.IsNullOrWhiteSpace(filtroNombre))
         {
-            Id = c.Id,
-            Nombre = c.Nombre,
-            DNI = c.DNI,
-            Direccion = c.Direccion,
-            Telefono = c.Telefono
-        };
-        editando = true;
-    }
+            cliente = cliente;
+        }
+        else
+        {
+            clientes = clientes
+                .Where(a => a.Nombre.Contains(filtroNombre, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
 
-    private async Task Eliminar(int id)
-    {
-        await Http.DeleteAsync($"api/Clientes/{id}");
-        clientes = await Http.GetFromJsonAsync<List<Cliente>>("api/Clientes");
-    }
-
-    private void Cancelar()
-    {
-        cliente = new Cliente();
-        editando = false;
+        if (filtroNombre.Equals(string.Empty))
+        {
+            await OnInitializedAsync();
+        }
     }
 }

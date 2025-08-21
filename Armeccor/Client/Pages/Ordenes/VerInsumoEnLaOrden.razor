@@ -1,0 +1,43 @@
+﻿@page "/ListadoInsumosOrden"
+@inject HttpClient Http
+
+<h3>Insumos en Órdenes</h3>
+
+@if (insumosEnOrden == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nro. de OT</th>
+                <th>Orden</th>
+                <th>Insumo</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in insumosEnOrden)
+            {
+                <tr>
+                    <td>@item.NroOT</td>
+                    <td>@item.NombreOrden</td>
+                    <td>@item.NombreInsumo</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code 
+{
+    private List<InsumoEnOrdenVistaDTO> insumosEnOrden;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //insumosEnOrden = await Http.GetFromJsonAsync<List<InsumoEnOrdenVistaDTO>>("api/Insumos/InsumosEnLaOrden");//ESTA ES LA LINEA 41
+        //insumosEnOrden = await Http.GetFromJsonAsync<List<InsumoEnOrdenVistaDTO>>("api/Insumos/InsumosEnLaOrden");
+        insumosEnOrden = await Http.GetFromJsonAsync<List<InsumoEnOrdenVistaDTO>>("api/Ordenes/InsumosEnLaOrden");
+    }
+}

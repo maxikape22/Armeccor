@@ -8,11 +8,27 @@
 <EditForm Model="@area" OnValidSubmit="Grabar">
     <DataAnnotationsValidator />
 
-    <div class="form-group">
-        <label>Nombre del Área</label>
-        <InputText class="form-control" @bind-Value="area.NombreArea" />
-        <ValidationMessage For="@(() => area.NombreArea)" />
+    <div class="mb-3">
+        <label>Área:</label>
+        <InputSelect class="form-control" @bind-Value="SeleccionArea">
+            <option value="">-- Seleccione el área --</option>
+            @foreach (var a in AreasExistentes)
+            {
+                <option value="@a">@a</option>
+            }
+            <option value="Otra">Otra área</option>
+        </InputSelect>
+
+        @if (SeleccionArea == "Otra")
+        {
+            <input class="form-control mt-2" placeholder="Ingrese nueva área" @bind="area.NombreArea" type="text" />
+        }
+        else if (!string.IsNullOrEmpty(SeleccionArea))
+        {
+            area.NombreArea = SeleccionArea;
+        }       
     </div>
+ 
 
     <div class="form-group">
         <label>Tiempo</label>
@@ -37,15 +53,33 @@
     <button class="btn btn-secondary" type="button" @onclick="Cancelar">Cancelar</button>
 </EditForm>
 
-@code {
+@code
+{
     private CrearAreaDTO area = new CrearAreaDTO();
+    private string SeleccionArea { get; set; } = string.Empty;
+
+    // Lista de áreas predefinidas
+    private List<string> AreasExistentes = new List<string>
+    {
+        "Recepción y Almacenamiento de Materiales",
+        "Corte y Preparación",
+        "Mecanizado",
+        "Plegado y Conformado",
+        "Soldadura y Ensamblaje",
+        "Tratamientos Térmicos y Superficiales",
+        "Montaje y Ajuste Final",
+        "Control de Calidad",
+        "Mantenimiento",
+        "Oficina Técnica/Ingeniería",
+        "Logística y Expedición"
+    };
 
     private async Task Grabar()
     {
-        var response = await http.PostAsJsonAsync("api/Areas", area);
+        var response = await http.PostAsJsonAsync("/api/Areas", area);
         if (response.IsSuccessStatusCode)
         {
-            navigationManager.NavigateTo("/api/ListaAreas");
+            navigationManager.NavigateTo("/api/Areas");
         }
         else
         {
@@ -56,6 +90,6 @@
 
     private void Cancelar()
     {
-        navigationManager.NavigateTo("/api/ListaAreas");
+        navigationManager.NavigateTo("/api/Areas");
     }
 }

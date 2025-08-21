@@ -12,6 +12,6 @@ namespace DTO.ObjetosDTO
         [Required(ErrorMessage = "La dirección del cliente es obligatoria.")]
         public string Direccion { get; set; }
         [Required(ErrorMessage = "El telefono del cliente es obligatorio.")]
-        public int Telefono { get; set; }
+        public string Telefono { get; set; }
     }
 }

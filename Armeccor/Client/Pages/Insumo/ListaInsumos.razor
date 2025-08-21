@@ -1,0 +1,132 @@
+﻿@page "/api/Insumos"
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<h3>Gestión de Insumos</h3>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="input-group" style="width: 48%;">
+        <input class="form-control" placeholder="Buscar por nombre de insumo..." @bind="filtroNombre" />
+        <button class="btn btn-primary" @onclick="BuscarPorNombre">Buscar</button>
+    </div>
+    <div>
+        <button class="btn btn-success" @onclick="IrANuevoInsumo">+ Nuevo Insumo</button>
+    </div>
+</div>
+
+@if (InsumoDTO == null)
+{
+    <p><em>Cargando insumos...</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Cantidad Disponible</th>
+                <th style="width:120px">Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (InsumoDTOFiltrados != null && InsumoDTOFiltrados.Any())
+            {
+                @foreach (var i in InsumoDTOFiltrados)
+                {
+                    <tr>
+                        <td>@i.Nombre</td>
+                        <td>@i.CantDisponible</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => IrAEditarInsumo(i.Id)">
+                                Editar
+                            </button>
+                            <button class="btn btn-sm btn-danger" @onclick="() => ConfirmarEliminar(i.Id)">
+                                Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="3" class="text-center">No se encontraron insumos.</td></tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<CrearInsumoDTO> InsumoDTO = new();           // Lista completa
+    private List<CrearInsumoDTO> InsumoDTOFiltrados = new(); // Lista filtrada
+    private CrearInsumoDTO insumoDTO = new CrearInsumoDTO();
+    private string filtroNombre = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Cargar();
+    }
+
+    private async Task Cargar()
+    {
+        InsumoDTO = await Http.GetFromJsonAsync<List<CrearInsumoDTO>>("api/Insumos") ?? new();
+        InsumoDTOFiltrados = InsumoDTO;
+    }
+
+    private void BuscarPorNombre()
+    {
+        if (string.IsNullOrWhiteSpace(filtroNombre))
+        {
+            InsumoDTOFiltrados = InsumoDTO; // Restaurar lista completa
+        }
+        else
+        {
+            InsumoDTOFiltrados = InsumoDTO
+                .Where(i => i.Nombre.Contains(filtroNombre, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+    }
+
+    private async Task ConfirmarEliminar(int id)
+    {
+        var ok = await JS.InvokeAsync<bool>("confirm", $"¿Desea eliminar el insumo: {insumoDTO.Nombre}?");
+        if (!ok) return;
+
+        await EliminarInsumo(id);
+        await Cargar();
+    }
+
+    private async Task EliminarInsumo(int id)
+    {
+        try
+        {
+            var resp = await Http.DeleteAsync($"/api/Insumos/{id}");
+            if (resp.IsSuccessStatusCode)
+            {
+                InsumoDTO.RemoveAll(i => i.Id == id);
+                await JS.InvokeVoidAsync("alert", "Insumo eliminado.");
+            }
+            else
+            {
+                var body = await resp.Content.ReadAsStringAsync();
+                Console.WriteLine($"Error al eliminar insumo: {resp.StatusCode} - {body}");
+                await JS.InvokeVoidAsync("alert", $"Error al eliminar insumo: {resp.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al eliminar insumo: {ex.Message}");
+            await JS.InvokeVoidAsync("alert", "Error al eliminar insumo. Ver consola.");
+        }
+    }
+
+    private void IrANuevoInsumo()
+    {
+        Navigation.NavigateTo("/api/Insumos/AgregarInsumo");
+    }
+
+    private void IrAEditarInsumo(int id)
+    {
+        Navigation.NavigateTo($"/api/Insumos/Editar/{id}");
+    }
+}

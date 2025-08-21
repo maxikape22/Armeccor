@@ -1,0 +1,59 @@
+﻿@page "/api/Insumos/AgregarInsumo"
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<h3>Agregar Nuevo Insumo</h3>
+
+<div class="mb-3">
+    <label>Nombre</label>
+    <input class="form-control" @bind="insumo.Nombre" placeholder="Ingrese nombre del insumo" />
+</div>
+
+<div class="mb-3">
+    <label>Cantidad Disponible</label>
+    <input class="form-control" type="number" @bind="insumo.CantDisponible" />
+</div>
+
+<div class="mb-3">
+    <button class="btn btn-success me-2" @onclick="Guardar">Guardar</button>
+    <button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+</div>
+
+@code {
+    private CrearInsumoDTO insumo = new CrearInsumoDTO();
+
+    private async Task Guardar()
+    {
+        if (string.IsNullOrWhiteSpace(insumo.Nombre))
+        {
+            await JS.InvokeVoidAsync("alert", "El nombre del insumo es obligatorio.");
+            return;
+        }
+
+        try
+        {
+            var resp = await Http.PostAsJsonAsync("api/Insumos", insumo);
+            if (resp.IsSuccessStatusCode)
+            {
+                await JS.InvokeVoidAsync("alert", "Insumo agregado correctamente.");
+                Navigation.NavigateTo("/api/Insumos");
+            }
+            else
+            {
+                var body = await resp.Content.ReadAsStringAsync();
+                await JS.InvokeVoidAsync("alert", $"Error al agregar insumo: {resp.StatusCode} - {body}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al agregar insumo: {ex.Message}");
+            await JS.InvokeVoidAsync("alert", "Error al agregar insumo. Revisar consola.");
+        }
+    }
+
+    private void Cancelar()
+    {
+        Navigation.NavigateTo("/api/Insumos");
+    }
+}

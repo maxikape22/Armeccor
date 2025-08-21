@@ -60,6 +60,18 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRW50cmVnYVxMaXN0YUVudHJlZ2FzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Insumo/AgregarInsumo.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5zdW1vXEFncmVnYXJJbnN1bW8ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Insumo/EditarInsumo.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5zdW1vXEVkaXRhckluc3Vtby5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Insumo/ListaInsumos.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5zdW1vXExpc3RhSW5zdW1vcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/ListaOrdenes.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTGlzdGFPcmRlbmVzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
@@ -74,6 +86,18 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Ordenes/ModalConfirmacion.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT3JkZW5lc1xNb2RhbENvbmZpcm1hY2lvbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Ordenes/VerAreaEnLaOrden.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT3JkZW5lc1xWZXJBcmVhRW5MYU9yZGVuLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Ordenes/VerInsumoEnLaOrden.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT3JkZW5lc1xWZXJJbnN1bW9FbkxhT3JkZW4ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Ordenes/VerPlanoEnLaOrden.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT3JkZW5lc1xWZXJQbGFub0VuTGFPcmRlbi5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Shared/ConfirmationModal.razor]
