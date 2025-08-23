@@ -1,0 +1,12 @@
+C:\Users\BERSERKER\source\repos\Armeccor\Validaciones\bin\Debug\net9.0\Validaciones.deps.json
+C:\Users\BERSERKER\source\repos\Armeccor\Validaciones\bin\Debug\net9.0\Validaciones.dll
+C:\Users\BERSERKER\source\repos\Armeccor\Validaciones\bin\Debug\net9.0\Validaciones.pdb
+C:\Users\BERSERKER\source\repos\Armeccor\Validaciones\obj\Debug\net9.0\Validaciones.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\BERSERKER\source\repos\Armeccor\Validaciones\obj\Debug\net9.0\Validaciones.AssemblyInfoInputs.cache
+C:\Users\BERSERKER\source\repos\Armeccor\Validaciones\obj\Debug\net9.0\Validaciones.AssemblyInfo.cs
+C:\Users\BERSERKER\source\repos\Armeccor\Validaciones\obj\Debug\net9.0\Validaciones.csproj.CoreCompileInputs.cache
+C:\Users\BERSERKER\source\repos\Armeccor\Validaciones\obj\Debug\net9.0\Validaciones.sourcelink.json
+C:\Users\BERSERKER\source\repos\Armeccor\Validaciones\obj\Debug\net9.0\Validaciones.dll
+C:\Users\BERSERKER\source\repos\Armeccor\Validaciones\obj\Debug\net9.0\refint\Validaciones.dll
+C:\Users\BERSERKER\source\repos\Armeccor\Validaciones\obj\Debug\net9.0\Validaciones.pdb
+C:\Users\BERSERKER\source\repos\Armeccor\Validaciones\obj\Debug\net9.0\ref\Validaciones.dll

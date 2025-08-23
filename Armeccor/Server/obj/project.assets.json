@@ -2033,7 +2033,8 @@
         "framework": ".NETCoreApp,Version=v9.0",
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "9.0.8",
-          "Microsoft.EntityFrameworkCore.SqlServer": "9.0.8"
+          "Microsoft.EntityFrameworkCore.SqlServer": "9.0.8",
+          "Validaciones": "1.0.0"
         },
         "compile": {
           "bin/placeholder/Armeccor.Datos.dll": {}
@@ -2050,6 +2051,16 @@
         },
         "runtime": {
           "bin/placeholder/DTO.dll": {}
+        }
+      },
+      "Validaciones/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "compile": {
+          "bin/placeholder/Validaciones.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Validaciones.dll": {}
         }
       }
     }
@@ -5897,6 +5908,11 @@
       "type": "project",
       "path": "../../DTO/DTO.csproj",
       "msbuildProject": "../../DTO/DTO.csproj"
+    },
+    "Validaciones/1.0.0": {
+      "type": "project",
+      "path": "../../Validaciones/Validaciones.csproj",
+      "msbuildProject": "../../Validaciones/Validaciones.csproj"
     }
   },
   "projectFileDependencyGroups": {

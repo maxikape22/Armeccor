@@ -1598,6 +1598,16 @@
             "rid": "win"
           }
         }
+      },
+      "Validaciones/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "compile": {
+          "bin/placeholder/Validaciones.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Validaciones.dll": {}
+        }
       }
     }
   },
@@ -4701,6 +4711,11 @@
         "system.windows.extensions.nuspec",
         "useSharedDesignerContext.txt"
       ]
+    },
+    "Validaciones/1.0.0": {
+      "type": "project",
+      "path": "../Validaciones/Validaciones.csproj",
+      "msbuildProject": "../Validaciones/Validaciones.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -4708,7 +4723,8 @@
       "Microsoft.EntityFrameworkCore >= 9.0.8",
       "Microsoft.EntityFrameworkCore.Design >= 9.0.8",
       "Microsoft.EntityFrameworkCore.SqlServer >= 9.0.8",
-      "Microsoft.EntityFrameworkCore.Tools >= 9.0.8"
+      "Microsoft.EntityFrameworkCore.Tools >= 9.0.8",
+      "Validaciones >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -4718,11 +4734,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\BERSERKER\\source\\repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj",
+      "projectUniqueName": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj",
       "projectName": "Armeccor.Datos",
-      "projectPath": "C:\\Users\\BERSERKER\\source\\repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj",
+      "projectPath": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj",
       "packagesPath": "C:\\Users\\BERSERKER\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\BERSERKER\\source\\repos\\Armeccor\\Armeccor.Datos\\obj\\",
+      "outputPath": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor.Datos\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -4743,7 +4759,11 @@
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Validaciones\\Validaciones.csproj": {
+              "projectPath": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Validaciones\\Validaciones.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

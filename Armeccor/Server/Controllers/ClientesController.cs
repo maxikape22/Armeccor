@@ -22,37 +22,6 @@ namespace Armeccor.Server.Controllers
             this._mapper = mapper;
         }
 
-        //[HttpPut("{id:int}")]
-        //public async Task<ActionResult> PutCliente(int id, CrearClienteDTO clienteActualizacionDto)
-        //{
-        //    var clienteExistente = await context.Clientes.FindAsync(id);
-
-        //    if (clienteExistente == null)
-        //    {
-        //        return NotFound($"No se encontro el {clienteActualizacionDto.Nombre} para actualizar");
-        //    }
-
-        //    _mapper.Map(clienteActualizacionDto, clienteExistente);
-        //    context.Entry(clienteExistente).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        await context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!await context.Clientes.AnyAsync(e => e.Id == id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-        //    return NoContent();
-        //}
-
         [HttpPut("{id:int}")]
         public async Task<IActionResult> PutCliente(int id, CrearClienteDTO dto)
         {

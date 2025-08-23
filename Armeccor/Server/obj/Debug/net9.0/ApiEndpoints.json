@@ -1,5 +1,51 @@
 [
   {
+    "ContainingType": "Armeccor.Server.Controllers.AreaDetalleOrdenController",
+    "Method": "GetListaAreaDetalleOrdenDTO",
+    "RelativePath": "api/Area_Detalle_Orden",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "DTO.ObjetosDTO.AreaDetalleOrdenListaDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Armeccor.Server.Controllers.AreaDetalleOrdenController",
+    "Method": "PostAreaDetalleOrdenDTO",
+    "RelativePath": "api/Area_Detalle_Orden",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "AreaDetalleOrdenDTO",
+        "Type": "DTO.ObjetosDTO.AreaDetalleOrdenDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Armeccor.Datos.Entidades.AreaDetalleOrden",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "Armeccor.Server.Controllers.AreasController",
     "Method": "GetAreas",
     "RelativePath": "api/Areas",
@@ -369,6 +415,52 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Armeccor.Server.Controllers.InsumoDetalleOrdenController",
+    "Method": "Get",
+    "RelativePath": "api/Insumo_Detalle_Orden",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "DTO.ObjetosDTO.InsumoDetalleOrdenListaDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Armeccor.Server.Controllers.InsumoDetalleOrdenController",
+    "Method": "PostCliente",
+    "RelativePath": "api/Insumo_Detalle_Orden",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "InsumoDetalleOrdenDTO",
+        "Type": "DTO.ObjetosDTO.InsumoDetalleOrdenDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DTO.ObjetosDTO.InsumoDetalleOrdenDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "Armeccor.Server.Controllers.InsumosController",
     "Method": "GetInsumos",
     "RelativePath": "api/Insumos",
@@ -601,52 +693,6 @@
       }
     ],
     "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Armeccor.Server.Controllers.OrdenesController",
-    "Method": "PostInsumoEnLaOrden",
-    "RelativePath": "api/Ordenes/InsumoEnOrden",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "crearOrdenDTO",
-        "Type": "DTO.ObjetosDTO.InsumoOrdenDTO",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "DTO.ObjetosDTO.InsumoOrdenDTO",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "Armeccor.Server.Controllers.OrdenesController",
-    "Method": "GetInsumosEnLaOrden",
-    "RelativePath": "api/Ordenes/InsumosEnLaOrden",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.List\u00601[[DTO.ObjetosDTO.InsumoEnOrdenVistaDTO, DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
   },
   {
     "ContainingType": "Armeccor.Server.Controllers.PlanoController",

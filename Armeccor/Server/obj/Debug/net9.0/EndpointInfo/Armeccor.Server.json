@@ -5,6 +5,81 @@
     "version": "v1"
   },
   "paths": {
+    "/api/Area_Detalle_Orden": {
+      "get": {
+        "tags": [
+          "AreaDetalleOrden"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AreaDetalleOrden"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AreaDetalleOrdenDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AreaDetalleOrdenDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AreaDetalleOrdenDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaDetalleOrden"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaDetalleOrden"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaDetalleOrden"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Areas": {
       "get": {
         "tags": [
@@ -629,6 +704,81 @@
         }
       }
     },
+    "/api/Insumo_Detalle_Orden": {
+      "get": {
+        "tags": [
+          "InsumoDetalleOrden"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/InsumoDetalleOrdenListaDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InsumoDetalleOrdenListaDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InsumoDetalleOrdenListaDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "InsumoDetalleOrden"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InsumoDetalleOrdenDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InsumoDetalleOrdenDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/InsumoDetalleOrdenDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/InsumoDetalleOrdenDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InsumoDetalleOrdenDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InsumoDetalleOrdenDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Insumos": {
       "get": {
         "tags": [
@@ -1021,92 +1171,6 @@
         }
       }
     },
-    "/api/Ordenes/InsumoEnOrden": {
-      "post": {
-        "tags": [
-          "Ordenes"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/InsumoOrdenDTO"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/InsumoOrdenDTO"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/InsumoOrdenDTO"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/InsumoOrdenDTO"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InsumoOrdenDTO"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InsumoOrdenDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Ordenes/InsumosEnLaOrden": {
-      "get": {
-        "tags": [
-          "Ordenes"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InsumoEnOrdenVistaDTO"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InsumoEnOrdenVistaDTO"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InsumoEnOrdenVistaDTO"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/Planos": {
       "get": {
         "tags": [
@@ -1194,6 +1258,123 @@
   },
   "components": {
     "schemas": {
+      "Area": {
+        "required": [
+          "nombreArea"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nombreArea": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "areaOrdenes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AreaDetalleOrden"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AreaDetalleOrden": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ordenId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "orden": {
+            "$ref": "#/components/schemas/Orden"
+          },
+          "areaId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "area": {
+            "$ref": "#/components/schemas/Area"
+          },
+          "descripcion": {
+            "type": "string",
+            "nullable": true
+          },
+          "estado": {
+            "type": "string",
+            "nullable": true
+          },
+          "tiempo": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AreaDetalleOrdenDTO": {
+        "type": "object",
+        "properties": {
+          "ordenId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "areaId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "descripcion": {
+            "type": "string",
+            "nullable": true
+          },
+          "estado": {
+            "type": "string",
+            "nullable": true
+          },
+          "tiempo": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AreaDetalleOrdenListaDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ordenId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "areaId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "descripcion": {
+            "type": "string",
+            "nullable": true
+          },
+          "estado": {
+            "type": "string",
+            "nullable": true
+          },
+          "tiempo": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "AreaListaDTO": {
         "type": "object",
         "properties": {
@@ -1230,24 +1411,55 @@
         },
         "additionalProperties": false
       },
+      "Cliente": {
+        "required": [
+          "direccion",
+          "dni",
+          "nombre",
+          "telefono"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nombre": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "dni": {
+            "pattern": "^\\d{7,8}$",
+            "type": "integer",
+            "format": "int32"
+          },
+          "direccion": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "telefono": {
+            "minLength": 1,
+            "pattern": "^(?:\\+54|54)?(?:9)?(?:0)?(?:15)?\\d{6,10}$",
+            "type": "string"
+          },
+          "ordenes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Orden"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CrearAreaDTO": {
         "required": [
-          "estado",
-          "nombreArea",
-          "tiempo"
+          "nombreArea"
         ],
         "type": "object",
         "properties": {
           "nombreArea": {
             "maxLength": 100,
-            "minLength": 1,
-            "type": "string"
-          },
-          "tiempo": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "estado": {
             "minLength": 1,
             "type": "string"
           }
@@ -1370,6 +1582,31 @@
         },
         "additionalProperties": false
       },
+      "Entrega": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "medioDePago": {
+            "maxLength": 30,
+            "type": "string",
+            "nullable": true
+          },
+          "entregado": {
+            "type": "boolean"
+          },
+          "ordenId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "orden": {
+            "$ref": "#/components/schemas/Orden"
+          }
+        },
+        "additionalProperties": false
+      },
       "EntregaDetalleDTO": {
         "type": "object",
         "properties": {
@@ -1391,10 +1628,125 @@
         },
         "additionalProperties": false
       },
-      "InsumoEnOrdenVistaDTO": {
+      "Insumo": {
+        "required": [
+          "nombre"
+        ],
         "type": "object",
         "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nombre": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "detalle": {
+            "type": "string",
+            "nullable": true
+          },
+          "unidadMedida": {
+            "type": "string",
+            "nullable": true
+          },
+          "cantDisponible": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tipo": {
+            "type": "string",
+            "nullable": true
+          },
+          "insumoOrdenes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InsumoDetalleOrden"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "InsumoDetalleOrden": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "insumoId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "insumo": {
+            "$ref": "#/components/schemas/Insumo"
+          },
           "ordenId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "orden": {
+            "$ref": "#/components/schemas/Orden"
+          },
+          "cantidad": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "InsumoDetalleOrdenDTO": {
+        "type": "object",
+        "properties": {
+          "insumoId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ordenId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cantidad": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "InsumoDetalleOrdenListaDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "insumoId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ordenId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cantidad": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Orden": {
+        "required": [
+          "descripcion",
+          "estado",
+          "nombreOrden",
+          "nroOT"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
             "type": "integer",
             "format": "int32"
           },
@@ -1403,38 +1755,65 @@
             "format": "int32"
           },
           "nombreOrden": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "descripcion": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "estado": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string"
+          },
+          "fechaInicio": {
             "type": "string",
+            "format": "date-time"
+          },
+          "fechaPactada": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fechaEntrega": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "clienteId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cliente": {
+            "$ref": "#/components/schemas/Cliente"
+          },
+          "planoId": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
-          "insumoId": {
-            "type": "integer",
-            "format": "int32"
+          "plano": {
+            "$ref": "#/components/schemas/Plano"
           },
-          "nombreInsumo": {
-            "type": "string",
+          "entregas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Entrega"
+            },
             "nullable": true
           },
-          "cantidadUsada": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "InsumoOrdenDTO": {
-        "required": [
-          "insumoId",
-          "ordenId"
-        ],
-        "type": "object",
-        "properties": {
-          "ordenId": {
-            "type": "integer",
-            "format": "int32"
+          "areaDetalleOrdenes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AreaDetalleOrden"
+            },
+            "nullable": true
           },
-          "insumoId": {
-            "type": "integer",
-            "format": "int32"
+          "insumoOrdenes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InsumoDetalleOrden"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false

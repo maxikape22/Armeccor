@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Armeccor.Client", "Armeccor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTO", "DTO\DTO.csproj", "{DF55E7A1-78C9-43CE-A698-EDBB79564752}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validaciones", "Validaciones\Validaciones.csproj", "{487F97A7-0768-425C-B34C-FD978E42B481}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{DF55E7A1-78C9-43CE-A698-EDBB79564752}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF55E7A1-78C9-43CE-A698-EDBB79564752}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF55E7A1-78C9-43CE-A698-EDBB79564752}.Release|Any CPU.Build.0 = Release|Any CPU
+		{487F97A7-0768-425C-B34C-FD978E42B481}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{487F97A7-0768-425C-B34C-FD978E42B481}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{487F97A7-0768-425C-B34C-FD978E42B481}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{487F97A7-0768-425C-B34C-FD978E42B481}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

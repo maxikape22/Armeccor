@@ -30,21 +30,46 @@ namespace Armeccor.Datos.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Estado")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("NombreArea")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Areas");
+                });
+
+            modelBuilder.Entity("Armeccor.Datos.Entidades.AreaDetalleOrden", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AreaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Descripcion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Estado")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OrdenId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Tiempo")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Areas");
+                    b.HasIndex("AreaId");
+
+                    b.HasIndex("OrdenId");
+
+                    b.ToTable("AreaDetalleOrdenes");
                 });
 
             modelBuilder.Entity("Armeccor.Datos.Entidades.Cliente", b =>
@@ -111,32 +136,49 @@ namespace Armeccor.Datos.Migrations
                     b.Property<int>("CantDisponible")
                         .HasColumnType("int");
 
+                    b.Property<string>("Detalle")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Tipo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UnidadMedida")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Insumos");
                 });
 
-            modelBuilder.Entity("Armeccor.Datos.Entidades.InsumoOrden", b =>
+            modelBuilder.Entity("Armeccor.Datos.Entidades.InsumoDetalleOrden", b =>
                 {
-                    b.Property<int>("OrdenId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Cantidad")
                         .HasColumnType("int");
 
                     b.Property<int>("InsumoId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CantidadUsada")
+                    b.Property<int>("OrdenId")
                         .HasColumnType("int");
 
-                    b.HasKey("OrdenId", "InsumoId");
+                    b.HasKey("Id");
 
                     b.HasIndex("InsumoId");
 
-                    b.ToTable("InsumosOrden");
+                    b.HasIndex("OrdenId");
+
+                    b.ToTable("InsumoDetalleOrdenes");
                 });
 
             modelBuilder.Entity("Armeccor.Datos.Entidades.Orden", b =>
@@ -146,9 +188,6 @@ namespace Armeccor.Datos.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("AreaId")
-                        .HasColumnType("int");
 
                     b.Property<int>("ClienteId")
                         .HasColumnType("int");
@@ -163,13 +202,13 @@ namespace Armeccor.Datos.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("FechaEntrega")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
 
                     b.Property<DateTime>("FechaInicio")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
 
                     b.Property<DateTime>("FechaPactada")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
 
                     b.Property<string>("NombreOrden")
                         .IsRequired()
@@ -182,8 +221,6 @@ namespace Armeccor.Datos.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AreaId");
 
                     b.HasIndex("ClienteId");
 
@@ -204,7 +241,7 @@ namespace Armeccor.Datos.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("FechaCreacion")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
 
                     b.Property<string>("RutaOriginal")
                         .HasColumnType("nvarchar(max)");
@@ -218,6 +255,25 @@ namespace Armeccor.Datos.Migrations
                     b.ToTable("Planos");
                 });
 
+            modelBuilder.Entity("Armeccor.Datos.Entidades.AreaDetalleOrden", b =>
+                {
+                    b.HasOne("Armeccor.Datos.Entidades.Area", "Area")
+                        .WithMany("AreaOrdenes")
+                        .HasForeignKey("AreaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Armeccor.Datos.Entidades.Orden", "Orden")
+                        .WithMany("AreaDetalleOrdenes")
+                        .HasForeignKey("OrdenId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Area");
+
+                    b.Navigation("Orden");
+                });
+
             modelBuilder.Entity("Armeccor.Datos.Entidades.Entrega", b =>
                 {
                     b.HasOne("Armeccor.Datos.Entidades.Orden", "Orden")
@@ -229,16 +285,16 @@ namespace Armeccor.Datos.Migrations
                     b.Navigation("Orden");
                 });
 
-            modelBuilder.Entity("Armeccor.Datos.Entidades.InsumoOrden", b =>
+            modelBuilder.Entity("Armeccor.Datos.Entidades.InsumoDetalleOrden", b =>
                 {
                     b.HasOne("Armeccor.Datos.Entidades.Insumo", "Insumo")
-                        .WithMany("InsumosOrden")
+                        .WithMany("InsumoOrdenes")
                         .HasForeignKey("InsumoId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Armeccor.Datos.Entidades.Orden", "Orden")
-                        .WithMany("InsumosOrden")
+                        .WithMany("InsumoOrdenes")
                         .HasForeignKey("OrdenId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -250,11 +306,6 @@ namespace Armeccor.Datos.Migrations
 
             modelBuilder.Entity("Armeccor.Datos.Entidades.Orden", b =>
                 {
-                    b.HasOne("Armeccor.Datos.Entidades.Area", "Area")
-                        .WithMany("Ordenes")
-                        .HasForeignKey("AreaId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("Armeccor.Datos.Entidades.Cliente", "Cliente")
                         .WithMany("Ordenes")
                         .HasForeignKey("ClienteId")
@@ -266,8 +317,6 @@ namespace Armeccor.Datos.Migrations
                         .HasForeignKey("PlanoId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.Navigation("Area");
-
                     b.Navigation("Cliente");
 
                     b.Navigation("Plano");
@@ -275,7 +324,7 @@ namespace Armeccor.Datos.Migrations
 
             modelBuilder.Entity("Armeccor.Datos.Entidades.Area", b =>
                 {
-                    b.Navigation("Ordenes");
+                    b.Navigation("AreaOrdenes");
                 });
 
             modelBuilder.Entity("Armeccor.Datos.Entidades.Cliente", b =>
@@ -285,14 +334,16 @@ namespace Armeccor.Datos.Migrations
 
             modelBuilder.Entity("Armeccor.Datos.Entidades.Insumo", b =>
                 {
-                    b.Navigation("InsumosOrden");
+                    b.Navigation("InsumoOrdenes");
                 });
 
             modelBuilder.Entity("Armeccor.Datos.Entidades.Orden", b =>
                 {
+                    b.Navigation("AreaDetalleOrdenes");
+
                     b.Navigation("Entregas");
 
-                    b.Navigation("InsumosOrden");
+                    b.Navigation("InsumoOrdenes");
                 });
 #pragma warning restore 612, 618
         }

@@ -147,8 +147,7 @@ namespace Armeccor.Server.Controllers
         {
             var ordenes = await context.Ordenes
                 .Include(o => o.Cliente)
-                .Include(o => o.Area) // Relación intermedia
-                    .ThenInclude(ao => ao.Ordenes) // Trae los datos de Area
+                .ThenInclude(ao => ao.Ordenes)
                 .Include(o => o.Plano)
                 .Include(o => o.Entregas)
                 .ToListAsync();
@@ -156,8 +155,6 @@ namespace Armeccor.Server.Controllers
             return Ok(_mapper.Map<IEnumerable<OrdenDetalleDTO>>(ordenes));
         }
 
-
-        // --- Método GET para obtener una Orden por ID con sus detalles relacionados (con DTO) ---
         [HttpGet("{id:int}")]
         public async Task<ActionResult<OrdenDetalleDTO>> GetOrden(int id)
         {
@@ -174,7 +171,6 @@ namespace Armeccor.Server.Controllers
             return _mapper.Map<OrdenDetalleDTO>(orden);
         }
 
-        // --- Método POST para crear una Orden ---
         [HttpPost]
         public async Task<ActionResult<CrearOrdenDTO>> PostOrden(CrearOrdenDTO crearOrdenDTO)
         {
@@ -200,7 +196,6 @@ namespace Armeccor.Server.Controllers
             return Ok(ordenDTO);
         }
 
-        // --- Método DELETE para eliminar una Orden por ID ---
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> DeleteOrden(int id)
         {
@@ -213,70 +208,5 @@ namespace Armeccor.Server.Controllers
             await context.SaveChangesAsync();
             return NoContent();
         }
-
-        [HttpPost("InsumoEnOrden")]
-        public async Task<ActionResult<InsumoOrdenDTO>> PostInsumoEnLaOrden(InsumoOrdenDTO crearOrdenDTO)
-        {
-            // 1. Validar que el Insumo exista en la tabla principal Insumos.
-            var insumoExiste = await context.Insumos.AnyAsync(i => i.Id == crearOrdenDTO.InsumoId);
-            if (!insumoExiste)
-            {
-                return BadRequest($"El Insumo con ID {crearOrdenDTO.InsumoId} no existe.");
-            }
-
-            // 2. Validar que la Orden exista en la tabla principal Ordenes.
-            var ordenExiste = await context.Ordenes.AnyAsync(o => o.Id == crearOrdenDTO.OrdenId);
-            if (!ordenExiste)
-            {
-                return BadRequest($"La Orden con ID {crearOrdenDTO.OrdenId} no existe.");
-            }
-
-            // 3. Opcional: Validar si la relación ya existe para evitar duplicados.
-            var relacionYaExiste = await context.InsumosOrden.AnyAsync(io =>
-                io.InsumoId == crearOrdenDTO.InsumoId &&
-                io.OrdenId == crearOrdenDTO.OrdenId);
-
-            if (relacionYaExiste)
-            {
-                return BadRequest($"La relación entre Insumo {crearOrdenDTO.InsumoId} y Orden {crearOrdenDTO.OrdenId} ya existe.");
-            }
-
-            // 4. Mapear del DTO a la entidad de la tabla intermedia.
-            var insumoOrden = _mapper.Map<InsumoOrden>(crearOrdenDTO);
-
-            context.InsumosOrden.Add(insumoOrden);
-
-            await context.SaveChangesAsync();
-
-            // 5. Mapear de la entidad a la DTO para el retorno y devolver 200 OK.
-            var insumoOrdenDTO = _mapper.Map<InsumoOrdenDTO>(insumoOrden);
-            return Ok(insumoOrdenDTO);
-        }
-
-        [HttpGet("InsumosEnLaOrden")]
-        public async Task<ActionResult<List<InsumoEnOrdenVistaDTO>>> GetInsumosEnLaOrden()
-        {
-            // Inicia la consulta desde la tabla intermedia InsumoOrden.
-            var insumosEnOrden = await context.InsumosOrden
-                // Incluye las entidades relacionadas para acceder a sus campos.
-                .Include(io => io.Insumo)
-                .Include(io => io.Orden)
-                // Proyecta el resultado directamente en el DTO de vista.
-                .Select(io => new InsumoEnOrdenVistaDTO
-                {
-                    OrdenId = io.OrdenId,
-                    NroOT = io.Orden.NroOT,
-                    NombreOrden = io.Orden.NombreOrden,
-                    InsumoId = io.InsumoId,
-                    NombreInsumo = io.Insumo.Nombre,
-                    CantidadUsada = io.CantidadUsada
-                })
-                .ToListAsync();
-
-            // Devuelve la lista de DTOs.
-            return Ok(insumosEnOrden);
-        }
-
-
     }
 }

@@ -22,58 +22,14 @@ namespace Armeccor.Server.Controllers
             this._mapper = mapper;
         }
 
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<CrearEntregaDTO>>> GetEntregas()
-        //{
-        //    var entregas = await context.Entregas.ToListAsync();
-        //    //return _mapper.Map<IEnumerable<CrearAreaDTO>>(areas);
-        //    return Ok(entregas);
-        //}
-
         [HttpGet]
-        //public async Task<ActionResult<IEnumerable<EntregaDetalleDTO>>> GetEntregas()
-        //{
-        //    var entregas = await context.Entregas.Include(x=>x.Orden).ToListAsync();
-        //    //return _mapper.Map<IEnumerable<CrearAreaDTO>>(areas);
-        //    return Ok(entregas);
-        //}
-
-        // Ejemplo en un repositorio o método de servicio
         public async Task<IEnumerable<EntregaDetalleDTO>> GetEntregasConOrdenAsync()
         {
-            // Construir la consulta
-            var entregasConOrden = context.Entregas
-                .Include(e => e.Orden); // <-- Llamada a .Include() aquí
-
-            // Ejecutar la consulta y materializar los datos en una lista
+            var entregasConOrden = context.Entregas.Include(e => e.Orden);
             var entregasList = await entregasConOrden.ToListAsync();
-
-            // Mapear a DTO
             var entregasDTO = _mapper.Map<IEnumerable<EntregaDetalleDTO>>(entregasList);
-
             return entregasDTO;
         }
-
-        //[HttpGet("{id:int}")]
-        //public async Task<ActionResult<CrearEntregaDTO>> GetEntrega(int id)
-        //{
-        //    var entrega = await context.Entregas.FirstOrDefaultAsync(x => x.Id == id);
-
-        //    if (entrega is null)
-        //    {
-        //        return NotFound($"No se encontraron entregas con el Id {id}");
-        //    }
-        //    return _mapper.Map<CrearEntregaDTO>(entrega);
-        //}
-
-        //[HttpGet("Prueba")]
-        //public async Task<ActionResult<IEnumerable<CrearEntregaDTO>>> GetEntregas2()
-        //{
-        //    var entregas = await context.Entregas
-        //                                .ToListAsync();
-
-        //    return Ok(_mapper.Map<IEnumerable<CrearEntregaDTO>>(entregas));
-        //}
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<CrearEntregaDTO>> GetEntrega(int id)
@@ -94,12 +50,6 @@ namespace Armeccor.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<CrearEntregaDTO>> PostEntrega(CrearEntregaDTO crearEntregaDTO)
         {
-            //var entrega = _mapper.Map<Entrega>(crearEntregaDTO);
-            //context.Entregas.Add(entrega);
-            //await context.SaveChangesAsync();
-            //var entregaDTO = _mapper.Map<CrearEntregaDTO>(entrega);
-            //return Ok(entregaDTO);
-
             var ordenExiste = await context.Ordenes.AnyAsync(c => c.Id == crearEntregaDTO.IdOrden);
             if (!ordenExiste)
             {
@@ -139,6 +89,5 @@ namespace Armeccor.Server.Controllers
             await context.SaveChangesAsync();
             return NoContent();
         }
-
     }
 }

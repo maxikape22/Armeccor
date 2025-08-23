@@ -1185,7 +1185,8 @@
       "Armeccor.Datos/1.0.0": {
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "9.0.8",
-          "Microsoft.EntityFrameworkCore.SqlServer": "9.0.8"
+          "Microsoft.EntityFrameworkCore.SqlServer": "9.0.8",
+          "Validaciones": "1.0.0"
         },
         "runtime": {
           "Armeccor.Datos.dll": {
@@ -1197,6 +1198,14 @@
       "DTO/1.0.0": {
         "runtime": {
           "DTO.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Validaciones/1.0.0": {
+        "runtime": {
+          "Validaciones.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -1942,6 +1951,11 @@
       "sha512": ""
     },
     "DTO/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Validaciones/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

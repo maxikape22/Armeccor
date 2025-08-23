@@ -162,9 +162,11 @@ C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\runtim
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\Armeccor.Client.dll
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\Armeccor.Datos.dll
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\DTO.dll
+C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\Validaciones.dll
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\Armeccor.Datos.pdb
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\DTO.pdb
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\Armeccor.Client.pdb
+C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\Validaciones.pdb
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\obj\Debug\net9.0\Armeccor.Server.csproj.AssemblyReference.cache
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\obj\Debug\net9.0\rpswa.dswa.cache.json
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\obj\Debug\net9.0\Armeccor.Server.GeneratedMSBuildEditorConfig.editorconfig

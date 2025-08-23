@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Armeccor.Datos.Entidades
 {
@@ -19,13 +18,12 @@ namespace Armeccor.Datos.Entidades
         public DateTime FechaInicio { get; set; } = DateTime.Now;
         public DateTime FechaPactada { get; set; } = DateTime.Now;
         public DateTime FechaEntrega { get; set; } = DateTime.Now;
-        public int? AreaId { get; set; }
-        public Area Area { get; set; }
         public int ClienteId { get; set; }
         public Cliente Cliente { get; set; }
         public int? PlanoId { get; set; } // puede ser null si no se cargó aún
         public Plano Plano { get; set; }
-        public ICollection<Entrega> Entregas { get; set; }
-        public ICollection<InsumoOrden> InsumosOrden { get; set; }
+        public ICollection<Entrega> Entregas { get; set; } 
+        public ICollection<AreaDetalleOrden> AreaDetalleOrdenes { get; set; }
+        public ICollection<InsumoDetalleOrden> InsumoOrdenes { get; set; }
     }
 }

@@ -18,25 +18,17 @@ namespace Armeccor.Server.Mapeos
             CreateMap<Orden, CrearOrdenDTO>();
 
             CreateMap<Orden, OrdenDetalleDTO>()
-                .ForMember(dest => dest.NombreCliente, opt => opt.MapFrom(src => src.Cliente.Nombre))
-                .ForMember(dest => dest.NombreArea, opt => opt.MapFrom(src => src.Area.NombreArea));
+                .ForMember(dest => dest.NombreCliente, opt => opt
+                .MapFrom(src => src.Cliente.Nombre));
 
             CreateMap<CrearAreaDTO, Area>()
                 .ForMember(x => x.NombreArea, y => y
                 .MapFrom(s => s.NombreArea))
-                .ForMember(h => h.Tiempo, l => l
-                .MapFrom(ñ => ñ.Tiempo))
-                .ForMember(e => e.Estado, q => q
-                .MapFrom(h => h.Estado))
                 .ReverseMap();
 
             CreateMap<Area,AreaListaDTO>()
                 .ForMember(dest => dest.NombreArea, opt => opt
                 .MapFrom(src => src.NombreArea))
-                .ForMember(dest => dest.Tiempo, opt => opt.
-                MapFrom(src => src.Tiempo))
-                .ForMember(dest => dest.Estado, opt => opt
-                .MapFrom(src => src.Estado))
                 .ReverseMap();
 
             CreateMap<CrearEntregaDTO, Entrega>()
@@ -61,11 +53,93 @@ namespace Armeccor.Server.Mapeos
                 .MapFrom(src => src.Nombre))
                 .ReverseMap();
 
-            CreateMap<InsumoOrden, InsumoOrdenDTO>().ReverseMap();
-            CreateMap<InsumoOrdenDTO, InsumoOrden>().ReverseMap();
+            CreateMap<InsumoDetalleOrden, InsumoDetalleOrdenDTO>()
+                .ForMember(dest => dest.InsumoId, opt => opt
+                .MapFrom(src => src.InsumoId))
+                .ForMember(dest => dest.OrdenId, opt => opt
+                .MapFrom(src => src.OrdenId))
+                .ForMember(dest => dest.Cantidad, opt => opt
+                .MapFrom(src => src.Cantidad));
 
-            CreateMap<InsumoOrden, InsumoEnOrdenVistaDTO>().ReverseMap();
-            CreateMap<InsumoEnOrdenVistaDTO, InsumoOrden>().ReverseMap();
+            CreateMap<InsumoDetalleOrdenDTO, InsumoDetalleOrden>()
+                .ForMember(dest => dest.InsumoId, opt => opt
+                .MapFrom(src => src.InsumoId))
+                .ForMember(dest => dest.OrdenId, opt => opt
+                .MapFrom(src => src.OrdenId))
+                .ForMember(dest => dest.Cantidad, opt => opt
+                .MapFrom(src => src.Cantidad));
+
+            CreateMap<InsumoDetalleOrden, InsumoDetalleOrdenListaDTO>()
+                .ForMember(c=>c.Id, d=>d
+                .MapFrom(f=>f.Id))
+                .ForMember(k=>k.InsumoId, l=>l
+                .MapFrom(w=>w.InsumoId))
+                .ForMember(e=>e.OrdenId,t=>t
+                .MapFrom(q=>q.OrdenId))
+                .ForMember(f=>f.Cantidad,a=>a
+                .MapFrom(ñ=>ñ.Cantidad));
+
+            CreateMap<InsumoDetalleOrdenListaDTO, InsumoDetalleOrden>()
+                .ForMember(c=>c.Id, d=>d
+                .MapFrom(f=>f.Id))
+                .ForMember(k=>k.InsumoId, l=>l
+                .MapFrom(w=>w.InsumoId))
+                .ForMember(e=>e.OrdenId,t=>t
+                .MapFrom(q=>q.OrdenId))
+                .ForMember(f=>f.Cantidad,a=>a
+                .MapFrom(ñ=>ñ.Cantidad));
+
+            CreateMap<AreaDetalleOrden, AreaDetalleOrdenListaDTO>()
+                .ForMember(dest => dest.Id, opt => opt
+                .MapFrom(src => src.Id))
+                .ForMember(dest => dest.AreaId, opt => opt
+                .MapFrom(src => src.AreaId))
+                .ForMember(dest => dest.OrdenId, opt => opt
+                .MapFrom(src => src.OrdenId))
+                .ForMember(dest => dest.Descripcion, opt => opt
+                .MapFrom(src => src.Descripcion))
+                .ForMember(dest => dest.Estado, opt => opt
+                .MapFrom(src => src.Estado))
+                .ForMember(dest => dest.Tiempo, opt => opt
+                .MapFrom(src => src.Tiempo));
+
+            CreateMap<AreaDetalleOrdenListaDTO, AreaDetalleOrden>()
+                .ForMember(dest => dest.Id, opt => opt
+                .MapFrom(src => src.Id))
+                .ForMember(dest => dest.AreaId, opt => opt
+                .MapFrom(src => src.AreaId))
+                .ForMember(dest => dest.OrdenId, opt => opt
+                .MapFrom(src => src.OrdenId))
+                .ForMember(dest => dest.Descripcion, opt => opt
+                .MapFrom(src => src.Descripcion))
+                .ForMember(dest => dest.Estado, opt => opt
+                .MapFrom(src => src.Estado))
+                .ForMember(dest => dest.Tiempo, opt => opt
+                .MapFrom(src => src.Tiempo));
+
+            CreateMap<AreaDetalleOrden, AreaDetalleOrdenDTO>()
+                .ForMember(dest => dest.AreaId, opt => opt
+                .MapFrom(src => src.AreaId))
+                .ForMember(dest => dest.OrdenId, opt => opt
+                .MapFrom(src => src.OrdenId))
+                .ForMember(dest => dest.Descripcion, opt => opt
+                .MapFrom(src => src.Descripcion))
+                .ForMember(dest => dest.Estado, opt => opt
+                .MapFrom(src => src.Estado))
+                .ForMember(dest => dest.Tiempo, opt => opt
+                .MapFrom(src => src.Tiempo));
+
+            CreateMap<AreaDetalleOrdenDTO, AreaDetalleOrden>()
+                .ForMember(dest => dest.AreaId, opt => opt
+                .MapFrom(src => src.AreaId))
+                .ForMember(dest => dest.OrdenId, opt => opt
+                .MapFrom(src => src.OrdenId))
+                .ForMember(dest => dest.Descripcion, opt => opt
+                .MapFrom(src => src.Descripcion))
+                .ForMember(dest => dest.Estado, opt => opt
+                .MapFrom(src => src.Estado))
+                .ForMember(dest => dest.Tiempo, opt => opt
+                .MapFrom(src => src.Tiempo));
         }
     }
 }

@@ -2,12 +2,15 @@ C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor.Datos\bin\Debug\net9.0\Armecco
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor.Datos\bin\Debug\net9.0\Armeccor.Datos.runtimeconfig.json
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor.Datos\bin\Debug\net9.0\Armeccor.Datos.dll
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor.Datos\bin\Debug\net9.0\Armeccor.Datos.pdb
+C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor.Datos\bin\Debug\net9.0\Validaciones.dll
+C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor.Datos\bin\Debug\net9.0\Validaciones.pdb
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor.Datos\obj\Debug\net9.0\Armeccor.Datos.csproj.AssemblyReference.cache
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor.Datos\obj\Debug\net9.0\Armeccor.Datos.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor.Datos\obj\Debug\net9.0\Armeccor.Datos.AssemblyInfoInputs.cache
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor.Datos\obj\Debug\net9.0\Armeccor.Datos.AssemblyInfo.cs
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor.Datos\obj\Debug\net9.0\Armeccor.Datos.csproj.CoreCompileInputs.cache
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor.Datos\obj\Debug\net9.0\Armeccor.Datos.sourcelink.json
+C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor.Datos\obj\Debug\net9.0\Armeccor.554F5666.Up2Date
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor.Datos\obj\Debug\net9.0\Armeccor.Datos.dll
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor.Datos\obj\Debug\net9.0\refint\Armeccor.Datos.dll
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor.Datos\obj\Debug\net9.0\Armeccor.Datos.pdb
