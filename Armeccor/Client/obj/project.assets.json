@@ -799,13 +799,13 @@
           }
         }
       },
-      "Microsoft.NET.ILLink.Tasks/9.0.8": {
+      "Microsoft.NET.ILLink.Tasks/9.0.6": {
         "type": "package",
         "build": {
           "build/Microsoft.NET.ILLink.Tasks.props": {}
         }
       },
-      "Microsoft.NET.Sdk.WebAssembly.Pack/9.0.8": {
+      "Microsoft.NET.Sdk.WebAssembly.Pack/9.0.6": {
         "type": "package",
         "build": {
           "build/Microsoft.NET.Sdk.WebAssembly.Pack.props": {},
@@ -2096,13 +2096,13 @@
           }
         }
       },
-      "Microsoft.NET.ILLink.Tasks/9.0.8": {
+      "Microsoft.NET.ILLink.Tasks/9.0.6": {
         "type": "package",
         "build": {
           "build/Microsoft.NET.ILLink.Tasks.props": {}
         }
       },
-      "Microsoft.NET.Sdk.WebAssembly.Pack/9.0.8": {
+      "Microsoft.NET.Sdk.WebAssembly.Pack/9.0.6": {
         "type": "package",
         "build": {
           "build/Microsoft.NET.Sdk.WebAssembly.Pack.props": {},
@@ -3889,10 +3889,10 @@
         "microsoft.jsinterop.webassembly.nuspec"
       ]
     },
-    "Microsoft.NET.ILLink.Tasks/9.0.8": {
-      "sha512": "rd1CbIsMtVPtZNTIVD6Xydue//klYOOQIDpRgu3BHtv17AlpRs74/6QFbcYgMm/jL+naVU2T3OFLxVSLV5lQLQ==",
+    "Microsoft.NET.ILLink.Tasks/9.0.6": {
+      "sha512": "TXy3SbJzGXQbxxIxCjdrp8bwEyTDImyYNpTpd6v7P3JL2Y7dno8EYG7dPezfYTa5SoWKdhbH9cbnwHHs3BR5gA==",
       "type": "package",
-      "path": "microsoft.net.illink.tasks/9.0.8",
+      "path": "microsoft.net.illink.tasks/9.0.6",
       "hasTools": true,
       "files": [
         ".nupkg.metadata",
@@ -3906,7 +3906,7 @@
         "build/Microsoft.NET.ILLink.Analyzers.props",
         "build/Microsoft.NET.ILLink.Tasks.props",
         "build/Microsoft.NET.ILLink.targets",
-        "microsoft.net.illink.tasks.9.0.8.nupkg.sha512",
+        "microsoft.net.illink.tasks.9.0.6.nupkg.sha512",
         "microsoft.net.illink.tasks.nuspec",
         "tools/net472/ILLink.Tasks.dll",
         "tools/net472/ILLink.Tasks.dll.config",
@@ -3940,10 +3940,10 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "Microsoft.NET.Sdk.WebAssembly.Pack/9.0.8": {
-      "sha512": "+JJYRyS8YoLMzLquskLfdF8RFp2PhN5v+lGCGDLHsywj3JHfSV/Zqo8+T0Fl0Xvoc9Js8YkrAWTnm7M2/3CniA==",
+    "Microsoft.NET.Sdk.WebAssembly.Pack/9.0.6": {
+      "sha512": "0KAM0CWU4v1KbKdsyOAkqY3txcrvwVkgYkgRwCnKJS8so0B+O562YAUwDcok5YWC3qFK/+dBAwtn9KK1JL4Xrw==",
       "type": "package",
-      "path": "microsoft.net.sdk.webassembly.pack/9.0.8",
+      "path": "microsoft.net.sdk.webassembly.pack/9.0.6",
       "hasTools": true,
       "files": [
         ".nupkg.metadata",
@@ -3974,7 +3974,7 @@
         "build/Microsoft.NET.Sdk.WebAssembly.Pack.targets",
         "build/Wasm.web.config",
         "build/browser.runtimeconfig.template.json",
-        "microsoft.net.sdk.webassembly.pack.9.0.8.nupkg.sha512",
+        "microsoft.net.sdk.webassembly.pack.9.0.6.nupkg.sha512",
         "microsoft.net.sdk.webassembly.pack.nuspec",
         "tools/net472/Microsoft.NET.Sdk.WebAssembly.Pack.Tasks.dll",
         "tools/net472/Microsoft.NET.WebAssembly.Webcil.dll",
@@ -5042,28 +5042,28 @@
       "DTO >= 1.0.0",
       "Microsoft.AspNetCore.Components.WebAssembly >= 9.0.0",
       "Microsoft.AspNetCore.Components.WebAssembly.DevServer >= 9.0.0",
-      "Microsoft.NET.ILLink.Tasks >= 9.0.8",
-      "Microsoft.NET.Sdk.WebAssembly.Pack >= 9.0.8"
+      "Microsoft.NET.ILLink.Tasks >= 9.0.6",
+      "Microsoft.NET.Sdk.WebAssembly.Pack >= 9.0.6"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\BERSERKER\\.nuget\\packages\\": {},
+    "C:\\Users\\Maxx\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor\\Client\\Armeccor.Client.csproj",
+      "projectUniqueName": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor\\Client\\Armeccor.Client.csproj",
       "projectName": "Armeccor.Client",
-      "projectPath": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor\\Client\\Armeccor.Client.csproj",
-      "packagesPath": "C:\\Users\\BERSERKER\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor\\Client\\obj\\",
+      "projectPath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor\\Client\\Armeccor.Client.csproj",
+      "packagesPath": "C:\\Users\\Maxx\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Armeccor\\Client\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\BERSERKER\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Maxx\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -5079,11 +5079,11 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj": {
-              "projectPath": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj"
+            "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj": {
+              "projectPath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj"
             },
-            "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj": {
-              "projectPath": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj"
+            "C:\\Users\\Maxx\\source\\repos\\Armeccor\\DTO\\DTO.csproj": {
+              "projectPath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\DTO\\DTO.csproj"
             }
           }
         }
@@ -5116,13 +5116,13 @@
           "Microsoft.NET.ILLink.Tasks": {
             "suppressParent": "All",
             "target": "Package",
-            "version": "[9.0.8, )",
+            "version": "[9.0.6, )",
             "autoReferenced": true
           },
           "Microsoft.NET.Sdk.WebAssembly.Pack": {
             "suppressParent": "All",
             "target": "Package",
-            "version": "[9.0.8, )",
+            "version": "[9.0.6, )",
             "autoReferenced": true
           }
         },
@@ -5142,7 +5142,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
       }
     },
     "runtimes": {

@@ -13,109 +13,109 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = browser
 build_property.RootNamespace = Armeccor.Client
 build_property.RootNamespace = Armeccor.Client
-build_property.ProjectDir = C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Client\
+build_property.ProjectDir = C:\Users\Maxx\source\repos\Armeccor\Armeccor\Client\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = false
 build_property.RazorLangVersion = 9.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Client
+build_property.MSBuildProjectDirectory = C:\Users\Maxx\source\repos\Armeccor\Armeccor\Client
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 9.0
 build_property.EnableCodeStyleSeverity = 
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/App.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/App.razor]
 build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Area/AgregarArea.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/Pages/Area/AgregarArea.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQXJlYVxBZ3JlZ2FyQXJlYS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Area/EditarArea.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/Pages/Area/EditarArea.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQXJlYVxFZGl0YXJBcmVhLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Area/ListaAreas.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/Pages/Area/ListaAreas.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQXJlYVxMaXN0YUFyZWFzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Cliente/AgregarCliente.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/Pages/Cliente/AgregarCliente.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2xpZW50ZVxBZ3JlZ2FyQ2xpZW50ZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Cliente/EditarCliente.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/Pages/Cliente/EditarCliente.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2xpZW50ZVxFZGl0YXJDbGllbnRlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Cliente/ListaClientes.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/Pages/Cliente/ListaClientes.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2xpZW50ZVxMaXN0YUNsaWVudGVzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Entrega/AgregarEntrega.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/Pages/Entrega/AgregarEntrega.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRW50cmVnYVxBZ3JlZ2FyRW50cmVnYS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Entrega/ListaEntregas.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/Pages/Entrega/ListaEntregas.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRW50cmVnYVxMaXN0YUVudHJlZ2FzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Insumo/AgregarInsumo.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/Pages/Insumo/AgregarInsumo.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5zdW1vXEFncmVnYXJJbnN1bW8ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Insumo/EditarInsumo.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/Pages/Insumo/EditarInsumo.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5zdW1vXEVkaXRhckluc3Vtby5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Insumo/ListaInsumos.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/Pages/Insumo/ListaInsumos.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5zdW1vXExpc3RhSW5zdW1vcy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/ListaOrdenes.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/Pages/ListaOrdenes.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTGlzdGFPcmRlbmVzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Ordenes/AgregarOrden.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/Pages/Ordenes/AgregarOrden.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT3JkZW5lc1xBZ3JlZ2FyT3JkZW4ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Ordenes/ConfirmationModal.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/Pages/Ordenes/ConfirmationModal.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT3JkZW5lc1xDb25maXJtYXRpb25Nb2RhbC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Ordenes/ModalConfirmacion.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/Pages/Ordenes/ModalConfirmacion.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT3JkZW5lc1xNb2RhbENvbmZpcm1hY2lvbi5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Ordenes/VerAreaEnLaOrden.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/Pages/Ordenes/VerAreaEnLaOrden.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT3JkZW5lc1xWZXJBcmVhRW5MYU9yZGVuLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Ordenes/VerInsumoEnLaOrden.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/Pages/Ordenes/VerInsumoEnLaOrden.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT3JkZW5lc1xWZXJJbnN1bW9FbkxhT3JkZW4ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Ordenes/VerPlanoEnLaOrden.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/Pages/Ordenes/VerPlanoEnLaOrden.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT3JkZW5lc1xWZXJQbGFub0VuTGFPcmRlbi5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Shared/ConfirmationModal.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/Shared/ConfirmationModal.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXENvbmZpcm1hdGlvbk1vZGFsLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Shared/SurveyPrompt.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/Shared/SurveyPrompt.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFN1cnZleVByb21wdC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/_Imports.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/_Imports.razor]
 build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Shared/MainLayout.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/Shared/MainLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1haW5MYXlvdXQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-wbo5mfdkd3
 
-[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Shared/NavMenu.razor]
+[C:/Users/Maxx/source/repos/Armeccor/Armeccor/Client/Shared/NavMenu.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE5hdk1lbnUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-k5uezjpx8e

@@ -10,3 +10,15 @@ C:\Users\BERSERKER\Source\Repos\Armeccor\DTO\obj\Debug\net9.0\DTO.dll
 C:\Users\BERSERKER\Source\Repos\Armeccor\DTO\obj\Debug\net9.0\refint\DTO.dll
 C:\Users\BERSERKER\Source\Repos\Armeccor\DTO\obj\Debug\net9.0\DTO.pdb
 C:\Users\BERSERKER\Source\Repos\Armeccor\DTO\obj\Debug\net9.0\ref\DTO.dll
+C:\Users\Maxx\Source\Repos\Armeccor\DTO\bin\Debug\net9.0\DTO.deps.json
+C:\Users\Maxx\Source\Repos\Armeccor\DTO\bin\Debug\net9.0\DTO.dll
+C:\Users\Maxx\Source\Repos\Armeccor\DTO\bin\Debug\net9.0\DTO.pdb
+C:\Users\Maxx\Source\Repos\Armeccor\DTO\obj\Debug\net9.0\DTO.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Maxx\Source\Repos\Armeccor\DTO\obj\Debug\net9.0\DTO.AssemblyInfoInputs.cache
+C:\Users\Maxx\Source\Repos\Armeccor\DTO\obj\Debug\net9.0\DTO.AssemblyInfo.cs
+C:\Users\Maxx\Source\Repos\Armeccor\DTO\obj\Debug\net9.0\DTO.csproj.CoreCompileInputs.cache
+C:\Users\Maxx\Source\Repos\Armeccor\DTO\obj\Debug\net9.0\DTO.sourcelink.json
+C:\Users\Maxx\Source\Repos\Armeccor\DTO\obj\Debug\net9.0\DTO.dll
+C:\Users\Maxx\Source\Repos\Armeccor\DTO\obj\Debug\net9.0\refint\DTO.dll
+C:\Users\Maxx\Source\Repos\Armeccor\DTO\obj\Debug\net9.0\DTO.pdb
+C:\Users\Maxx\Source\Repos\Armeccor\DTO\obj\Debug\net9.0\ref\DTO.dll

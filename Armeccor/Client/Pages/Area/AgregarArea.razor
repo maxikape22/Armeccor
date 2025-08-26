@@ -8,7 +8,7 @@
 <EditForm Model="@area" OnValidSubmit="Grabar">
     <DataAnnotationsValidator />
 
-    <div class="mb-3">
+@*     <div class="mb-3">
         <label>Área:</label>
         <InputSelect class="form-control" @bind-Value="SeleccionArea">
             <option value="">-- Seleccione el área --</option>
@@ -27,7 +27,7 @@
         {
             area.NombreArea = SeleccionArea;
         }       
-    </div>
+    </div> *@
 @*  
 
     <div class="form-group">
@@ -48,6 +48,17 @@
         <ValidationMessage For="@(() => area.Estado)" />
     </div> *@
 
+
+        <div class="form-group">
+         <label>Nombre Area</label>
+          <InputText class="form-control" @bind-Value="area.NombreArea" />
+          <ValidationMessage For="@(() => area.NombreArea)" />
+        </div>
+
+
+  
+
+
     <br />
     <button class="btn btn-primary" type="submit">Aceptar</button>
     <button class="btn btn-secondary" type="button" @onclick="Cancelar">Cancelar</button>
@@ -56,23 +67,25 @@
 @code
 {
     private CrearAreaDTO area = new CrearAreaDTO();
-    private string SeleccionArea { get; set; } = string.Empty;
+    // private string SeleccionArea { get; set; } = string.Empty;
 
     // Lista de áreas predefinidas
-    private List<string> AreasExistentes = new List<string>
-    {
-        "Recepción y Almacenamiento de Materiales",
-        "Corte y Preparación",
-        "Mecanizado",
-        "Plegado y Conformado",
-        "Soldadura y Ensamblaje",
-        "Tratamientos Térmicos y Superficiales",
-        "Montaje y Ajuste Final",
-        "Control de Calidad",
-        "Mantenimiento",
-        "Oficina Técnica/Ingeniería",
-        "Logística y Expedición"
-    };
+    // private List<string> AreasExistentes = new List<string>
+    // {
+    //     "Recepción y Almacenamiento de Materiales",
+    //     "Corte y Preparación",
+    //     "Mecanizado",
+    //     "Plegado y Conformado",
+    //     "Soldadura y Ensamblaje",
+    //     "Tratamientos Térmicos y Superficiales",
+    //     "Montaje y Ajuste Final",
+    //     "Control de Calidad",
+    //     "Mantenimiento",
+    //     "Oficina Técnica/Ingeniería",
+    //     "Logística y Expedición"
+    // };
+
+
 
     private async Task Grabar()
     {
