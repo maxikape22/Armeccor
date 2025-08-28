@@ -208,5 +208,109 @@ namespace Armeccor.Server.Controllers
             await context.SaveChangesAsync();
             return NoContent();
         }
+
+        [HttpGet("OrdenConAreas")]
+        public async Task<ActionResult<Orden>> GetOrdenConAreas(int id)
+        {
+            var orden = await context.Ordenes
+                .Include(o => o.AreaDetalleOrdenes)
+                    .ThenInclude(ad => ad.Area) // 🔹 Para que traiga el NombreArea
+                .FirstOrDefaultAsync(o => o.Id == id);
+
+            if (orden == null)
+                return NotFound();
+
+            return Ok(orden);
+        }
+
+        //METODOS PARA ASIGNAR Y CONSULTAR AREAS DE UNA ORDEN --> ANALIZAR IGUALMENTE LA FUNCIONALIAD
+
+        [HttpPost("AsignarAreas")]
+        public async Task<ActionResult> AsignarAreas(int ordenId, List<AreaDetalleOrdenDTO> areasDTO)
+        {
+            var orden = await context.Ordenes
+                .Include(o => o.AreaDetalleOrdenes)
+                .FirstOrDefaultAsync(o => o.Id == ordenId);
+
+            if (orden == null)
+                return NotFound($"No se encontró la orden con ID {ordenId}");
+
+            foreach (var dto in areasDTO)
+            {
+                // validar que el área exista
+                var area = await context.Areas.FindAsync(dto.AreaId);
+                if (area == null)
+                    return BadRequest($"El área con ID {dto.AreaId} no existe.");
+
+                var detalle = new AreaDetalleOrden
+                {
+                    OrdenId = orden.Id,
+                    AreaId = dto.AreaId,
+                    Descripcion = dto.Descripcion,
+                    Estado = dto.Estado,
+                    Tiempo = dto.Tiempo
+                };
+
+                orden.AreaDetalleOrdenes.Add(detalle);
+            }
+
+            await context.SaveChangesAsync();
+            return Ok("Áreas asignadas correctamente.");
+        }
+
+        [HttpGet("{ordenId}/Areas")]
+        public async Task<ActionResult<List<object>>> GetAreasDeOrden(int ordenId)
+        {
+            var orden = await context.Ordenes
+                .Include(o => o.AreaDetalleOrdenes)
+                .ThenInclude(ado => ado.Area)
+                .FirstOrDefaultAsync(o => o.Id == ordenId);
+
+            if (orden == null)
+                return NotFound($"No se encontró la orden con ID {ordenId}");
+
+            var result = orden.AreaDetalleOrdenes
+                .Select(ado => new
+                {
+                    ado.Id,
+                    ado.OrdenId,
+                    ado.AreaId,
+                    NombreArea = ado.Area.NombreArea,
+                    ado.Descripcion,
+                    ado.Estado,
+                    ado.Tiempo
+                }).ToList();
+
+            return Ok(result);
+        }
+
+        [HttpGet("{ordenId}/AreaActual")]
+        public async Task<ActionResult<object>> GetAreaActual(int ordenId)
+        {
+            var orden = await context.Ordenes
+                .Include(o => o.AreaDetalleOrdenes)
+                .ThenInclude(ado => ado.Area)
+                .FirstOrDefaultAsync(o => o.Id == ordenId);
+
+            if (orden == null)
+                return NotFound($"No se encontró la orden con ID {ordenId}");
+
+            // regla: el área actual es la última con estado distinto de "Terminada"
+            var areaActual = orden.AreaDetalleOrdenes
+                .OrderByDescending(ado => ado.Id)
+                .FirstOrDefault(ado => ado.Estado != "Terminada");
+
+            if (areaActual == null)
+                return NotFound("La orden no tiene un área actual asignada.");
+
+            return Ok(new
+            {
+                areaActual.OrdenId,
+                areaActual.AreaId,
+                NombreArea = areaActual.Area.NombreArea,
+                areaActual.Estado,
+                areaActual.Tiempo
+            });
+        }
     }
 }

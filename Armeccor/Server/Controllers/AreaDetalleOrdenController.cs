@@ -4,6 +4,7 @@ using AutoMapper;
 using DTO.ObjetosDTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -49,5 +50,40 @@ namespace Armeccor.Server.Controllers
             var areaDetalleOrdenDTO = _mapper.Map<AreaDetalleOrden>(AreaDetalleOrden);
             return Ok(areaDetalleOrdenDTO);
         }
+
+        [HttpPost("VariasAreasTablaIntermediaEnOrden")]
+        public async Task<ActionResult> Post(AreaDetalleOrdenDTO[] areas)
+        {
+            context.AddRange(areas);
+            await context.SaveChangesAsync();
+            return Ok();
+        }
+
+        //[HttpGet("AreaDetalleOrdenConNombreArea")]
+        //public async Task<ActionResult<List<AreaDetalleOrdenDTO>>> GetAreasDetalleConNombre()
+        //{
+        //    var areasConNombre = await context.AreaDetalleOrdenes
+        //        .Join(context.Areas, // Tabla de Áreas
+        //              detalle => detalle.AreaId, // Clave foránea en AreaDetalleOrden
+        //              area => area.Id, // Clave primaria en Areas
+        //              (detalle, area) => new AreaDetalleOrdenDTO
+        //              {
+        //                  AreaId = detalle.AreaId,
+        //                  OrdenId = detalle.OrdenId,
+        //                  Descripcion = detalle.Descripcion,
+        //                  Estado = detalle.Estado,
+        //                  Tiempo = detalle.Tiempo,
+        //                  //Area = new CrearAreaDTO()
+        //                  //{
+        //                  //      NombreArea = area.NombreArea // Asignar el nombre del área
+        //                  //}
+        //                  NombreArea = area.NombreArea // Asignar el nombre del área
+        //              })
+        //        .ToListAsync();
+
+        //    return Ok(areasConNombre);
+        //}
+
+
     }
 }

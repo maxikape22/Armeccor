@@ -19,7 +19,7 @@ namespace DTO.ObjetosDTO
         public string Estado { get; set; }
         public DateTime FechaInicio { get; set; } = DateTime.Now;
         public DateTime FechaPactada { get; set; } = DateTime.Now;
-        public DateTime FechaEntrega { get; set; } = DateTime.Now;
+        public Nullable<DateTime> FechaEntrega { get; set; }
         public int AreaId { get; set; }
         public int ClienteId { get; set; }
         public int? PlanoId { get; set; } // puede ser null si no se cargó aún

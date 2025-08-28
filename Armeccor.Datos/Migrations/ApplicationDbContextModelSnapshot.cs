@@ -38,6 +38,58 @@ namespace Armeccor.Datos.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Areas");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            NombreArea = "Mecanizado"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            NombreArea = "Soldadura"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            NombreArea = "Pintura"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            NombreArea = "Calidad"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            NombreArea = "Embalaje"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            NombreArea = "Logística"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            NombreArea = "Montaje"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            NombreArea = "Mantenimiento"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            NombreArea = "Administración"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            NombreArea = "Compras"
+                        });
                 });
 
             modelBuilder.Entity("Armeccor.Datos.Entidades.AreaDetalleOrden", b =>
@@ -201,7 +253,7 @@ namespace Armeccor.Datos.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<DateTime>("FechaEntrega")
+                    b.Property<DateTime?>("FechaEntrega")
                         .HasColumnType("date");
 
                     b.Property<DateTime>("FechaInicio")

@@ -257,7 +257,8 @@ builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Alquileress", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "ArmecCor", Version = "v1" });
+    c.SupportNonNullableReferenceTypes();
 });
 
 builder.Services.AddControllersWithViews()

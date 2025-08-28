@@ -75,6 +75,63 @@ namespace Armeccor.Datos
                 .HasOne(e => e.Orden)
                 .WithMany(o => o.Entregas)
                 .HasForeignKey(e => e.OrdenId);
+
+            var areas = new List<Area>
+            {
+                new Area()
+                {
+                    Id = 1,
+                    NombreArea = "Mecanizado"
+                },
+                new Area()
+                {
+                    Id = 2,
+                    NombreArea = "Soldadura"
+                },
+                new Area()
+                {
+                    Id = 3,
+                    NombreArea = "Pintura"
+                },
+                new Area()
+                {
+                    Id = 4,
+                    NombreArea = "Calidad"
+                },
+                new Area()
+                {
+                    Id = 5,
+                    NombreArea = "Embalaje"
+                },
+                new Area()
+                {
+                    Id = 6,
+                    NombreArea = "Logística"
+                },
+                new Area()
+                {
+                    Id = 7,
+                    NombreArea = "Montaje"
+                },
+                new Area()
+                {
+                    Id = 8,
+                    NombreArea = "Mantenimiento"
+                },
+                new Area()
+                {
+                    Id = 9,
+                    NombreArea = "Administración"
+                },
+                new Area()
+                {
+                    Id = 10,
+                    NombreArea = "Compras"
+                }
+            };
+
+            modelBuilder.Entity<Area>().HasData(areas);
+
         }
     }
 }
