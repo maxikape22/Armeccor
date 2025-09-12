@@ -24,9 +24,9 @@ namespace Armeccor.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<InsumoDetalleOrdenListaDTO>> Get()
         {
-            var InsumoDetalleOrdenListaDTO = await context.InsumoDetalleOrdenes
-                .Select(x => new InsumoDetalleOrdenListaDTO { Id = x.Id, InsumoId = x.InsumoId, OrdenId = x.OrdenId, Cantidad = x.Cantidad })
-                .ToListAsync();
+            var InsumoDetalleOrdenListaDTO = await context.InsumoDetalleOrdenes.ToListAsync();
+                //.Select(x => new InsumoDetalleOrdenListaDTO { Id = x.Id, InsumoId = x.InsumoId, OrdenId = x.OrdenId, Cantidad = x.Cantidad })
+                //.ToListAsync();
             await context.InsumoDetalleOrdenes.ToListAsync();
             return Ok(InsumoDetalleOrdenListaDTO);
         }

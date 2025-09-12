@@ -24,9 +24,8 @@ namespace DTO.ObjetosDTO
         public int ClienteId { get; set; }
         public int? PlanoId { get; set; } // puede ser null si no se cargó aún
         public string NombreCliente { get; set; } // Aplanado del Cliente
-        public string NombreArea { get; set; } //Aplanado de Area
-        public List<AreaOrdenDetalleDTO> AreasDeLaOrden { get; set; }
-        public List<CrearEntregaDTO> EntregasDeLaOrden { get; set; }
+        public string AreaActual { get; set; } //Aplanado de Area
+        public List<AreaDetalleOrdenListaDTO> AreasDeLaOrden { get; set; } = new();
     }
 
 }

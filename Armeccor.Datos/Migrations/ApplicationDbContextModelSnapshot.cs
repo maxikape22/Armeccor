@@ -100,7 +100,7 @@ namespace Armeccor.Datos.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AreaId")
+                    b.Property<int?>("AreaId")
                         .HasColumnType("int");
 
                     b.Property<string>("Descripcion")
@@ -218,10 +218,10 @@ namespace Armeccor.Datos.Migrations
                     b.Property<int>("Cantidad")
                         .HasColumnType("int");
 
-                    b.Property<int>("InsumoId")
+                    b.Property<int?>("InsumoId")
                         .HasColumnType("int");
 
-                    b.Property<int>("OrdenId")
+                    b.Property<int?>("OrdenId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -312,8 +312,7 @@ namespace Armeccor.Datos.Migrations
                     b.HasOne("Armeccor.Datos.Entidades.Area", "Area")
                         .WithMany("AreaOrdenes")
                         .HasForeignKey("AreaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Armeccor.Datos.Entidades.Orden", "Orden")
                         .WithMany("AreaDetalleOrdenes")
@@ -342,14 +341,12 @@ namespace Armeccor.Datos.Migrations
                     b.HasOne("Armeccor.Datos.Entidades.Insumo", "Insumo")
                         .WithMany("InsumoOrdenes")
                         .HasForeignKey("InsumoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Armeccor.Datos.Entidades.Orden", "Orden")
                         .WithMany("InsumoOrdenes")
                         .HasForeignKey("OrdenId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Insumo");
 

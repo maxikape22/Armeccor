@@ -5,6 +5,55 @@
     "version": "v1"
   },
   "paths": {
+    "/api/Area_Detalle_Orden/{nroOT}": {
+      "get": {
+        "tags": [
+          "AreaDetalleOrden"
+        ],
+        "parameters": [
+          {
+            "name": "nroOT",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Area_Detalle_Orden": {
       "get": {
         "tags": [
@@ -16,17 +65,26 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                  }
                 }
               }
             }
@@ -80,7 +138,83 @@
         }
       }
     },
-    "/api/Area_Detalle_Orden/VariasAreasTablaIntermediaEnOrden": {
+    "/api/Area_Detalle_Orden/Original": {
+      "get": {
+        "tags": [
+          "AreaDetalleOrden"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AreaDetalleOrden"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AreaDetalleOrden"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AreaDetalleOrden"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Area_Detalle_Orden/Orden": {
+      "get": {
+        "tags": [
+          "AreaDetalleOrden"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Area_Detalle_Orden/AreaDetallaEnOrden": {
       "post": {
         "tags": [
           "AreaDetalleOrden"
@@ -89,33 +223,232 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/AreaDetalleOrdenDTO"
-                }
+                "$ref": "#/components/schemas/AreaDetalleOrdenDTO"
               }
             },
             "text/json": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/AreaDetalleOrdenDTO"
-                }
+                "$ref": "#/components/schemas/AreaDetalleOrdenDTO"
               }
             },
             "application/*+json": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/AreaDetalleOrdenDTO"
-                }
+                "$ref": "#/components/schemas/AreaDetalleOrdenDTO"
               }
             }
           }
         },
         "responses": {
           "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaDetalleOrdenDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaDetalleOrdenDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaDetalleOrdenDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Area_Detalle_Orden/{id}/Estado": {
+      "put": {
+        "tags": [
+          "AreaDetalleOrden"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Area_Detalle_Orden/AreaActual/{nroOT}": {
+      "get": {
+        "tags": [
+          "AreaDetalleOrden"
+        ],
+        "parameters": [
+          {
+            "name": "nroOT",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Area_Detalle_Orden/{id}": {
+      "delete": {
+        "tags": [
+          "AreaDetalleOrden"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Area_Detalle_Orden/EstadoDeUnArea": {
+      "get": {
+        "tags": [
+          "AreaDetalleOrden"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Area_Detalle_Orden/EstadoDeUnArea/{ordenId}": {
+      "get": {
+        "tags": [
+          "AreaDetalleOrden"
+        ],
+        "parameters": [
+          {
+            "name": "ordenId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
+                }
+              }
+            }
           }
         }
       }
@@ -197,6 +530,44 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CrearAreaDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Areas/Original": {
+      "get": {
+        "tags": [
+          "Areas"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Area"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Area"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Area"
+                  }
                 }
               }
             }
@@ -1211,6 +1582,90 @@
         }
       }
     },
+    "/api/Ordenes/Original": {
+      "get": {
+        "tags": [
+          "Ordenes"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Orden"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Orden"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Orden"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Ordenes"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Orden"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Orden"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Orden"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Orden"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Orden"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Orden"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Ordenes/OrdenConAreas": {
       "get": {
         "tags": [
@@ -1246,122 +1701,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/api/Ordenes/AsignarAreas": {
-      "post": {
-        "tags": [
-          "Ordenes"
-        ],
-        "parameters": [
-          {
-            "name": "ordenId",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/AreaDetalleOrdenDTO"
-                }
-              }
-            },
-            "text/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/AreaDetalleOrdenDTO"
-                }
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/AreaDetalleOrdenDTO"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Ordenes/{ordenId}/Areas": {
-      "get": {
-        "tags": [
-          "Ordenes"
-        ],
-        "parameters": [
-          {
-            "name": "ordenId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": { }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Ordenes/{ordenId}/AreaActual": {
-      "get": {
-        "tags": [
-          "Ordenes"
-        ],
-        "parameters": [
-          {
-            "name": "ordenId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
           }
         }
       }
@@ -1494,7 +1833,8 @@
           },
           "areaId": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "area": {
             "$ref": "#/components/schemas/Area"
@@ -1519,11 +1859,17 @@
         "properties": {
           "ordenId": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "areaId": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
+          },
+          "nombreArea": {
+            "type": "string",
+            "nullable": true
           },
           "descripcion": {
             "type": "string",
@@ -1553,7 +1899,12 @@
           },
           "areaId": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
+          },
+          "nombreArea": {
+            "type": "string",
+            "nullable": true
           },
           "descripcion": {
             "type": "string",
@@ -1574,28 +1925,6 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "nombreArea": {
-            "type": "string",
-            "nullable": true
-          },
-          "tiempo": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "estado": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "AreaOrdenDetalleDTO": {
-        "type": "object",
-        "properties": {
-          "idArea": {
             "type": "integer",
             "format": "int32"
           },
@@ -1759,10 +2088,6 @@
             "format": "date-time",
             "nullable": true
           },
-          "areaId": {
-            "type": "integer",
-            "format": "int32"
-          },
           "clienteId": {
             "type": "integer",
             "format": "int32"
@@ -1871,14 +2196,16 @@
           },
           "insumoId": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "insumo": {
             "$ref": "#/components/schemas/Insumo"
           },
           "ordenId": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "orden": {
             "$ref": "#/components/schemas/Orden"
@@ -2071,21 +2398,14 @@
             "type": "string",
             "nullable": true
           },
-          "nombreArea": {
+          "areaActual": {
             "type": "string",
             "nullable": true
           },
           "areasDeLaOrden": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/AreaOrdenDetalleDTO"
-            },
-            "nullable": true
-          },
-          "entregasDeLaOrden": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CrearEntregaDTO"
+              "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
             },
             "nullable": true
           }

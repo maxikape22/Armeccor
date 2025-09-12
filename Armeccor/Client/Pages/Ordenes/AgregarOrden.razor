@@ -146,7 +146,7 @@
             }
         </div>
 
-        <div class="form-group">
+        @* <div class="form-group">
             <label for="idArea">Área:</label>
             @if (areas == null)
             {
@@ -167,7 +167,7 @@
                 </InputSelect>
                 <ValidationMessage For="@(() => nuevaOrden.AreaId)" />
             }
-        </div>
+        </div> *@
 @* 
         <div class="form-group">
             <label for="idCliente">Cliente:</label>
@@ -246,7 +246,7 @@
     {
         // Inicializar los IDs para que las opciones por defecto del dropdown funcionen con la validación Range
         nuevaOrden.ClienteId = 0;
-        nuevaOrden.AreaId = 0;
+        //nuevaOrden.AreaId = 0;
 
         // Cargar datos en paralelo para mayor eficiencia
         var loadClientsTask = LoadClientes();

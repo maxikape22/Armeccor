@@ -4,6 +4,7 @@ using AutoMapper;
 using DTO.ObjetosDTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,6 +25,13 @@ namespace Armeccor.Server.Controllers
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AreaListaDTO>>> GetAreas()
+        {
+            var areas = await context.Areas.ToListAsync();
+            return Ok(areas);
+        }
+
+        [HttpGet("Original")]
+        public async Task<ActionResult<List<Area>>> GetAreasOriginal()
         {
             var areas = await context.Areas.ToListAsync();
             return Ok(areas);
@@ -53,17 +61,6 @@ namespace Armeccor.Server.Controllers
 
             return _mapper.Map<List<CrearAreaDTO>>(areas);
         }
-
-
-        //[HttpPost("VariasAreas")]
-        //public async Task<ActionResult<List<CrearAreaDTO>>> Post(List<CrearAreaDTO> generos)
-        //{
-        //    var areaDTO = _mapper.Map<Area[]>(generos);
-        //    context.AddRange(generos);
-        //    await context.SaveChangesAsync();
-        //    var area = _mapper.Map<CrearAreaDTO[]>(areaDTO);
-        //    return Ok(area);
-        //}
 
         [HttpPost]
         public async Task<ActionResult<CrearAreaDTO>> PostArea(CrearAreaDTO crearAreaDTO)

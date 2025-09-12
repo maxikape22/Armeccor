@@ -1,8 +1,5 @@
 ﻿using Armeccor.Datos.Entidades;
-using Armeccor.Datos.Migrations;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Armeccor.Datos
 {
@@ -24,57 +21,131 @@ namespace Armeccor.Datos
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            #region
+            //// Relación Orden - AreaDetalleOrden
+            //modelBuilder.Entity<Orden>()
+            //    .HasMany(o => o.AreaDetalleOrdenes)
+            //    .WithOne(a => a.Orden)
+            //    .HasForeignKey(a => a.OrdenId) // CORRECCIÓN
+            //    .OnDelete(DeleteBehavior.SetNull);
+
+            ////Relacón Orden - InsumoDetalleOrden
+            //modelBuilder.Entity<Orden>()
+            //    .HasMany(o => o.InsumoOrdenes)
+            //    .WithOne(i => i.Orden)
+            //    .HasForeignKey(i => i.OrdenId) // CORRECCIÓN
+            //    .OnDelete(DeleteBehavior.Cascade);
+
+            //// Relación AreaDetalleOrden - Area
+            //modelBuilder.Entity<AreaDetalleOrden>()
+            //    .HasOne(ad => ad.Area)
+            //    .WithMany(a => a.AreaOrdenes)
+            //    .HasForeignKey(ad => ad.AreaId)
+            //    .OnDelete(DeleteBehavior.SetNull);
+
+            //// Relación InsumoDetalleOrden - Insumo
+            //modelBuilder.Entity<InsumoDetalleOrden>()
+            //    .HasOne(id => id.Insumo)
+            //    .WithMany(i => i.InsumoOrdenes)
+            //    .HasForeignKey(id => id.InsumoId)
+            //    .OnDelete(DeleteBehavior.Cascade);
+
+            //// Relación Orden - Cliente
+            //modelBuilder.Entity<Orden>()
+            //    .HasOne(o => o.Cliente)
+            //    .WithMany(c => c.Ordenes)
+            //    .HasForeignKey(o => o.ClienteId);
+
+            //// Relación Orden - Plano (nullable, sin cascada)
+            //modelBuilder.Entity<Orden>()
+            //    .HasOne(o => o.Plano)
+            //    .WithMany()
+            //    .HasForeignKey(o => o.PlanoId)
+            //    .OnDelete(DeleteBehavior.SetNull);
+
+            //// Relación Orden - Entrega
+            //modelBuilder.Entity<Orden>()
+            //    .HasMany(o => o.Entregas)
+            //    .WithOne(e => e.Orden)
+            //    .HasForeignKey(e => e.OrdenId);
+
+            //modelBuilder.Entity<Entrega>()
+            //    .HasOne(e => e.Orden)
+            //    .WithMany(o => o.Entregas)
+            //    .HasForeignKey(e => e.OrdenId);
+
+            #endregion
+
+
+            // ===========================
             // Relación Orden - AreaDetalleOrden
+            // ===========================
             modelBuilder.Entity<Orden>()
                 .HasMany(o => o.AreaDetalleOrdenes)
                 .WithOne(a => a.Orden)
-                .HasForeignKey(a => a.OrdenId) // CORRECCIÓN
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(a => a.OrdenId)
+                .OnDelete(DeleteBehavior.Cascade); // Ahora si borras la orden, OrdenId se pone null
 
-            //Relacón Orden - InsumoDetalleOrden
+            // ===========================
+            // Relación Orden - InsumoDetalleOrden
+            // ===========================
             modelBuilder.Entity<Orden>()
                 .HasMany(o => o.InsumoOrdenes)
                 .WithOne(i => i.Orden)
-                .HasForeignKey(i => i.OrdenId) // CORRECCIÓN
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(i => i.OrdenId)
+                .OnDelete(DeleteBehavior.Cascade); // SetNull para no exigir cascade
 
+            // ===========================
             // Relación AreaDetalleOrden - Area
+            // ===========================
             modelBuilder.Entity<AreaDetalleOrden>()
                 .HasOne(ad => ad.Area)
                 .WithMany(a => a.AreaOrdenes)
                 .HasForeignKey(ad => ad.AreaId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.SetNull); // AreaId se pone null si borran el Area
 
+            // ===========================
             // Relación InsumoDetalleOrden - Insumo
+            // ===========================
             modelBuilder.Entity<InsumoDetalleOrden>()
                 .HasOne(id => id.Insumo)
                 .WithMany(i => i.InsumoOrdenes)
                 .HasForeignKey(id => id.InsumoId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Cascade); // Similar, se pone null
 
+            // ===========================
             // Relación Orden - Cliente
+            // ===========================
             modelBuilder.Entity<Orden>()
                 .HasOne(o => o.Cliente)
                 .WithMany(c => c.Ordenes)
-                .HasForeignKey(o => o.ClienteId);
+                .HasForeignKey(o => o.ClienteId)
+                .OnDelete(DeleteBehavior.Cascade); // ClienteId se pone null si borran cliente
 
+            // ===========================
             // Relación Orden - Plano (nullable, sin cascada)
+            // ===========================
             modelBuilder.Entity<Orden>()
                 .HasOne(o => o.Plano)
                 .WithMany()
                 .HasForeignKey(o => o.PlanoId)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            // ===========================
             // Relación Orden - Entrega
+            // ===========================
             modelBuilder.Entity<Orden>()
                 .HasMany(o => o.Entregas)
                 .WithOne(e => e.Orden)
-                .HasForeignKey(e => e.OrdenId);
+                .HasForeignKey(e => e.OrdenId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Entrega>()
                 .HasOne(e => e.Orden)
                 .WithMany(o => o.Entregas)
                 .HasForeignKey(e => e.OrdenId);
+
+            base.OnModelCreating(modelBuilder);
 
             var areas = new List<Area>
             {

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Numerics;
 
 namespace DTO.ObjetosDTO
 {
@@ -15,8 +14,7 @@ namespace DTO.ObjetosDTO
         public DateTime FechaInicio { get; set; } = DateTime.Now;
         public DateTime FechaPactada { get; set; } = DateTime.Now;
         public Nullable<DateTime> FechaEntrega { get; set; }
-        public int AreaId { get; set; }
         public int ClienteId { get; set; }
-        public Nullable<int> PlanoId { get; set; } = null; // puede ser null si no se cargó aún                                    
+        public Nullable<int> PlanoId { get; set; } = null; // puede ser null si no se cargó aún
     }
 }

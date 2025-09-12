@@ -1,0 +1,135 @@
+﻿@page "/AgregarAreaEnAreaDetalleOrden/{OrdenId:int}"
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@using System.Net.Http.Json
+
+
+<h3>Agregar área a la área detallada</h3>
+
+<div class="card p-3">
+
+    <div class="mb-3">
+        <label for="areaSelect" class="form-label">Área</label>
+        <select id="areaSelect" class="form-select" @bind="nuevaArea.AreaId">
+            <option value="">-- Seleccione un área --</option>
+            @foreach (var area in areasDisponibles)
+            {
+                <option value="@area.Id">@area.NombreArea</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="ordenSelect" class="form-label">Orden</label>
+        <select id="ordenSelect" class="form-select" @bind="nuevaArea.OrdenId">
+            <option value="">-- Seleccione una orden --</option>
+            @foreach (var orden in OrdenIdaNroOT)
+            {
+                <option value="@orden.Key">@orden.Value</option>
+            }
+        </select>
+    </div>
+
+
+    <div class="mb-3">
+        <label for="descripcion" class="form-label">Descripción</label>
+        <input id="descripcion" type="text" class="form-control"
+               @bind="nuevaArea.Descripcion" />
+    </div>
+
+    <InputSelect class="form-select" @bind-Value="nuevaArea.Estado">
+        @foreach (var estado in Estados)
+        {
+            <option value="@estado">@estado</option>
+        }
+    </InputSelect>
+
+    <div class="mb-3">
+        <label for="tiempo" class="form-label">Tiempo (horas)</label>
+        <input id="tiempo" type="number" class="form-control"
+               @bind="nuevaArea.Tiempo" />
+    </div>
+
+    <div class="d-flex justify-content-end">
+        <button class="btn btn-success" @onclick="GuardarArea">Aceptar</button>
+        <button class="btn btn-secondary ms-2" @onclick="Volver">Volver</button>
+    </div>
+</div>
+
+@code
+{
+    [Parameter] public int OrdenId { get; set; }
+    [Parameter] public List<AreaDetalleOrdenListaDTO> AreaDetalleOrden { get; set; }
+    = new List<AreaDetalleOrdenListaDTO>();
+
+    private Dictionary<int, int> OrdenIdaNroOT = new();
+    private AreaDetalleOrdenListaDTO AreaDetalle = new AreaDetalleOrdenListaDTO();
+
+
+    private AreaDetalleOrdenDTO nuevaArea = new AreaDetalleOrdenDTO()
+    {
+        Estado = "Iniciado", // Valor por defecto 
+    };
+
+    private List<AreaListaDTO> areasDisponibles = new();
+    private AreaListaDTO Area = new AreaListaDTO();
+    private List<OrdenDetalleDTO> ordenes = new List<OrdenDetalleDTO>();
+
+    private List<string> Estados = new List<string>
+    {       
+        "Iniciado",
+    };
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Cargar las áreas disponibles desde el backend
+        areasDisponibles = await Http.GetFromJsonAsync<List<AreaListaDTO>>("api/Areas");
+        nuevaArea.OrdenId = OrdenId; // asignamos el id de la orden
+
+        var ordenes = await Http.GetFromJsonAsync<List<OrdenDetalleDTO>>("api/Ordenes");
+
+        if (ordenes != null)
+        {
+            OrdenIdaNroOT = ordenes.ToDictionary(o => o.Id, o => o.NroOT);
+        }
+    }
+
+    private void AsignarNombreArea(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int selectedId))
+        {
+            nuevaArea.AreaId = selectedId;
+            var area = areasDisponibles.FirstOrDefault(a => a.Id == selectedId);
+            if (area != null)
+                nuevaArea.NombreArea = area.NombreArea;
+        }
+        else
+        {
+            nuevaArea.AreaId = null;
+            nuevaArea.NombreArea = null;
+        }
+    }
+
+    private async Task GuardarArea()
+    {
+        var response = await Http.PostAsJsonAsync("api/Area_Detalle_Orden/AreaDetallaEnOrden", nuevaArea);
+
+        try
+        {
+            Navigation.NavigateTo($"/AreasDetalleOrden/{OrdenId}");
+        }
+        catch (Exception e)
+        {
+            var mensaje = e.Message;
+            mensaje = await response.Content.ReadAsStringAsync();
+            //throw new Exception(mensaje);
+            Console.WriteLine(mensaje);
+        }
+    }
+
+    private void Volver()
+    {
+        Navigation.NavigateTo($"/AreasDetalleOrden/{OrdenId}");
+    }
+}

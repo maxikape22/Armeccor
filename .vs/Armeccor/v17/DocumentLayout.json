@@ -3,12 +3,8 @@
   "WorkspaceRootPath": "C:\\Users\\BERSERKER\\source\\repos\\Armeccor\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6D5CC793-8377-42E0-BE84-97DC9ADE0363}|Armeccor\\Server\\Armeccor.Server.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\server\\controllers\\ordenescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6D5CC793-8377-42E0-BE84-97DC9ADE0363}|Armeccor\\Server\\Armeccor.Server.csproj|solutionrelative:armeccor\\server\\controllers\\ordenescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DF55E7A1-78C9-43CE-A698-EDBB79564752}|DTO\\DTO.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\dto\\objetosdto\\crearordendto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DF55E7A1-78C9-43CE-A698-EDBB79564752}|DTO\\DTO.csproj|solutionrelative:dto\\objetosdto\\crearordendto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\client\\pages\\ordenes\\verareaenlaorden.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|solutionrelative:armeccor\\client\\pages\\ordenes\\verareaenlaorden.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -23,27 +19,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "OrdenesController.cs",
-              "DocumentMoniker": "C:\\Users\\BERSERKER\\source\\repos\\Armeccor\\Armeccor\\Server\\Controllers\\OrdenesController.cs",
-              "RelativeDocumentMoniker": "Armeccor\\Server\\Controllers\\OrdenesController.cs",
-              "ToolTip": "C:\\Users\\BERSERKER\\source\\repos\\Armeccor\\Armeccor\\Server\\Controllers\\OrdenesController.cs*",
-              "RelativeToolTip": "Armeccor\\Server\\Controllers\\OrdenesController.cs*",
-              "ViewState": "AgIAABkBAAAAAAAAAAAwwCYBAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-28T02:20:08.232Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "CrearOrdenDTO.cs",
-              "DocumentMoniker": "C:\\Users\\BERSERKER\\source\\repos\\Armeccor\\DTO\\ObjetosDTO\\CrearOrdenDTO.cs",
-              "RelativeDocumentMoniker": "DTO\\ObjetosDTO\\CrearOrdenDTO.cs",
-              "ToolTip": "C:\\Users\\BERSERKER\\source\\repos\\Armeccor\\DTO\\ObjetosDTO\\CrearOrdenDTO.cs",
-              "RelativeToolTip": "DTO\\ObjetosDTO\\CrearOrdenDTO.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAADAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-28T02:13:11.274Z",
+              "Title": "VerAreaEnLaOrden.razor",
+              "DocumentMoniker": "C:\\Users\\BERSERKER\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Ordenes\\VerAreaEnLaOrden.razor",
+              "RelativeDocumentMoniker": "Armeccor\\Client\\Pages\\Ordenes\\VerAreaEnLaOrden.razor",
+              "ToolTip": "C:\\Users\\BERSERKER\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Ordenes\\VerAreaEnLaOrden.razor",
+              "RelativeToolTip": "Armeccor\\Client\\Pages\\Ordenes\\VerAreaEnLaOrden.razor",
+              "ViewState": "AgIAAFgAAAAAAAAAAAAhwGQAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-09-12T01:09:18.055Z",
               "EditorCaption": ""
             }
           ]

@@ -80,6 +80,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT3JkZW5lc1xBZ3JlZ2FyT3JkZW4ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Ordenes/AreaAgregarAreaDetalleOrden.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT3JkZW5lc1xBcmVhQWdyZWdhckFyZWFEZXRhbGxlT3JkZW4ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/BERSERKER/Source/Repos/Armeccor/Armeccor/Client/Pages/Ordenes/ConfirmationModal.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT3JkZW5lc1xDb25maXJtYXRpb25Nb2RhbC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 

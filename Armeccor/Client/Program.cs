@@ -14,4 +14,9 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 builder.Services.AddScoped<IHttpServicio, HttpServicio>();
 
+// Program.cs en el proyecto Blazor (Client)
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+
+// Agrega esta línea para registrar el servicio de estado
+builder.Services.AddSingleton<OrdenStateService>();
 await builder.Build().RunAsync();

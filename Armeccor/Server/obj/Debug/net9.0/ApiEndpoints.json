@@ -1,7 +1,7 @@
 [
   {
     "ContainingType": "Armeccor.Server.Controllers.AreaDetalleOrdenController",
-    "Method": "GetListaAreaDetalleOrdenDTO",
+    "Method": "GetLista",
     "RelativePath": "api/Area_Detalle_Orden",
     "HttpMethod": "GET",
     "IsController": true,
@@ -9,7 +9,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "DTO.ObjetosDTO.AreaDetalleOrdenListaDTO",
+        "Type": "System.Collections.Generic.List\u00601[[DTO.ObjetosDTO.AreaDetalleOrdenListaDTO, DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -21,14 +21,14 @@
   },
   {
     "ContainingType": "Armeccor.Server.Controllers.AreaDetalleOrdenController",
-    "Method": "PostAreaDetalleOrdenDTO",
+    "Method": "AreaDetalleOrdenDTO",
     "RelativePath": "api/Area_Detalle_Orden",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "AreaDetalleOrdenDTO",
+        "Name": "dto",
         "Type": "DTO.ObjetosDTO.AreaDetalleOrdenDTO",
         "IsRequired": true
       }
@@ -47,19 +47,214 @@
   },
   {
     "ContainingType": "Armeccor.Server.Controllers.AreaDetalleOrdenController",
-    "Method": "Post",
-    "RelativePath": "api/Area_Detalle_Orden/VariasAreasTablaIntermediaEnOrden",
+    "Method": "EliminarArea",
+    "RelativePath": "api/Area_Detalle_Orden/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Armeccor.Server.Controllers.AreaDetalleOrdenController",
+    "Method": "CambiarEstado",
+    "RelativePath": "api/Area_Detalle_Orden/{id}/Estado",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "DTO.ObjetosDTO.AreaDetalleOrdenListaDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DTO.ObjetosDTO.AreaDetalleOrdenListaDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Armeccor.Server.Controllers.AreaDetalleOrdenController",
+    "Method": "GetAreasByNroOT",
+    "RelativePath": "api/Area_Detalle_Orden/{nroOT}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "nroOT",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[DTO.ObjetosDTO.AreaDetalleOrdenListaDTO, DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Armeccor.Server.Controllers.AreaDetalleOrdenController",
+    "Method": "GetAreaActual",
+    "RelativePath": "api/Area_Detalle_Orden/AreaActual/{nroOT}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "nroOT",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DTO.ObjetosDTO.AreaDetalleOrdenListaDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Armeccor.Server.Controllers.AreaDetalleOrdenController",
+    "Method": "PostAreaDetalleOrden",
+    "RelativePath": "api/Area_Detalle_Orden/AreaDetallaEnOrden",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "areas",
-        "Type": "DTO.ObjetosDTO.AreaDetalleOrdenDTO[]",
+        "Name": "dto",
+        "Type": "DTO.ObjetosDTO.AreaDetalleOrdenDTO",
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "DTO.ObjetosDTO.AreaDetalleOrdenDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Armeccor.Server.Controllers.AreaDetalleOrdenController",
+    "Method": "GetEstadoDeUnArea",
+    "RelativePath": "api/Area_Detalle_Orden/EstadoDeUnArea",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "DTO.ObjetosDTO.AreaDetalleOrdenListaDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Armeccor.Server.Controllers.AreaDetalleOrdenController",
+    "Method": "GetEstadoDeUnArea",
+    "RelativePath": "api/Area_Detalle_Orden/EstadoDeUnArea/{ordenId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ordenId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DTO.ObjetosDTO.AreaDetalleOrdenListaDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Armeccor.Server.Controllers.AreaDetalleOrdenController",
+    "Method": "GetAreaDetallada",
+    "RelativePath": "api/Area_Detalle_Orden/Orden",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[DTO.ObjetosDTO.AreaDetalleOrdenListaDTO, DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Armeccor.Server.Controllers.AreaDetalleOrdenController",
+    "Method": "GetAreaDetalleOriginal",
+    "RelativePath": "api/Area_Detalle_Orden/Original",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[Armeccor.Datos.Entidades.AreaDetalleOrden, Armeccor.Datos, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "Armeccor.Server.Controllers.AreasController",
@@ -203,6 +398,26 @@
     "ReturnTypes": [
       {
         "Type": "System.Collections.Generic.List\u00601[[DTO.ObjetosDTO.CrearAreaDTO, DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Armeccor.Server.Controllers.AreasController",
+    "Method": "GetAreasOriginal",
+    "RelativePath": "api/Areas/Original",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[Armeccor.Datos.Entidades.Area, Armeccor.Datos, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -712,37 +927,21 @@
   },
   {
     "ContainingType": "Armeccor.Server.Controllers.OrdenesController",
-    "Method": "GetAreaActual",
-    "RelativePath": "api/Ordenes/{ordenId}/AreaActual",
+    "Method": "GetOrdenConAreas",
+    "RelativePath": "api/Ordenes/OrdenConAreas",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "ordenId",
+        "Name": "id",
         "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Armeccor.Server.Controllers.OrdenesController",
-    "Method": "GetAreasDeOrden",
-    "RelativePath": "api/Ordenes/{ordenId}/Areas",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "ordenId",
-        "Type": "System.Int32",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "Type": "Armeccor.Datos.Entidades.Orden",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -754,37 +953,36 @@
   },
   {
     "ContainingType": "Armeccor.Server.Controllers.OrdenesController",
-    "Method": "AsignarAreas",
-    "RelativePath": "api/Ordenes/AsignarAreas",
+    "Method": "GetOrdenesOriginal",
+    "RelativePath": "api/Ordenes/Original",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[Armeccor.Datos.Entidades.Orden, Armeccor.Datos, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Armeccor.Server.Controllers.OrdenesController",
+    "Method": "PostOrdenOriginal",
+    "RelativePath": "api/Ordenes/Original",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "ordenId",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "areasDTO",
-        "Type": "System.Collections.Generic.List\u00601[[DTO.ObjetosDTO.AreaDetalleOrdenDTO, DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Name": "orden",
+        "Type": "Armeccor.Datos.Entidades.Orden",
         "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Armeccor.Server.Controllers.OrdenesController",
-    "Method": "GetOrdenConAreas",
-    "RelativePath": "api/Ordenes/OrdenConAreas",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": false
       }
     ],
     "ReturnTypes": [

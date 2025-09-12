@@ -1,1 +1,177 @@
-﻿
+﻿@page "/AreasDetalleOrden/{NroOT:int}"
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+@using Microsoft.AspNetCore.SignalR.Client
+
+
+<h3>Áreas detalladas de la Orden</h3>
+
+@* <div class="d-flex justify-content-end mb-3">
+    <button class="btn btn-danger" @onclick="AgregarArea">
+        ➕ Agregar Área
+    </button>
+</div> *@
+
+
+<div class="d-flex justify-content-between mb-3">
+    <div>
+        <label>Filtrar por estado:</label>
+        <select class="form-select d-inline-block w-auto" @bind="filtroEstado">
+            <option value="">Todos</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="Iniciado">Iniciado</option>
+            <option value="Finalizado">Finalizado</option>
+        </select>
+
+        <label class="ms-3">
+            <input type="checkbox" @bind="soloFinalizados" />
+            Solo finalizados
+        </label>
+    </div>
+    <button class="btn btn-danger" @onclick="() => AgregarArea(NroOT)">➕ Agregar Área</button>
+</div>
+
+@if (areasDetalle == null)
+{
+    <p><em>Cargando áreas detalladas...</em></p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Nombre del área</th>
+                <th>Descripción</th>
+                <th>Estado</th>
+                <th>Tiempo</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var area in FiltrarAreas())
+            {
+                <tr>
+                    <td>@area.NombreArea</td>
+                    <td>@area.Descripcion</td>
+                    <td>@area.Estado</td>
+                    <td>@area.Tiempo</td>
+                    <td>
+                        <select class="form-select" @onchange="async e => await CambiarEstado(area.Id,e)">
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Finalizado">Finalizado</option>
+                        </select>
+                        <button class="btn btn-sm btn-danger mt-1" @onclick="async () => await EliminarArea(area.Id)">Eliminar</button>
+                    </td>
+                </tr>
+            }
+    </tbody>
+</table>
+ <button class="btn btn-secondary mt-3" @onclick="Volver">Volver</button>
+
+@code
+    {
+    [Parameter] public int NroOT { get; set; }
+    public string[] SeleccionAreas { get; set; } = new String[] { };
+
+    private List<AreaDetalleOrdenListaDTO> areasDetalle = new();
+    private List<AreaDTO> todasLasAreas = new();
+    private List<AreaListaDTO> Areas = new List<AreaListaDTO>();
+    private AreaListaDTO Area = new AreaListaDTO();
+    private Area AreaDTO = new Area();
+    private Dictionary<int, string> NombreAreaDiccionario = new();
+    private string filtroEstado = "";
+    private bool soloFinalizados = false;
+    private OrdenDetalleDTO detalleDTO = new OrdenDetalleDTO();
+
+    private HubConnection hubConnection;
+
+
+    public void SeleccionarAreasCambios(ChangeEventArgs e)
+    {
+        SeleccionAreas = (string[])e.Value;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (NroOT > 0)
+        {
+            areasDetalle = await Http.GetFromJsonAsync<List<AreaDetalleOrdenListaDTO>>($"api/Area_Detalle_Orden/{NroOT}");
+        }
+        ordenDetalleDTO.NroOT = NroOT;
+    }
+
+   
+    private void Volver()
+    {
+        Navigation.NavigateTo("/Ordenes");
+    }
+
+    private void AgregarArea(int OrdenId)
+    {
+        Navigation.NavigateTo($"/AgregarAreaEnAreaDetalleOrden/{OrdenId}");
+    }
+
+    private IEnumerable<AreaDetalleOrdenListaDTO> FiltrarAreas()
+    {
+        IEnumerable<AreaDetalleOrdenListaDTO> lista = areasDetalle;
+
+        if (!string.IsNullOrEmpty(filtroEstado))
+            lista = lista.Where(a => a.Estado == filtroEstado);
+
+        if (soloFinalizados)
+            lista = lista.Where(a => a.Estado == "Finalizado");
+
+        return lista;
+    }
+
+    private OrdenDetalleDTO ordenDetalleDTO = new OrdenDetalleDTO();
+
+   
+    // CambiarEstado: llamar PUT y actualizar localmente (el Hub también notificará)
+    private async Task CambiarEstado(int id, ChangeEventArgs e)
+    {
+        var nuevoEstado = e?.Value?.ToString();
+        if (string.IsNullOrWhiteSpace(nuevoEstado)) return;
+
+        var payload = new { Estado = nuevoEstado };
+        var response = await Http.PutAsJsonAsync($"api/Area_Detalle_Orden/{id}/Estado", payload);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var area = areasDetalle.FirstOrDefault(a => a.Id == id);
+            if (area != null) area.Estado = nuevoEstado;
+
+            await JS.InvokeVoidAsync("alert", "Estado actualizado en el servidor.");
+            InvokeAsync(StateHasChanged);
+            // No hace falta redirigir; el Hub ya propagará a Ordenes
+        }
+        else
+        {
+            var msg = await response.Content.ReadAsStringAsync();
+            await JS.InvokeVoidAsync("alert", $"Error al actualizar en servidor: {msg}");
+        }
+    }
+
+
+    private async Task EliminarArea(int areaDetalleId)
+    {
+        var confirm = await JS.InvokeAsync<bool>("confirm", $"¿Seguro que quieres eliminar esta área asociada al Nro de orden {ordenDetalleDTO.NroOT}?");
+        if (!confirm) return;
+
+        var response = await Http.DeleteAsync($"api/Area_Detalle_Orden/{areaDetalleId}");
+        if (response.IsSuccessStatusCode)
+        {
+            areasDetalle.RemoveAll(a => a.Id == areaDetalleId);
+            await JS.InvokeVoidAsync("alert", "Área eliminada correctamente.");
+            // Redirigir a la página principal de órdenes para refrescar
+            Navigation.NavigateTo("/Ordenes", true);
+        }
+        else
+        {
+            var msg = await response.Content.ReadAsStringAsync();
+            await JS.InvokeVoidAsync("alert", $"Error al eliminar: {msg}");
+        }
+    }
+}
+}

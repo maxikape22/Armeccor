@@ -41,29 +41,52 @@ else
 
         <div class="mb-3"> 
             <InputSelect @bind-Value="entrega.MedioDePago">
-                <option value="">-- Seleccione medio de pago --</option>
+           @*      <option value="">-- Seleccione medio de pago --</option>
                 <option value="Tarjeta">Tarjeta</option>
                 <option value="Efectivo">Efectivo</option>
                 <option value="MercadoPago">MercadoPago</option>
                 <option value="Transferencia">Transferencia</option>
-                <option value="Criptomonedas">Criptomonedas</option>
+                <option value="Criptomonedas">Criptomonedas</option> *@
+
+                
+                @foreach (var MedioDePago in MediosDePago)
+                {
+                    <option value="@MedioDePago">@MedioDePago</option>
+                }
             </InputSelect>
  @*            <label class="form-label">Medio de pago</label>
             <input class="form-control" @bind="entrega.MedioDePago" /> *@
         </div>
 
         <button class="btn btn-success" type="submit">Guardar</button>
-        <button class="btn btn-secondary ms-2" @onclick="@(() => Nav.NavigateTo("/api/Entregas"))">Cancelar</button>
+        <button class="btn btn-secondary ms-2" @onclick="@(() => Cancelar())">Cancelar</button>
     </EditForm>
 }
 
-@code {
+@code 
+{
+    private List<string> MediosDePago = new List<string>
+    {
+        "Tarjeta",
+        "Efectivo",
+        "MercadoPago",
+        "Transferencia",
+        "Criptomonedas"
+    };
+
+
     private CrearEntregaDTO entrega = new();
     private List<OrdenDTO>? ordenes;
 
     protected override async Task OnInitializedAsync()
     {
         ordenes = await Http.GetFromJsonAsync<List<OrdenDTO>>("api/Ordenes");
+        entrega.MedioDePago = "Tarjeta";
+    }
+
+    public void Cancelar()    
+    {
+        Nav.NavigateTo("/api/Entregas");
     }
 
     private async Task Guardar()

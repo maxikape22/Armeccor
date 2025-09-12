@@ -11,7 +11,7 @@
         "projectName": "Armeccor.Datos",
         "projectPath": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj",
         "packagesPath": "C:\\Users\\BERSERKER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor.Datos\\obj\\",
+        "outputPath": "C:\\Users\\BERSERKER\\source\\repos\\Armeccor\\Armeccor.Datos\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

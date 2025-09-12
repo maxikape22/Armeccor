@@ -7,7 +7,7 @@ namespace Armeccor.Datos.Entidades
         public int Id { get; set; }
         public int OrdenId { get; set; }
         public Orden Orden { get; set; }
-        public int AreaId { get; set; }
+        public Nullable<int> AreaId { get; set; }
         public Area Area { get; set; }
         public string? Descripcion { get; set; }
         public string Estado { get; set; }

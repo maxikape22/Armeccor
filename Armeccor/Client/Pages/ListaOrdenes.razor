@@ -3,6 +3,8 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 @inject NavigationManager navigationManager
+@using System.Net.Http.Json
+
 
 <PageTitle>Órdenes</PageTitle>
 
@@ -228,7 +230,7 @@
 @* --- FIN ESTILOS CSS INTEGRADOS --- *@
 
 <div class="main-container">
-@*     <div class="sidebar">
+    @*     <div class="sidebar">
         <h3>ARme design</h3>
         <hr />
         <a href="/api/Clientes">Clientes</a>
@@ -287,7 +289,7 @@
                         <th>Fecha pactada</th>
                         <th>Fecha de entrega</th>
                         <th>Cliente</th>
-                        <th>Área actual</th>
+                        <th>Estado del área</th>
                         <th>Acción</th>
                     </tr>
                 </thead>
@@ -301,12 +303,13 @@
                             <td>@orden.Estado</td>
                             <td>@orden.FechaInicio.ToShortDateString()</td>
                             <td>@orden.FechaPactada.ToShortDateString()</td>
-                            <td>@orden.FechaEntrega</td>
+                            <td>@orden.FechaEntrega.ToString()</td>
                             <td>@orden.NombreCliente</td>
+                            <td>@orden.AreaActual</td>
 
                             @* --- SOLO UNA columna de Área actual (sin duplicar) --- *@
-                            <td>@GetAreaActual(orden)</td>
-
+@*                              <td>@GetAreaActual(orden)</td>
+ *@  
                             @* === Botón de eliminar independiente (se conserva tal cual lo tenías) === *@
                             @* <td>
                                 <button class="btn btn-danger btn-sm" @onclick="() => DeleteOrder(orden.Id)">Eliminar</button>
@@ -337,8 +340,8 @@
                                             <option value="Terminando">Terminando</option>
                                         </select>
 
-                                        <button class="dropdown-item" @onclick="() => MenuViewAreaDetails(orden.Id)">
-                                            <i class="fas fa-map-marker-alt"></i> Ver área
+                                        <button class="dropdown-item" @onclick="() => MenuViewAreaDetails(orden.NroOT)">
+                                            <i class="fas fa-map-marker-alt"></i> Ver áreas
                                         </button>
                                         <button class="dropdown-item" @onclick="() => MenuViewPlans(orden.Id)">
                                             <i class="fas fa-file-alt"></i> Ver planos
@@ -381,6 +384,9 @@
     private EntregaDetalleDTO entregaDetalleDTO = new EntregaDetalleDTO();
     private ConfirmationModal? confirmationModal;
     private int? isDeletingId = null;
+    private AreaDetalleOrdenListaDTO AreaDetalleOrdenListaDTO = new AreaDetalleOrdenListaDTO();
+
+    //private OrdenDetalleDTO IdAsociadoAreaDetalle = new OrdenDetalleDTO();
 
     // Control del dropdown por fila (acordeón)
     private int? openedDropdownId = null;
@@ -466,15 +472,6 @@
         return sb.ToString().Normalize(System.Text.NormalizationForm.FormC);
     }
 
-    private string GetAreaActual(OrdenDetalleDTO orden)
-    {
-        // Si tu DTO trae NombreArea, lo mostramos; si además hay AreasDeLaOrden, mostramos la primera como "actual".
-        if (!string.IsNullOrWhiteSpace(orden.NombreArea))
-            return orden.AreasDeLaOrden?.FirstOrDefault()?.NombreArea ?? orden.NombreArea;
-
-        return orden.AreasDeLaOrden?.FirstOrDefault()?.NombreArea ?? "N/A";
-    }
-
     private void NavigateToNewOrder()
     {
         NavigationManager.NavigateTo("/ordenes/nueva");
@@ -502,7 +499,7 @@
             FechaInicio = currentOrden.FechaInicio,
             FechaPactada = currentOrden.FechaPactada,
             FechaEntrega = currentOrden.FechaEntrega,
-            AreaId = currentOrden.AreaId,
+            //AreaId = currentOrden.AreaId,
             ClienteId = currentOrden.ClienteId,
             PlanoId = currentOrden.PlanoId
         };
@@ -522,9 +519,11 @@
         }
     }
 
+
     private void ViewAreaDetails(int id)
     {
-        JSRuntime.InvokeVoidAsync("alert", $"Ver detalles del área para la Orden ID: {id}");
+        // JSRuntime.InvokeVoidAsync("alert", $"Ver detalles del área para la Orden ID: {id}");
+        navigationManager.NavigateTo($"/AreasDetalleOrden/{id}");
     }
 
     private void ViewPlans(int id)

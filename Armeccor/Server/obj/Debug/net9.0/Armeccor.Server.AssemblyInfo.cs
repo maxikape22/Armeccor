@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Armeccor.Server")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8ec6a6790c4a6a15f258da5e51c2c1b083601805")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a0a1e254cbcb8b89397c75871e04ad461eb243be")]
 [assembly: System.Reflection.AssemblyProductAttribute("Armeccor.Server")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Armeccor.Server")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
