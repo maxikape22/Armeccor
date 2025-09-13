@@ -25,79 +25,44 @@ namespace Armeccor.Server.Controllers
             this._mapper = mapper;
         }
 
-        // --- Método PUT para actualizar una Orden por ID ---
+        //Para hacer que el cambio de estado asigne la fecha de entrega al momento de cambiar de estado
+
         [HttpPut("{id:int}")]
         public async Task<ActionResult> PutOrden(int id, CrearOrdenDTO ordenActualizacionDto)
         {
             var ordenExistente = await context.Ordenes.FindAsync(id);
 
             if (ordenExistente == null)
-            {
                 return NotFound($"No se pudo encontrar la orden con ID: {id}");
+
+            // Mapear los cambios del DTO a la entidad
+            _mapper.Map(ordenActualizacionDto, ordenExistente);
+
+            // ✅ Si el nuevo estado es Finalizado y aún no tiene fecha, la asignamos
+            if (ordenActualizacionDto.Estado.Equals("Finalizada", StringComparison.OrdinalIgnoreCase) &&
+                !ordenExistente.FechaEntrega.HasValue)
+            {
+                DateTime time = DateTime.Now;
+                var contador = time.AddDays(2);
+                ordenExistente.FechaEntrega = DateTime.Now; //contador; //DateTime.Now;
             }
 
-            _mapper.Map(ordenActualizacionDto, ordenExistente);
             context.Entry(ordenExistente).State = EntityState.Modified;
 
             try
             {
-                await context.SaveChangesAsync();
+                await context.SaveChangesAsync(); // ✅ se guarda todo junto
             }
             catch (DbUpdateConcurrencyException)
             {
                 if (!await context.Ordenes.AnyAsync(e => e.Id == id))
-                {
-                    return NotFound($"No se pudo actualizar el registro de Id: {id}. Posiblemente fue borrado.");
-                }
+                    return NotFound($"No se pudo actualizar la orden Nro: {ordenExistente.NroOT}.");
                 else
-                {
                     throw;
-                }
             }
+
             return NoContent();
         }
-
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<OrdenDetalleDTO>>> GetOrdenes()
-        //{
-        //    var ordenes = await context.Ordenes
-        //        .Include(o => o.Cliente)
-        //        .ThenInclude(ao => ao.Ordenes)
-        //        .Include(o => o.Plano)
-        //        .Include(o => o.Entregas)
-        //        .Include(a => a.AreaDetalleOrdenes)
-        //        .ThenInclude(ad => ad.Area)
-        //        .ToListAsync();
-
-        //    return Ok(_mapper.Map<IEnumerable<OrdenDetalleDTO>>(ordenes));
-        //}
-
-        //Para hacer funcionar Signlr
-
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<OrdenDetalleDTO>>> GetOrdenes()
-        //{
-        //    var ordenes = await context.Ordenes
-        //        .Include(o => o.Cliente)
-        //        .Include(o => o.Plano)
-        //        .Include(o => o.Entregas)
-        //        .Include(o => o.AreaDetalleOrdenes)
-        //            .ThenInclude(ad => ad.Area)
-        //        .ToListAsync();
-
-        //    var ordenesDto = _mapper.Map<List<OrdenDetalleDTO>>(ordenes);
-
-        //    // rellenar AreaActual por NroOT => la area con Estado == "Iniciado" (si existe)
-        //    foreach (var dto in ordenesDto)
-        //    {
-        //        var entidad = ordenes.FirstOrDefault(o => o.Id == dto.Id);
-        //        var areaActual = entidad?.AreaDetalleOrdenes?.FirstOrDefault(ad =>
-        //            ad.Estado != null && ad.Estado.Equals("Iniciado", System.StringComparison.OrdinalIgnoreCase));
-        //        dto.AreaActual = areaActual != null ? areaActual.Area?.NombreArea ?? "Sin área activa" : "Sin área activa";
-        //    }
-
-        //    return Ok(ordenesDto);
-        //}
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OrdenDetalleDTO>>> GetOrdenes()
@@ -215,75 +180,5 @@ namespace Armeccor.Server.Controllers
 
             return Ok(orden);
         }
-
-        //[HttpGet("{ordenId}/Areas")]
-        //public async Task<ActionResult<List<object>>> GetAreasDeOrden(int ordenId)
-        //{
-        //    var orden = await context.Ordenes
-        //        .Include(o => o.AreaDetalleOrdenes)
-        //        .ThenInclude(ado => ado.Area)
-        //        .FirstOrDefaultAsync(o => o.Id == ordenId);
-
-        //    if (orden == null)
-        //        return NotFound($"No se encontró la orden con ID {ordenId}");
-
-        //    var result = orden.AreaDetalleOrdenes
-        //        .Select(ado => new
-        //        {
-        //            ado.Id,
-        //            ado.OrdenId,
-        //            ado.AreaId,
-        //            NombreArea = ado.Area.NombreArea,
-        //            ado.Descripcion,
-        //            ado.Estado,
-        //            ado.Tiempo
-        //        }).ToList();
-
-        //    return Ok(result);
-        //}
-
-        //[HttpGet("{ordenId}/AreaActual")]
-        //public async Task<ActionResult<object>> GetAreaActual(int ordenId)
-        //{
-        //    var orden = await context.Ordenes
-        //        .Include(o => o.AreaDetalleOrdenes)
-        //        .ThenInclude(ado => ado.Area)
-        //        .FirstOrDefaultAsync(o => o.Id == ordenId);
-
-        //    if (orden == null)
-        //        return NotFound($"No se encontró la orden con ID {ordenId}");
-
-        //    // regla: el área actual es la última con estado distinto de "Terminada"
-        //    var areaActual = orden.AreaDetalleOrdenes
-        //        .OrderByDescending(ado => ado.Id)
-        //        .FirstOrDefault(ado => ado.Estado != "Terminada");
-
-        //    if (areaActual == null)
-        //        return NotFound("La orden no tiene un área actual asignada.");
-
-        //    return Ok(new
-        //    {
-        //        areaActual.OrdenId,
-        //        areaActual.AreaId,
-        //        NombreArea = areaActual.Area.NombreArea,
-        //        areaActual.Estado,
-        //        areaActual.Tiempo
-        //    });
-        //}
-
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<OrdenDetalleDTO>> GetAreaOrden(int id)
-        //{
-        //    var orden = await context.Ordenes
-        //        .Include(o => o.Cliente)
-        //        .Include(o => o.AreaDetalleOrdenes)
-        //        .FirstOrDefaultAsync(o => o.Id == id);
-
-        //    if (orden == null)
-        //        return NotFound();
-
-        //    return _mapper.Map<OrdenDetalleDTO>(orden);
-        //}
-
     }
 }

@@ -1,29 +1,45 @@
 ﻿@page "/entregas/nueva"
+@using System.Text.Json
 @inject HttpClient Http
 @inject NavigationManager Nav
+@inject IJSRuntime JS
 
 <h3>Nueva entrega</h3>
 
-@if (ordenes is null)
+@if (OrdenDetalleDTOs is null)
 {
     <div class="alert alert-info">Cargando órdenes...</div>
 }
 else
 {
-    <EditForm Model="entrega" OnValidSubmit="Guardar">
+    <EditForm Model="Entrega" OnValidSubmit="Guardar">
         <DataAnnotationsValidator />
         <ValidationSummary />
 
         <div class="mb-3">
             <label class="form-label">Fecha de entrega</label>
-            <select class="form-select" @bind="entrega.IdOrden">
-                <option value="">-- Seleccione una orden --</option>
-                @foreach (var o in ordenes)
+            <select class="form-select" @bind="Entrega.IdOrden">
+                <option value="">-- Seleccione una fecha de entrega --</option>
+                @foreach (var orden in OrdenDetalleDisponibles)
                 {
-                    <option value="@o.Id">@o.FechaEntrega.ToShortDateString()</option>
+                    <option value="@orden.Id">
+                        @(orden.FechaEntrega.HasValue ?                                     
+                        orden.FechaEntrega.Value.ToString("dd/MM/yyyy") : "")
+                    </option>
                 }
             </select>
         </div>
+@* 
+        <div class="mb-3">
+            <label for="areaSelect" class="form-label">Área</label>
+            <select id="areaSelect" class="form-select" @bind="nuevaArea.AreaId">
+                <option value="">-- Seleccione un área --</option>
+                @foreach (var area in areasDisponibles)
+                {
+                    <option value="@area.Id">@area.NombreArea</option>
+                }
+            </select>
+        </div> *@
 
         <div class="mb-3">
           @*    <label class="form-label">Entregado</label>
@@ -32,7 +48,7 @@ else
                 <option value="false">No</option>
             </select>  *@
 
-            <InputSelect @bind-value="entrega.Entregado">
+            <InputSelect @bind-value="Entrega.Entregado">
                 <option value="">-- entregado --</option>
                 <option value="true">Sí</option>
                 <option value="false">No</option>
@@ -40,28 +56,17 @@ else
         </div>
 
         <div class="mb-3"> 
-            <InputSelect @bind-Value="entrega.MedioDePago">
-           @*      <option value="">-- Seleccione medio de pago --</option>
-                <option value="Tarjeta">Tarjeta</option>
-                <option value="Efectivo">Efectivo</option>
-                <option value="MercadoPago">MercadoPago</option>
-                <option value="Transferencia">Transferencia</option>
-                <option value="Criptomonedas">Criptomonedas</option> *@
-
-                
+            <InputSelect @bind-Value="Entrega.MedioDePago">
                 @foreach (var MedioDePago in MediosDePago)
                 {
                     <option value="@MedioDePago">@MedioDePago</option>
                 }
             </InputSelect>
- @*            <label class="form-label">Medio de pago</label>
-            <input class="form-control" @bind="entrega.MedioDePago" /> *@
         </div>
 
         <button class="btn btn-success" type="submit">Guardar</button>
         <button class="btn btn-secondary ms-2" @onclick="@(() => Cancelar())">Cancelar</button>
     </EditForm>
-}
 
 @code 
 {
@@ -75,13 +80,22 @@ else
     };
 
 
-    private CrearEntregaDTO entrega = new();
-    private List<OrdenDTO>? ordenes;
+    private CrearEntregaDTO Entrega = new();
+    private List<OrdenDTO>? Ordenes;
+    private List<OrdenDetalleDTO> OrdenDetalleDTOs = new List<OrdenDetalleDTO>();
+    private OrdenDetalleDTO OrdenDetalleDTO = new OrdenDetalleDTO();
+    [Parameter] public int OrdenId { get; set; }
+    private List<OrdenDetalleDTO> OrdenDetalleDisponibles = new List<OrdenDetalleDTO>();
+
+
 
     protected override async Task OnInitializedAsync()
     {
-        ordenes = await Http.GetFromJsonAsync<List<OrdenDTO>>("api/Ordenes");
-        entrega.MedioDePago = "Tarjeta";
+        OrdenDetalleDisponibles = await Http.GetFromJsonAsync<List<OrdenDetalleDTO>>("api/Ordenes");
+        Entrega.MedioDePago = "Tarjeta";
+        OrdenDetalleDisponibles = OrdenDetalleDisponibles
+            .Where(o => !o.FechaEntrega.Equals(null)) // Filtrar solo las órdenes sin entrega realizada
+            .ToList();
     }
 
     public void Cancelar()    
@@ -91,24 +105,11 @@ else
 
     private async Task Guardar()
     {
-        var resp = await Http.PostAsJsonAsync("/api/Entregas", entrega);
+        var resp = await Http.PostAsJsonAsync("/api/Entregas", Entrega);
         if (resp.IsSuccessStatusCode)
         {
             Nav.NavigateTo("/api/Entregas");
         }
     }
-
-    // DTOs auxiliares
-    public class CrearEntregaDTO
-    {
-        public string MedioDePago { get; set; } = string.Empty;
-        public bool Entregado { get; set; }
-        public int IdOrden { get; set; }
-    }
-
-    public class OrdenDTO
-    {
-        public int Id { get; set; }
-        public DateTime FechaEntrega { get; set; }
-    }
+ }    
 }

@@ -21,9 +21,6 @@ else
             @foreach (var item in insumosEnOrden)
             {
                 <tr>
-                    <td>@item.NroOT</td>
-                    <td>@item.NombreOrden</td>
-                    <td>@item.NombreInsumo</td>
                 </tr>
             }
         </tbody>
@@ -32,12 +29,10 @@ else
 
 @code 
 {
-    private List<InsumoEnOrdenVistaDTO> insumosEnOrden;
+    private List<InsumoDetalleOrdenDTO> insumosEnOrden;
 
     protected override async Task OnInitializedAsync()
     {
-        //insumosEnOrden = await Http.GetFromJsonAsync<List<InsumoEnOrdenVistaDTO>>("api/Insumos/InsumosEnLaOrden");//ESTA ES LA LINEA 41
-        //insumosEnOrden = await Http.GetFromJsonAsync<List<InsumoEnOrdenVistaDTO>>("api/Insumos/InsumosEnLaOrden");
-        insumosEnOrden = await Http.GetFromJsonAsync<List<InsumoEnOrdenVistaDTO>>("api/Ordenes/InsumosEnLaOrden");
+        insumosEnOrden = await Http.GetFromJsonAsync<List<InsumoDetalleOrdenDTO>>("api/Ordenes/Insumo_Detalle_Orden");
     }
 }

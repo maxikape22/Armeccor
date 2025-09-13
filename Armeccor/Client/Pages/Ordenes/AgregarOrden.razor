@@ -97,10 +97,12 @@
         <div class="form-group">
             <InputSelect @bind-Value="nuevaOrden.Estado">
                 <option value="">-- Seleccionar estado --</option>
-                <option value="Abierto">Abierto</option>
-                <option value="Cerrado">Cerrado</option>
-                <option value="Procesando">Procesando</option>
-                <option value="Iniciando">Iniciando</option>
+                <option value="Abierta">Abierta</option>
+                <option value="Cerrada">Cerrada</option>
+                <option value="Cancelada">Cancelada</option>
+                <option value="Procesada">Procesada</option>
+                <option value="Iniciada">Iniciada</option>
+                <option value="Finalizada">Finalizada</option>
             </InputSelect>
         </div>
 
@@ -115,12 +117,12 @@
             <InputDate class="form-control" @bind-Value="nuevaOrden.FechaPactada" />
             <ValidationMessage For="@(() => nuevaOrden.FechaPactada)" />
         </div>
-
+@* 
         <div class="form-group">
             <label>Fecha Entrega:</label>
             <InputDate class="form-control" @bind-Value="nuevaOrden.FechaEntrega" />
             <ValidationMessage For="@(() => nuevaOrden.FechaEntrega)" />
-        </div>
+        </div> *@
 
 
         <div class="form-group">

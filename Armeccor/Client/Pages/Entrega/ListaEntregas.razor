@@ -115,19 +115,11 @@ else
             entregas = entregas?.Where(e => e.Id != id).ToList();
         }
     }
-
-    //DTO local para el listado
-    // public class EntregaDetalleDTO
-    // {
-    //     public int Id { get; set; }
-    //     public DateTime FechaEntrega { get; set; }
-    //     public bool Entregado { get; set; }
-    //     public string MedioDePago { get; set; } = string.Empty;
-    // }
 }
 
 <style>
-    .toolbar {
+    .toolbar 
+    {
         display: flex;
         align-items: center;
         gap: .5rem;
