@@ -98,3 +98,12 @@ C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Client\obj\Debug\net9.0\static
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Client\obj\Debug\net9.0\staticwebassets.build.json
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Client\obj\Debug\net9.0\staticwebassets.build.json
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Client\obj\Debug\net9.0\staticwebassets.build.json
+C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Client\obj\Debug\net9.0\staticwebassets.build.json
+C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Client\obj\Debug\net9.0\staticwebassets.build.json
+C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Client\obj\Debug\net9.0\staticwebassets.build.json
+C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Client\obj\Debug\net9.0\staticwebassets.build.json
+C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Client\obj\Debug\net9.0\staticwebassets.build.json
+C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Client\obj\Debug\net9.0\staticwebassets.build.json
+C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Client\obj\Debug\net9.0\staticwebassets.build.json
+C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Client\obj\Debug\net9.0\staticwebassets.build.json
+C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Client\obj\Debug\net9.0\staticwebassets.build.json

@@ -10,14 +10,10 @@ using System.Text.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
-
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("conn"));
-});
 
 builder.Services.AddAutoMapper(typeof(Program));
 
@@ -26,6 +22,19 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "ArmecCor", Version = "v1" });
     c.SupportNonNullableReferenceTypes();
 });
+
+// ✅ COMIENZO DE LA CONFIGURACIÓN DE CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+});
+// ✅ FIN DE LA CONFIGURACIÓN DE CORS
 
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(x => x.JsonSerializerOptions
@@ -61,10 +70,14 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+// ✅ AQUÍ SE HABILITA EL MIDDLEWARE DE CORS
+app.UseCors("AllowAll");
+// ✅ FIN DE LA HABILITACIÓN DEL MIDDLEWARE DE CORS
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapRazorPages();
 app.MapFallbackToFile("index.html");
 app.Run();
-
