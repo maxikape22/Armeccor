@@ -1250,14 +1250,7 @@
         }
       },
       "System.Text.Json/9.0.8": {},
-      "System.Threading.Channels/9.0.9": {
-        "runtime": {
-          "lib/net9.0/System.Threading.Channels.dll": {
-            "assemblyVersion": "9.0.0.0",
-            "fileVersion": "9.0.925.41916"
-          }
-        }
-      },
+      "System.Threading.Channels/9.0.9": {},
       "System.Threading.Tasks.Extensions/4.5.4": {},
       "System.Windows.Extensions/6.0.0": {
         "dependencies": {

@@ -91,7 +91,6 @@ C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\System
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\System.Runtime.Caching.dll
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\System.Security.Permissions.dll
-C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\System.Threading.Channels.dll
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\System.Windows.Extensions.dll
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\cs\Microsoft.CodeAnalysis.resources.dll
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\de\Microsoft.CodeAnalysis.resources.dll
@@ -197,7 +196,6 @@ C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\obj\Debug\net9.0\static
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\obj\Debug\net9.0\staticwebassets.build.json.cache
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\obj\Debug\net9.0\staticwebassets.development.json
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\obj\Debug\net9.0\staticwebassets.build.endpoints.json
-C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\obj\Debug\net9.0\Armeccor.04ABED2E.Up2Date
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\obj\Debug\net9.0\Armeccor.Server.dll
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\obj\Debug\net9.0\refint\Armeccor.Server.dll

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "WI4PxwYMUrY=",
+  "dgSpecHash": "KLKtXWdF9ec=",
   "success": true,
   "projectFilePath": "C:\\Users\\BERSERKER\\Source\\Repos\\Armeccor\\Armeccor\\Client\\Armeccor.Client.csproj",
   "expectedPackageFiles": [
@@ -57,8 +57,8 @@
     "C:\\Users\\BERSERKER\\.nuget\\packages\\microsoft.identitymodel.tokens\\6.35.0\\microsoft.identitymodel.tokens.6.35.0.nupkg.sha512",
     "C:\\Users\\BERSERKER\\.nuget\\packages\\microsoft.jsinterop\\9.0.0\\microsoft.jsinterop.9.0.0.nupkg.sha512",
     "C:\\Users\\BERSERKER\\.nuget\\packages\\microsoft.jsinterop.webassembly\\9.0.0\\microsoft.jsinterop.webassembly.9.0.0.nupkg.sha512",
-    "C:\\Users\\BERSERKER\\.nuget\\packages\\microsoft.net.illink.tasks\\9.0.8\\microsoft.net.illink.tasks.9.0.8.nupkg.sha512",
-    "C:\\Users\\BERSERKER\\.nuget\\packages\\microsoft.net.sdk.webassembly.pack\\9.0.8\\microsoft.net.sdk.webassembly.pack.9.0.8.nupkg.sha512",
+    "C:\\Users\\BERSERKER\\.nuget\\packages\\microsoft.net.illink.tasks\\9.0.9\\microsoft.net.illink.tasks.9.0.9.nupkg.sha512",
+    "C:\\Users\\BERSERKER\\.nuget\\packages\\microsoft.net.sdk.webassembly.pack\\9.0.9\\microsoft.net.sdk.webassembly.pack.9.0.9.nupkg.sha512",
     "C:\\Users\\BERSERKER\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
     "C:\\Users\\BERSERKER\\.nuget\\packages\\microsoft.netcore.targets\\1.1.0\\microsoft.netcore.targets.1.1.0.nupkg.sha512",
     "C:\\Users\\BERSERKER\\.nuget\\packages\\microsoft.sqlserver.server\\1.0.0\\microsoft.sqlserver.server.1.0.0.nupkg.sha512",
