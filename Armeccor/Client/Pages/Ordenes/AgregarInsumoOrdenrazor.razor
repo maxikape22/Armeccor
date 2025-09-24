@@ -1,18 +1,18 @@
-﻿@page "/ListadoInsumosOrden"
+﻿@page "/AgregarInsumosOrden"
 @inject HttpClient Http
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
 
-<h3>Gestión de Insumos de la Orden</h3>
+<h3>Agregar Insumos a la Orden</h3>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div class="input-group" style="width: 48%;">
         <input class="form-control" placeholder="Buscar por nombre de insumo..." @bind="filtroNombre" />
         <button class="btn btn-primary" @onclick="BuscarPorNombre">Buscar</button>
     </div>
-    <div>
-        <button class="btn btn-success" @onclick="IrANuevoInsumo">+ Agregar Insumos a la Orden</button>
-    </div>
+    @*     <div>
+        <button class="btn btn-success" @onclick="IrANuevoInsumo">+ Nuevo Insumo</button>
+    </div> *@
 </div>
 
 @if (InsumoDTO == null)
@@ -26,6 +26,7 @@ else
             <tr>
                 <th>Nombre</th>
                 <th>Cantidad Disponible</th>
+                <th>Cantidad A Retirar</th>
                 <th style="width:120px">Acción</th>
             </tr>
         </thead>
@@ -38,7 +39,9 @@ else
                         <td>@i.Nombre</td>
                         <td>@i.CantDisponible</td>
                         <td>
-    @*                         <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => IrAEditarInsumo(i.Id)">
+                            <InputNumber @bind-Value="i.CantidadARetirar" class="form-control" />
+
+                            @*                         <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => IrAEditarInsumo(i.Id)">
                                 Editar
                             </button>
                             <button class="btn btn-sm btn-danger" @onclick="() => ConfirmarEliminar(i.Id)">
@@ -121,10 +124,10 @@ else
     // }
 
     //Eliminar
-    private void IrANuevoInsumo()
-    {
-        Navigation.NavigateTo("/AgregarInsumosOrden");
-    }
+    // private void IrANuevoInsumo()
+    // {
+    //     Navigation.NavigateTo("/api/Insumos/AgregarInsumo");
+    // }
 
     // private void IrAEditarInsumo(int id)
     // {
