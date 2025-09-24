@@ -83,7 +83,7 @@ else
     private string filtroEstado = "";
     private bool soloFinalizados = false;
     private OrdenDetalleDTO detalleDTO = new OrdenDetalleDTO();
-
+    private AreaDetalleOrdenDTO AreaDetalle = new AreaDetalleOrdenDTO();
     private HubConnection hubConnection;
 
 
@@ -92,14 +92,39 @@ else
         SeleccionAreas = (string[])e.Value;
     }
 
-    protected override async Task OnInitializedAsync()
+   @*  protected override async Task OnInitializedAsync()
     {
-        if (NroOT > 0)
+        AreaDetalle.NroOT = NroOT;
+        if (NroOT > AreaDetalle.NroOT)
         {
             areasDetalle = await Http.GetFromJsonAsync<List<AreaDetalleOrdenListaDTO>>($"api/Area_Detalle_Orden/{NroOT}");
         }
         ordenDetalleDTO.NroOT = NroOT;
+    } *@
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        AreaDetalle.NroOT = NroOT;
+        ordenDetalleDTO.NroOT = NroOT;
+
+        try
+        {
+            areasDetalle = await Http.GetFromJsonAsync<List<AreaDetalleOrdenListaDTO>>(
+                $"api/Area_Detalle_Orden/{NroOT}");
+
+            if (areasDetalle == null || !areasDetalle.Any())
+            {
+                Console.WriteLine($"No se encontraron áreas para la orden NroOT {NroOT}");
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            Console.WriteLine($"Error al obtener áreas: {ex.Message}");
+        }
+        
     }
+
 
    
     private void Volver()

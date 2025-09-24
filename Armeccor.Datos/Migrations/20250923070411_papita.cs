@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Armeccor.Datos.Migrations
 {
     /// <inheritdoc />
-    public partial class Migracion : Migration
+    public partial class papita : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

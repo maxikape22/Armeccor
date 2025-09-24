@@ -26,7 +26,7 @@ builder.Services.AddSwaggerGen(c =>
 // ✅ COMIENZO DE LA CONFIGURACIÓN DE CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
+    options.AddPolicy("AllowAllOrigins",
         policy =>
         {
             policy.AllowAnyOrigin()
@@ -72,7 +72,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 // ✅ AQUÍ SE HABILITA EL MIDDLEWARE DE CORS
-app.UseCors("AllowAll");
+app.UseCors("AllowAllOrigins");
 // ✅ FIN DE LA HABILITACIÓN DEL MIDDLEWARE DE CORS
 
 app.UseAuthentication();

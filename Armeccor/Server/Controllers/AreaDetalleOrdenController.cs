@@ -115,31 +115,34 @@ namespace Armeccor.Server.Controllers
             return Ok(resultDto);
         }
 
-        [HttpPost("AreaDetallaEnOrden")]
-        public async Task<ActionResult<AreaDetalleOrdenDTO>> PostAreaDetalleOrden(AreaDetalleOrdenDTO dto)
-        {
-            // Validar que existan las relaciones
-            if (!await context.Ordenes.AnyAsync(o => o.Id == dto.OrdenId))
-                return BadRequest($"La Orden con Id {dto.OrdenId} no existe.");
 
-            if (!await context.Areas.AnyAsync(a => a.Id == dto.AreaId))
-                return BadRequest($"El Área con Id {dto.AreaId} no existe.");
+        //Metodo original
 
-            var entity = _mapper.Map<AreaDetalleOrden>(dto);
-            context.AreaDetalleOrdenes.Add(entity);
+        //[HttpPost("AreaDetallaEnOrden")]
+        //public async Task<ActionResult<AreaDetalleOrdenDTO>> PostAreaDetalleOrden(AreaDetalleOrdenDTO dto)
+        //{
+        //    // Validar que existan las relaciones
+        //    if (!await context.Ordenes.AnyAsync(o => o.Id == dto.OrdenId))
+        //        return BadRequest($"La Orden con Id {dto.OrdenId} no existe.");
 
-            await context.SaveChangesAsync();
+        //    if (!await context.Areas.AnyAsync(a => a.Id == dto.AreaId))
+        //        return BadRequest($"El Área con Id {dto.AreaId} no existe.");
 
-            // Incluir el Nombre del área para devolverlo al front
-            var result = await context.AreaDetalleOrdenes
-                .Include(x => x.Area)
-                .FirstOrDefaultAsync(x => x.Id == entity.Id);
+        //    var entity = _mapper.Map<AreaDetalleOrden>(dto);
+        //    context.AreaDetalleOrdenes.Add(entity);
 
-            var resultDto = _mapper.Map<AreaDetalleOrdenDTO>(result);
-            resultDto.NombreArea = result.Area?.NombreArea;
+        //    await context.SaveChangesAsync();
 
-            return Ok(resultDto);
-        }
+        //    // Incluir el Nombre del área para devolverlo al front
+        //    var result = await context.AreaDetalleOrdenes
+        //        .Include(x => x.Area)
+        //        .FirstOrDefaultAsync(x => x.Id == entity.Id);
+
+        //    var resultDto = _mapper.Map<AreaDetalleOrdenDTO>(result);
+        //    resultDto.NombreArea = result.Area?.NombreArea;
+
+        //    return Ok(resultDto);
+        //}
 
 
         //[HttpPut("{id}/Estado")]
@@ -154,6 +157,47 @@ namespace Armeccor.Server.Controllers
         //    await context.SaveChangesAsync();
         //    return Ok(areaDetalle);
         //}
+
+        //Metodo modificado que no sirve para bosta
+
+        [HttpPost("AreaDetallaEnOrden")]
+        public async Task<ActionResult<AreaDetalleOrdenDTO>> PostAreaDetalleOrden(AreaDetalleOrdenDTO dto)
+        {
+            // ✅ Si viene NroOT, buscar el OrdenId
+            if (dto.NroOT.HasValue)
+            {
+                var orden = await context.Ordenes
+                    .FirstOrDefaultAsync(o => o.NroOT == dto.NroOT.Value);
+
+                if (orden == null)
+                    return BadRequest($"No existe la orden con NroOT {dto.NroOT}");
+
+                dto.OrdenId = orden.Id;
+            }
+
+            // ✅ Validar existencia de OrdenId y AreaId
+            if (!await context.Ordenes.AnyAsync(o => o.Id == dto.OrdenId))
+                return BadRequest($"La Orden con Id {dto.OrdenId} no existe.");
+
+            if (!await context.Areas.AnyAsync(a => a.Id == dto.AreaId))
+                return BadRequest($"El Área con Id {dto.AreaId} no existe.");
+
+            // ✅ Guardar entidad
+            var entity = _mapper.Map<AreaDetalleOrden>(dto);
+            context.AreaDetalleOrdenes.Add(entity);
+            await context.SaveChangesAsync();
+
+            // ✅ Incluir nombre del área en la respuesta
+            var result = await context.AreaDetalleOrdenes
+                .Include(x => x.Area)
+                .FirstOrDefaultAsync(x => x.Id == entity.Id);
+
+            var resultDto = _mapper.Map<AreaDetalleOrdenDTO>(result);
+            resultDto.NombreArea = result.Area?.NombreArea;
+
+            return Ok(resultDto);
+        }
+
 
         [HttpPut("{id}/Estado")]
         public async Task<ActionResult<AreaDetalleOrdenListaDTO>> CambiarEstado(int id, [FromBody] AreaDetalleOrdenListaDTO dto)

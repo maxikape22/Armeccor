@@ -998,6 +998,32 @@
     ]
   },
   {
+    "ContainingType": "Armeccor.Server.Controllers.OrdenesController",
+    "Method": "GetOrdenIdPorNroOT",
+    "RelativePath": "api/Ordenes/SoloOrdenIdPorNroOT/{nroOT}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "nroOT",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Int32",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "Armeccor.Server.Controllers.PlanoController",
     "Method": "GetPlanos",
     "RelativePath": "api/Planos",

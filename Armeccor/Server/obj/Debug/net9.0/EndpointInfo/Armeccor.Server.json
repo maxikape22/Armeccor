@@ -1397,6 +1397,49 @@
         }
       }
     },
+    "/api/Ordenes/SoloOrdenIdPorNroOT/{nroOT}": {
+      "get": {
+        "tags": [
+          "Ordenes"
+        ],
+        "parameters": [
+          {
+            "name": "nroOT",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Ordenes/{id}": {
       "put": {
         "tags": [
@@ -1858,6 +1901,11 @@
         "type": "object",
         "properties": {
           "ordenId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "nroOT": {
             "type": "integer",
             "format": "int32",
             "nullable": true
@@ -2400,13 +2448,6 @@
           },
           "areaActual": {
             "type": "string",
-            "nullable": true
-          },
-          "areasDeLaOrden": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AreaDetalleOrdenListaDTO"
-            },
             "nullable": true
           }
         },

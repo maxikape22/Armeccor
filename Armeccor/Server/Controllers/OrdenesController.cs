@@ -25,6 +25,55 @@ namespace Armeccor.Server.Controllers
             this._mapper = mapper;
         }
 
+
+        //[HttpGet("PorNroOT/{nroOT:int}")]
+        ////[HttpGet("{nroOT:int}")]
+
+        //public async Task<ActionResult<OrdenDetalleDTO>> GetPorNroOT(int nroOT)
+        //{
+        //    var orden = await context.Ordenes.Include(c=>c.Cliente)
+        //        .FirstOrDefaultAsync(o => o.NroOT == nroOT);
+
+        //    if (orden == null)
+
+        //        return NotFound();
+
+
+        //    return _mapper.Map<OrdenDetalleDTO>(orden);
+        //}
+
+
+        //[HttpGet("NroOT/(OT:int)")]
+        //public async Task<ActionResult<OrdenDetalleDTO>> GetPorNroOT(int nroOT)
+        //{
+        //    var orden = await context.Ordenes
+        //        .AnyAsync(o => o.NroOT == nroOT);
+
+        //    //if (orden == null) return NotFound();
+
+        //    return _mapper.Map<OrdenDetalleDTO>(orden);
+        //}
+
+        [HttpGet("SoloOrdenIdPorNroOT/{nroOT:int}")]
+        public async Task<ActionResult<int>> GetOrdenIdPorNroOT(int nroOT)
+        {
+            var ordenId = await context.Ordenes
+                .Where(o => o.NroOT == nroOT)
+                .Select(o => o.Id)
+                .FirstOrDefaultAsync();
+
+            if (ordenId == 0)
+                return NotFound();
+
+            return Ok(ordenId);
+        }
+
+
+
+
+
+
+
         //Para hacer que el cambio de estado asigne la fecha de entrega al momento de cambiar de estado
 
         [HttpPut("{id:int}")]
