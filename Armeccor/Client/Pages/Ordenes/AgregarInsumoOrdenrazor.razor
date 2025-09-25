@@ -129,6 +129,10 @@ else
                 insumo.CantDisponible = resultado.InsumoActualizado.CantDisponible;
                 insumo.CantidadARetirar = null;
 
+                // Forzar renderizado
+                StateHasChanged();
+
+
                 await JS.InvokeVoidAsync("alert",
                     $"Se agregó {resultado.DetalleOrden.Cantidad} de {insumo.Nombre} a la orden {ordenId}. Stock restante: {insumo.CantDisponible}");
             }
