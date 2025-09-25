@@ -11,7 +11,7 @@
         "projectName": "Armeccor.Datos",
         "projectPath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj",
         "packagesPath": "C:\\Users\\Maxx\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Armeccor.Datos\\obj\\",
+        "outputPath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor.Datos\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -103,7 +103,7 @@
         "projectName": "Armeccor.Client",
         "projectPath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor\\Client\\Armeccor.Client.csproj",
         "packagesPath": "C:\\Users\\Maxx\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Armeccor\\Client\\obj\\",
+        "outputPath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor\\Client\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -208,7 +208,7 @@
         "projectName": "DTO",
         "projectPath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\DTO\\DTO.csproj",
         "packagesPath": "C:\\Users\\Maxx\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\DTO\\obj\\",
+        "outputPath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\DTO\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

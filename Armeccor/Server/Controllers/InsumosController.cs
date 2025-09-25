@@ -28,6 +28,7 @@ namespace Armeccor.Server.Controllers
             return Ok(insumos);
         }
 
+
         [HttpGet("{id:int}")]
         public async Task<ActionResult<CrearInsumoDTO>> GetInsumoPorId(int id)
         {
@@ -88,5 +89,9 @@ namespace Armeccor.Server.Controllers
             await context.SaveChangesAsync();
             return NoContent();
         }
+
+
+
+
     }
 }
