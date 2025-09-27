@@ -1,7 +1,9 @@
-﻿@page "/ListadoInsumosOrden"
+﻿@page "/ListadoInsumosOrden/{NroOT:int}"
 @inject HttpClient Http
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
+@using Microsoft.AspNetCore.SignalR.Client
+
 
 <h3>Gestión de Insumos de la Orden </h3>
 
@@ -25,7 +27,7 @@ else
         <thead>
             <tr>
                 <th>Nombre</th>
-                <th>Cantidad Disponible</th>
+                <th>Cantidad</th>
                 <th style="width:120px">Acción</th>
             </tr>
         </thead>
@@ -35,15 +37,10 @@ else
                 @foreach (var i in InsumoDTOFiltrados)
                 {
                     <tr>
-                        <td>@i.OrdenId</td>
-                        <td>@i.Cantidad</td>
+                        <td>@i.Nombre</td>    @* 👈 Mostrar el nombre real del insumo *@
+                        <td>@i.Cantidad</td>  @* 👈 Mostrar la cantidad agrupada *@
                         <td>
-    @*                         <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => IrAEditarInsumo(i.Id)">
-                                Editar
-                            </button>
-                            <button class="btn btn-sm btn-danger" @onclick="() => ConfirmarEliminar(i.Id)">
-                                Eliminar
-                            </button> *@
+                            @* Botones de acción acá si querés *@
                         </td>
                     </tr>
                 }
@@ -54,6 +51,7 @@ else
             }
         </tbody>
     </table>
+
 }
 
 @code {
@@ -61,17 +59,29 @@ else
     private List<InsumoDetalleOrdenDTO> InsumoDTOFiltrados = new(); // Lista filtrada
     private InsumoDetalleOrdenDTO insumoDTO = new InsumoDetalleOrdenDTO();
     private string filtroNombre = string.Empty;
+    [Parameter] public int NroOT { get; set; }
+
+    
 
     protected override async Task OnInitializedAsync()
     {
         await Cargar();
     }
 
+    // private async Task Cargar()  ultimo que comente
+    // {
+    //     insumoDTO.NroOT =NroOT;
+    //     InsumoDTO = await Http.GetFromJsonAsync<List<InsumoDetalleOrdenDTO>>("api/Insumo_Detalle_Orden") ?? new();
+    //     InsumoDTOFiltrados = InsumoDTO;
+    // }
+
     private async Task Cargar()
     {
-        InsumoDTO = await Http.GetFromJsonAsync<List<InsumoDetalleOrdenDTO>>("api/Insumo_Detalle_Orden") ?? new();
+        var url = $"api/Insumo_Detalle_Orden/AgrupadosPorOrden/{NroOT}";
+        InsumoDTO = await Http.GetFromJsonAsync<List<InsumoDetalleOrdenDTO>>(url) ?? new();
         InsumoDTOFiltrados = InsumoDTO;
     }
+
 
     // // // // // // private void BuscarPorNombre()
     // // // // // // {
@@ -121,11 +131,14 @@ else
     // }
 
     //Eliminar
+    // private void IrANuevoInsumo()
+    // {
+    //     Navigation.NavigateTo("/AgregarInsumosOrden");
+    // }
     private void IrANuevoInsumo()
     {
-        Navigation.NavigateTo("/AgregarInsumosOrden");
+        Navigation.NavigateTo($"/AgregarInsumosOrden/{NroOT}");
     }
-
     // private void IrAEditarInsumo(int id)
     // {
     //     Navigation.NavigateTo($"/api/Insumos/Editar/{id}");

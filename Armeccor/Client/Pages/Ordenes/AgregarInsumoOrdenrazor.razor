@@ -1,4 +1,4 @@
-﻿@page "/AgregarInsumosOrden"
+﻿@page "/AgregarInsumosOrden/{NroOT:int}"
 @inject HttpClient Http
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
@@ -73,10 +73,20 @@ else
     private CrearInsumoDTO insumoDTO = new CrearInsumoDTO();
     private string filtroNombre = string.Empty;
 
+    [Parameter] public int NroOT { get; set; }
+
+    private int ordenId;
+
     protected override async Task OnInitializedAsync()
     {
+        ordenId = NroOT; // ✅ el id viene desde la URL
         await Cargar();
     }
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     await Cargar();
+    // }
 
     private async Task Cargar()
     {
@@ -98,7 +108,7 @@ else
         }
     }
 
-    private int ordenId = 1; // 👈 Ejemplo: el id de la orden actual. Podés pasarlo como parámetro.
+    // private int ordenId = 1; // 👈 Ejemplo: el id de la orden actual. Podés pasarlo como parámetro.
 
     private async Task AgregarInsumoAOrden(CrearInsumoDTO insumo)
     {

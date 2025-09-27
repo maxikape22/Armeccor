@@ -77,6 +77,27 @@ namespace Armeccor.Server.Controllers
                 Detalle = _mapper.Map<InsumoDetalleOrdenDTO>(detalle)
             });
         }
+        //agrupar insumos de la orden
+        [HttpGet("AgrupadosPorOrden/{ordenId:int}")]
+        public async Task<ActionResult> GetInsumosAgrupadosPorOrden(int ordenId)
+        {
+            var query = await context.InsumoDetalleOrdenes
+    .Include(x => x.Insumo)
+    .Where(x => x.OrdenId == ordenId)
+    .GroupBy(x => new { x.InsumoId, x.Insumo.Nombre })
+    .Select(g => new InsumoDetalleOrdenDTO
+    {
+        InsumoId = g.Key.InsumoId.Value,   // 👈 corrección
+        Nombre = g.Key.Nombre,
+        Cantidad = g.Sum(x => x.Cantidad),
+        OrdenId = ordenId
+    })
+    .ToListAsync();
+
+
+            return Ok(query);
+        }
+
 
     }
 }

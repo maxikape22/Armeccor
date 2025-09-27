@@ -535,7 +535,9 @@
 
     private void ViewSupplies(int id)
     {
-        JSRuntime.InvokeVoidAsync("alert", $"Ver insumos para la Orden ID: {id}");
+        navigationManager.NavigateTo($"/ListadoInsumosOrden/{id}");
+
+        // JSRuntime.InvokeVoidAsync("alert", $"Ver insumos para la Orden ID: {id}");
     }
 
     // 🗑️ Flujo de eliminación con modal
@@ -631,8 +633,8 @@
 
     private void MenuViewSupplies(int id)
     {
-        navigationManager.NavigateTo($"/ListadoInsumosOrden");
-        //ViewSupplies(id);
+        // navigationManager.NavigateTo($"/ListadoInsumosOrden");
+        ViewSupplies(id);
         CloseDropdown();
     }
 
