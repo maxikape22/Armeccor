@@ -263,8 +263,28 @@ namespace Armeccor.Server.Mapeos
 
             CreateMap<Entrega, EntregaDetalleDTO>()
                 .ForMember(dest => dest.FechaEntrega,
-                    opt => opt.MapFrom(src => src.Orden != null ? src.Orden.FechaEntrega : DateTime.MinValue))
+                    opt => opt
+                    .MapFrom(src => src.Orden != null ? src.Orden.FechaEntrega : DateTime.MinValue))
+                .ForMember(dest => dest.MedioDePago,
+                   opt => opt.
+                   MapFrom(src => src.Medio_De_Pago != null ? src.Medio_De_Pago.Nombre_Medio : string.Empty))
                 .ReverseMap();
+
+            // Para mostrar Entregas (DTO con Nombre del medio)
+            CreateMap<Entrega, CrearEntregaDTO>()
+                .ForMember(dest => dest.MedioDePagoId, opt => opt.MapFrom(src => src.Medio_De_Pago.Nombre_Medio));
+
+
+            //Esta configuracion hace que la fecha de entrega salga como 01/01/0001
+            //CreateMap<Entrega, EntregaDetalleDTO>()
+                //.ForMember(dest => dest.MedioDePago,
+                //   opt => opt.
+                //   MapFrom(src => src.Medio_De_Pago != null ? src.Medio_De_Pago.Nombre_Medio : string.Empty));
+
+            // Para crear nuevas Entregas (se recibe MedioDePagoId)
+            CreateMap<CrearEntregaDTO, Entrega>()
+                .ForMember(dest => dest.MedioDePagoId, opt => opt.MapFrom(src => src.MedioDePagoId));
+
 
             // ================== INSUMO ==================
             CreateMap<CrearInsumoDTO, Insumo>().ReverseMap();
@@ -290,6 +310,15 @@ namespace Armeccor.Server.Mapeos
                 .ForMember(dest => dest.OrdenId, opt => opt.Ignore())
                 .ForMember(dest => dest.AreaId, opt => opt.Ignore());
 
+            // ================== MEDIO DE PAGO ==================
+
+            CreateMap<MedioDePago, MedioDePagoDTO>().ForMember(x => x.Nombre_Medio, y => y.MapFrom(z => z.Nombre_Medio));
+            CreateMap<MedioDePagoDTO, MedioDePago>().ForMember(x => x.Nombre_Medio, y => y.MapFrom(z => z.Nombre_Medio));
+
+            // ================== NOTIFICACIÓN ==================
+
+            CreateMap<Notificacion, NotificacionDTO>();
+            CreateMap<NotificacionDTO, Notificacion>();
         }
     } 
 }

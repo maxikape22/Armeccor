@@ -9,5 +9,6 @@
         public string Descripcion { get; set; }
         public string Estado { get; set; }
         public int Tiempo { get; set; }
+        public string Comentario { get; set; }
     }
 }

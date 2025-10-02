@@ -1,0 +1,82 @@
+﻿@inject INotificationService NotificationService
+@using System.Timers
+
+<div class="notification-bell-wrapper">
+    <button class="bell-btn" @onclick="ToggleDropdown">
+        <i class="fas fa-bell bell-icon @(UnreadCount > 0 ? "has-notif" : "")"></i>
+        @if (UnreadCount > 0)
+        {
+            <span class="badge">@UnreadCount</span>
+        }
+    </button>
+
+    @if (ShowDropdown)
+    {
+        <div class="notif-panel-right">
+            <div class="notif-header">
+                <span>Notificaciones</span>
+                <button class="mark-read-btn" @onclick="MarkAllAsRead">Marcar todo leído</button>
+                <button class="clear-btn" @onclick="DeleteNotifications">Limpiar</button>
+            </div>
+
+            @if (Notificaciones.Any())
+            {
+                <ul class="notif-list">
+                    @foreach (var notif in Notificaciones.OrderByDescending(n => n.Fecha))
+                    {
+                        <li class="notif-item @(notif.EsLeida ? "" : "unread")">
+                            <strong>@notif.Tipo:</strong> @notif.Mensaje
+                            <br />
+                            <small>@notif.Fecha.ToString("dd/MM/yyyy HH:mm")</small>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <div class="notif-empty">Sin notificaciones</div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private bool ShowDropdown = false;
+    private List<NotificacionDTO> Notificaciones = new();
+    private Timer refreshTimer;
+
+    private void ToggleDropdown() => ShowDropdown = !ShowDropdown;
+
+    private int UnreadCount => Notificaciones.Count(n => !n.EsLeida);
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadNotifications();
+
+        // 🔄 Actualización automática cada 30 segundos
+        refreshTimer = new Timer(1000);
+        refreshTimer.Elapsed += async (_, __) => await InvokeAsync(LoadNotifications);
+        refreshTimer.Start();
+    }
+
+    private async Task LoadNotifications()
+    {
+        Notificaciones = await NotificationService.GetAllAsync();
+        StateHasChanged();
+    }
+
+    private async Task MarkAllAsRead()
+    {
+        await NotificationService.MarcarTodasComoLeidas();
+        await LoadNotifications(); // 🔁 Refresca desde la base
+        ShowDropdown = false;
+    }
+
+
+    private async Task DeleteNotifications()
+    {
+        await NotificationService.LimpiarTodas();
+        Notificaciones.Clear(); // 🧼 Limpia en memoria
+        ShowDropdown = false;
+    }
+}

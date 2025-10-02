@@ -1,10 +1,12 @@
 ﻿@page "/entregas/nueva"
-@using System.Text.Json
+@using DTO.ObjetosDTO
+@using System.Net.Http.Json
 @inject HttpClient Http
 @inject NavigationManager Nav
 @inject IJSRuntime JS
 
 <h3>Nueva entrega</h3>
+
 
 @if (OrdenDetalleDTOs is null)
 {
@@ -23,93 +25,129 @@ else
                 @foreach (var orden in OrdenDetalleDisponibles)
                 {
                     <option value="@orden.Id">
-                        @(orden.FechaEntrega.HasValue ?                                     
+                        @(orden.FechaEntrega.HasValue ?              
                         orden.FechaEntrega.Value.ToString("dd/MM/yyyy") : "")
-                    </option>
+                    </option>                    
                 }
             </select>
         </div>
-@* 
-        <div class="mb-3">
-            <label for="areaSelect" class="form-label">Área</label>
-            <select id="areaSelect" class="form-select" @bind="nuevaArea.AreaId">
-                <option value="">-- Seleccione un área --</option>
-                @foreach (var area in areasDisponibles)
-                {
-                    <option value="@area.Id">@area.NombreArea</option>
-                }
-            </select>
-        </div> *@
 
         <div class="mb-3">
-          @*    <label class="form-label">Entregado</label>
-            <select class="form-select" @bind="entrega.Entregado">
-                <option value="true">Sí</option>
+            <label class="form-label">¿Entregado?</label>
+            <InputSelect @bind-Value="Entrega.Entregado" class="form-select">
                 <option value="false">No</option>
-            </select>  *@
-
-            <InputSelect @bind-value="Entrega.Entregado">
-                <option value="">-- entregado --</option>
                 <option value="true">Sí</option>
-                <option value="false">No</option>
-            </InputSelect> 
-        </div>
-
-        <div class="mb-3"> 
-            <InputSelect @bind-Value="Entrega.MedioDePago">
-                @foreach (var MedioDePago in MediosDePago)
-                {
-                    <option value="@MedioDePago">@MedioDePago</option>
-                }
             </InputSelect>
         </div>
 
-        <button class="btn btn-success" type="submit">Guardar</button>
-        <button class="btn btn-secondary ms-2" @onclick="@(() => Cancelar())">Cancelar</button>
+        <div class="mb-3">
+            <label class="form-label">Medio de pago</label>
+            <select class="form-select" @onchange="OnMedioChange">
+                <option value="0">-- Seleccione medio --</option>
+                @foreach (var medio in MediosDePago)
+                {
+                    <option value="@medio.Id">@medio.Nombre_Medio</option>
+                }
+                <option value="-1">Otro medio...</option>
+            </select>
+        </div>
+
+        @if (otroMedio)
+        {
+            <div class="mb-3">
+                <label class="form-label">Ingrese nuevo medio</label>
+                <input class="form-control" @bind="nuevoMedioNombre" />
+            </div>
+        }
+
+        <div class="d-flex gap-2">
+            <button class="btn btn-success" type="submit">Guardar</button>
+            <button class="btn btn-secondary" type="button" @onclick="Cancelar">Cancelar</button>
+        </div>
     </EditForm>
+}
 
-@code 
-{
-    private List<string> MediosDePago = new List<string>
-    {
-        "Tarjeta",
-        "Efectivo",
-        "MercadoPago",
-        "Transferencia",
-        "Criptomonedas"
-    };
-
-
-    private CrearEntregaDTO Entrega = new();
-    private List<OrdenDTO>? Ordenes;
-    private List<OrdenDetalleDTO> OrdenDetalleDTOs = new List<OrdenDetalleDTO>();
-    private OrdenDetalleDTO OrdenDetalleDTO = new OrdenDetalleDTO();
-    [Parameter] public int OrdenId { get; set; }
-    private List<OrdenDetalleDTO> OrdenDetalleDisponibles = new List<OrdenDetalleDTO>();
-
-
+@code {
+    private bool isLoading = true;
+    private List<Armeccor.Datos.Entidades.MedioDePago> MediosDePago = new();
+    private List<OrdenDetalleDTO> OrdenDetalleDTOs = new();
+    private List<OrdenDetalleDTO> OrdenDetalleDisponibles = new();
+    private CrearEntregaDTO Entrega = new CrearEntregaDTO();
+    private bool otroMedio = false;
+    private string nuevoMedioNombre = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        OrdenDetalleDisponibles = await Http.GetFromJsonAsync<List<OrdenDetalleDTO>>("api/Ordenes");
-        Entrega.MedioDePago = "Tarjeta";
-        OrdenDetalleDisponibles = OrdenDetalleDisponibles
-            .Where(o => !o.FechaEntrega.Equals(null)) // Filtrar solo las órdenes sin entrega realizada
-            .ToList();
+        try
+        {
+            MediosDePago = await Http.GetFromJsonAsync<List<MedioDePago>>("api/MediosDePago") ?? new List<Armeccor.Datos.Entidades.MedioDePago>();
+            var ordenes = await Http.GetFromJsonAsync<List<OrdenDetalleDTO>>("api/Ordenes");
+            OrdenDetalleDisponibles = ordenes ?? new List<OrdenDetalleDTO>();
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("alert", $"Error cargando datos: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 
-    public void Cancelar()    
+    private void OnMedioChange(ChangeEventArgs e)
     {
-        Nav.NavigateTo("/api/Entregas");
+        if (int.TryParse(e?.Value?.ToString(), out var v))
+        {
+            if (v == -1)
+            {
+                otroMedio = true;
+                Entrega.MedioDePagoId = 0;
+            }
+            else
+            {
+                otroMedio = false;
+                Entrega.MedioDePagoId = v;
+                nuevoMedioNombre = string.Empty;
+            }
+        }
     }
 
     private async Task Guardar()
     {
-        var resp = await Http.PostAsJsonAsync("/api/Entregas", Entrega);
+        // Si eligió "otro medio" y no puso nombre -> error
+        if (otroMedio)
+        {
+            if (string.IsNullOrWhiteSpace(nuevoMedioNombre))
+            {
+                await JS.InvokeVoidAsync("alert", "Ingrese el nombre del nuevo medio de pago.");
+                return;
+            }
+            Entrega.NuevoMedio = nuevoMedioNombre;
+            Entrega.MedioDePagoId = 0;
+        }
+
+        // Validaciones básicas
+        if (Entrega.IdOrden <= 0)
+        {
+            await JS.InvokeVoidAsync("alert", "Debe seleccionar una orden.");
+            return;
+        }
+
+        var resp = await Http.PostAsJsonAsync("api/Entregas", Entrega);
         if (resp.IsSuccessStatusCode)
         {
+            await JS.InvokeVoidAsync("alert", "Entrega guardada.");
             Nav.NavigateTo("/api/Entregas");
         }
+        else
+        {
+            var msg = await resp.Content.ReadAsStringAsync();
+            await JS.InvokeVoidAsync("alert", $"Error al guardar: {msg}");
+        }
     }
- }    
+
+    private void Cancelar()
+    {
+        Nav.NavigateTo("/api/Entregas");
+    }
 }

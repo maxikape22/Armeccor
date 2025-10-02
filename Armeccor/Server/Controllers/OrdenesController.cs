@@ -26,34 +26,6 @@ namespace Armeccor.Server.Controllers
         }
 
 
-        //[HttpGet("PorNroOT/{nroOT:int}")]
-        ////[HttpGet("{nroOT:int}")]
-
-        //public async Task<ActionResult<OrdenDetalleDTO>> GetPorNroOT(int nroOT)
-        //{
-        //    var orden = await context.Ordenes.Include(c=>c.Cliente)
-        //        .FirstOrDefaultAsync(o => o.NroOT == nroOT);
-
-        //    if (orden == null)
-
-        //        return NotFound();
-
-
-        //    return _mapper.Map<OrdenDetalleDTO>(orden);
-        //}
-
-
-        //[HttpGet("NroOT/(OT:int)")]
-        //public async Task<ActionResult<OrdenDetalleDTO>> GetPorNroOT(int nroOT)
-        //{
-        //    var orden = await context.Ordenes
-        //        .AnyAsync(o => o.NroOT == nroOT);
-
-        //    //if (orden == null) return NotFound();
-
-        //    return _mapper.Map<OrdenDetalleDTO>(orden);
-        //}
-
         [HttpGet("SoloOrdenIdPorNroOT/{nroOT:int}")]
         public async Task<ActionResult<int>> GetOrdenIdPorNroOT(int nroOT)
         {
@@ -67,12 +39,6 @@ namespace Armeccor.Server.Controllers
 
             return Ok(ordenId);
         }
-
-
-
-
-
-
 
         //Para hacer que el cambio de estado asigne la fecha de entrega al momento de cambiar de estado
 
@@ -186,6 +152,11 @@ namespace Armeccor.Server.Controllers
             }
 
             var orden = _mapper.Map<Orden>(crearOrdenDTO);
+
+            //if (orden.NroOT.Equals(crearOrdenDTO.NroOT))
+            //{
+            //    return Conflict($"La orden {orden.NroOT} ya existe. No se puede agregar de nuevo");
+            //}
 
             context.Ordenes.Add(orden);
 

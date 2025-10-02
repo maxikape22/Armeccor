@@ -4,15 +4,7 @@
 @inject IJSRuntime JS
 @using Microsoft.AspNetCore.SignalR.Client
 
-
 <h3>Áreas detalladas de la Orden</h3>
-
-@* <div class="d-flex justify-content-end mb-3">
-    <button class="btn btn-danger" @onclick="AgregarArea">
-        ➕ Agregar Área
-    </button>
-</div> *@
-
 
 <div class="d-flex justify-content-between mb-3">
     <div>
@@ -41,10 +33,12 @@ else
     <table class="table table-bordered">
         <thead>
             <tr>
+                <th>Nro de orden</th>
                 <th>Nombre del área</th>
                 <th>Descripción</th>
                 <th>Estado</th>
                 <th>Tiempo</th>
+                <th>Comentario</th> @* 🔹 Nueva columna persistente *@
                 <th>Acción</th>
             </tr>
         </thead>
@@ -52,56 +46,41 @@ else
             @foreach (var area in FiltrarAreas())
             {
                 <tr>
+                    <td>@ordenDetalleDTO.NroOT</td>
                     <td>@area.NombreArea</td>
                     <td>@area.Descripcion</td>
                     <td>@area.Estado</td>
                     <td>@area.Tiempo</td>
                     <td>
+                        <input type="text" class="form-control"
+                               @bind="area.Comentario"
+                               @bind:event="oninput"
+                               @onchange="() => GuardarComentario(area)" />
+                    </td>
+                    <td>
                         <select class="form-select" @onchange="async e => await CambiarEstado(area.Id,e)">
                             <option value="Pendiente">Pendiente</option>
                             <option value="Finalizado">Finalizado</option>
                         </select>
-                        <button class="btn btn-sm btn-danger mt-1" @onclick="async () => await EliminarArea(area.Id)">Eliminar</button>
+                        <button class="btn btn-sm btn-danger mt-1" 
+                                @onclick="async () => await EliminarArea(area.Id)">
+                            Eliminar
+                        </button>
                     </td>
                 </tr>
             }
-    </tbody>
-</table>
- <button class="btn btn-secondary mt-3" @onclick="Volver">Volver</button>
+        </tbody>
+    </table>
+    <button class="btn btn-secondary mt-3" @onclick="Volver">Volver</button>
+}
 
-@code
-    {
+@code {
     [Parameter] public int NroOT { get; set; }
-    public string[] SeleccionAreas { get; set; } = new String[] { };
-
     private List<AreaDetalleOrdenListaDTO> areasDetalle = new();
-    private List<AreaDTO> todasLasAreas = new();
-    private List<AreaListaDTO> Areas = new List<AreaListaDTO>();
-    private AreaListaDTO Area = new AreaListaDTO();
-    private Area AreaDTO = new Area();
-    private Dictionary<int, string> NombreAreaDiccionario = new();
     private string filtroEstado = "";
     private bool soloFinalizados = false;
-    private OrdenDetalleDTO detalleDTO = new OrdenDetalleDTO();
+    private OrdenDetalleDTO ordenDetalleDTO = new OrdenDetalleDTO();
     private AreaDetalleOrdenDTO AreaDetalle = new AreaDetalleOrdenDTO();
-    private HubConnection hubConnection;
-
-
-    public void SeleccionarAreasCambios(ChangeEventArgs e)
-    {
-        SeleccionAreas = (string[])e.Value;
-    }
-
-   @*  protected override async Task OnInitializedAsync()
-    {
-        AreaDetalle.NroOT = NroOT;
-        if (NroOT > AreaDetalle.NroOT)
-        {
-            areasDetalle = await Http.GetFromJsonAsync<List<AreaDetalleOrdenListaDTO>>($"api/Area_Detalle_Orden/{NroOT}");
-        }
-        ordenDetalleDTO.NroOT = NroOT;
-    } *@
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -117,16 +96,29 @@ else
             {
                 Console.WriteLine($"No se encontraron áreas para la orden NroOT {NroOT}");
             }
+            else
+            {
+                // 🔹 Recuperar comentarios de localStorage y sessionStorage
+                foreach (var area in areasDetalle)
+                {
+                    var comentarioLocal = await JS.InvokeAsync<string>(
+                        "localStorage.getItem", $"comentario_{area.Id}");
+                    var comentarioSession = await JS.InvokeAsync<string>(
+                        "sessionStorage.getItem", $"comentario_{area.Id}");
+
+                    if (!string.IsNullOrEmpty(comentarioLocal))
+                        area.Comentario = comentarioLocal;
+                    else if (!string.IsNullOrEmpty(comentarioSession))
+                        area.Comentario = comentarioSession;
+                }
+            }
         }
         catch (HttpRequestException ex)
         {
             Console.WriteLine($"Error al obtener áreas: {ex.Message}");
         }
-        
     }
 
-
-   
     private void Volver()
     {
         Navigation.NavigateTo("/Ordenes");
@@ -150,10 +142,15 @@ else
         return lista;
     }
 
-    private OrdenDetalleDTO ordenDetalleDTO = new OrdenDetalleDTO();
+    // 🔹 Guardar comentario en sessionStorage y localStorage
+    private async Task GuardarComentario(AreaDetalleOrdenListaDTO area)
+    {
+        var comentario = area.Comentario ?? "";
+        await JS.InvokeVoidAsync("sessionStorage.setItem", $"comentario_{area.Id}", comentario);
+        await JS.InvokeVoidAsync("localStorage.setItem", $"comentario_{area.Id}", comentario);
+    }
 
-   
-    // CambiarEstado: llamar PUT y actualizar localmente (el Hub también notificará)
+    // Cambiar estado
     private async Task CambiarEstado(int id, ChangeEventArgs e)
     {
         var nuevoEstado = e?.Value?.ToString();
@@ -169,7 +166,6 @@ else
 
             await JS.InvokeVoidAsync("alert", "Estado actualizado en el servidor.");
             InvokeAsync(StateHasChanged);
-            // No hace falta redirigir; el Hub ya propagará a Ordenes
         }
         else
         {
@@ -178,18 +174,22 @@ else
         }
     }
 
-
     private async Task EliminarArea(int areaDetalleId)
     {
-        var confirm = await JS.InvokeAsync<bool>("confirm", $"¿Seguro que quieres eliminar esta área asociada al Nro de orden {ordenDetalleDTO.NroOT}?");
+        var confirm = await JS.InvokeAsync<bool>("confirm", 
+            $"¿Seguro que quieres eliminar esta área asociada al Nro de orden {ordenDetalleDTO.NroOT}?");
         if (!confirm) return;
 
         var response = await Http.DeleteAsync($"api/Area_Detalle_Orden/{areaDetalleId}");
         if (response.IsSuccessStatusCode)
         {
             areasDetalle.RemoveAll(a => a.Id == areaDetalleId);
+
+            // 🔹 Borrar también de localStorage/sessionStorage
+            await JS.InvokeVoidAsync("localStorage.removeItem", $"comentario_{areaDetalleId}");
+            await JS.InvokeVoidAsync("sessionStorage.removeItem", $"comentario_{areaDetalleId}");
+
             await JS.InvokeVoidAsync("alert", "Área eliminada correctamente.");
-            // Redirigir a la página principal de órdenes para refrescar
             Navigation.NavigateTo("/Ordenes", true);
         }
         else
@@ -198,5 +198,4 @@ else
             await JS.InvokeVoidAsync("alert", $"Error al eliminar: {msg}");
         }
     }
-}
 }

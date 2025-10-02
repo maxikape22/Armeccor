@@ -7,10 +7,11 @@ namespace Armeccor.Datos.Entidades
     {
         public int Id { get; set; }
         [MaxLength(30)]
-        public string MedioDePago { get; set; }
         public bool Entregado { get; set; }
         public int OrdenId { get; set; }
         public Orden Orden { get; set; }
+        public int MedioDePagoId { get; set; }
+        public MedioDePago Medio_De_Pago { get; set; }
     }
 
 }

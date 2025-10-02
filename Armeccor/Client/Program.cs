@@ -1,5 +1,6 @@
 using Armeccor.Client;
 using Armeccor.Client.Servicios;
+using Armeccor.Client.Shared;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,4 +20,6 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 // Agrega esta línea para registrar el servicio de estado
 builder.Services.AddSingleton<OrdenStateService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
 await builder.Build().RunAsync();

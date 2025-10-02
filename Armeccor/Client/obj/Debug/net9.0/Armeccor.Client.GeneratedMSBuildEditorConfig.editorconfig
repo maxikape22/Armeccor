@@ -40,20 +40,20 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQXJlYVxMaXN0YUFyZWFzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Berserker/Source/Repos/Armeccor/Armeccor/Client/Pages/Cliente/AgregarCliente.razor]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2xpZW50ZVxBZ3JlZ2FyQ2xpZW50ZS5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/Berserker/Source/Repos/Armeccor/Armeccor/Client/Pages/Cliente/EditarCliente.razor]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2xpZW50ZVxFZGl0YXJDbGllbnRlLnJhem9y
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/Berserker/Source/Repos/Armeccor/Armeccor/Client/Pages/Cliente/ListaClientes.razor]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2xpZW50ZVxMaXN0YUNsaWVudGVzLnJhem9y
-build_metadata.AdditionalFiles.CssScope = 
-
 [C:/Users/Berserker/Source/Repos/Armeccor/Armeccor/Client/Pages/Entrega/AgregarEntrega.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRW50cmVnYVxBZ3JlZ2FyRW50cmVnYS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Berserker/Source/Repos/Armeccor/Armeccor/Client/Pages/Entrega/Cliente/AgregarCliente.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRW50cmVnYVxDbGllbnRlXEFncmVnYXJDbGllbnRlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Berserker/Source/Repos/Armeccor/Armeccor/Client/Pages/Entrega/Cliente/EditarCliente.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRW50cmVnYVxDbGllbnRlXEVkaXRhckNsaWVudGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Berserker/Source/Repos/Armeccor/Armeccor/Client/Pages/Entrega/Cliente/ListaClientes.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRW50cmVnYVxDbGllbnRlXExpc3RhQ2xpZW50ZXMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Berserker/Source/Repos/Armeccor/Armeccor/Client/Pages/Entrega/ListaEntregas.razor]
@@ -74,6 +74,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Berserker/Source/Repos/Armeccor/Armeccor/Client/Pages/ListaOrdenes.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTGlzdGFPcmRlbmVzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Berserker/Source/Repos/Armeccor/Armeccor/Client/Pages/Ordenes/AgregarInsumoOrdenrazor.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT3JkZW5lc1xBZ3JlZ2FySW5zdW1vT3JkZW5yYXpvci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Berserker/Source/Repos/Armeccor/Armeccor/Client/Pages/Ordenes/AgregarOrden.razor]
@@ -108,6 +112,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXENvbmZpcm1hdGlvbk1vZGFsLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Berserker/Source/Repos/Armeccor/Armeccor/Client/Shared/HomeLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXEhvbWVMYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Berserker/Source/Repos/Armeccor/Armeccor/Client/Shared/SurveyPrompt.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFN1cnZleVByb21wdC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
@@ -123,3 +131,7 @@ build_metadata.AdditionalFiles.CssScope = b-wbo5mfdkd3
 [C:/Users/Berserker/Source/Repos/Armeccor/Armeccor/Client/Shared/NavMenu.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE5hdk1lbnUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-k5uezjpx8e
+
+[C:/Users/Berserker/Source/Repos/Armeccor/Armeccor/Client/Shared/NotificationBell.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE5vdGlmaWNhdGlvbkJlbGwucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-d0dmca4ur6

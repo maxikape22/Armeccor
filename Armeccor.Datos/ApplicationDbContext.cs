@@ -14,6 +14,9 @@ namespace Armeccor.Datos
         public DbSet<Plano> Planos { get; set; }
         public DbSet<AreaDetalleOrden> AreaDetalleOrdenes { get; set; }
         public DbSet<InsumoDetalleOrden> InsumoDetalleOrdenes { get; set; }
+        public DbSet<MedioDePago> MedioDePagos { get; set; }
+        public DbSet<Notificacion> Notificaciones { get; set; }
+        public DbSet<EventoNotificado> EventosNotificados { get; set; }
 
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
         {
@@ -89,6 +92,35 @@ namespace Armeccor.Datos
                 .WithMany(o => o.Entregas)
                 .HasForeignKey(e => e.OrdenId);
 
+            modelBuilder.Entity<Entrega>()
+                .HasOne(e => e.Medio_De_Pago)
+                .WithMany(m => m.Entregas)   // un medio de pago → muchas entregas
+                .HasForeignKey(e => e.MedioDePagoId)
+                .OnDelete(DeleteBehavior.Cascade); // o Cascade, según lo que prefieras
+
+            //Configuración de Notificaciones
+
+            // Relación con Insumo
+            modelBuilder.Entity<Notificacion>()
+                .HasOne(n => n.Insumo)
+                .WithMany(i => i.Notificaciones)
+                .HasForeignKey(n => n.InsumoId)
+                .OnDelete(DeleteBehavior.Restrict); // Evita borrado en cascada
+
+            // Relación con Orden
+            modelBuilder.Entity<Notificacion>()
+                .HasOne(n => n.Orden)
+                .WithMany(o => o.Notificaciones)
+                .HasForeignKey(n => n.OrdenId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relación con AreaDetalleOrden
+            modelBuilder.Entity<Notificacion>()
+                .HasOne(n => n.AreaDetalle)
+                .WithMany(a => a.Notificaciones)
+                .HasForeignKey(n => n.AreaDetalleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             base.OnModelCreating(modelBuilder);
 
             var areas = new List<Area>
@@ -147,6 +179,42 @@ namespace Armeccor.Datos
 
             modelBuilder.Entity<Area>().HasData(areas);
 
+            var medios = new List<MedioDePago>
+            {
+                new MedioDePago()
+                {
+                    Id = 1,
+                    Nombre_Medio = "Efectivo"
+                },
+                new MedioDePago()
+                {
+                    Id = 2,
+                    Nombre_Medio = "Tarjeta de crédito"
+                },
+                new MedioDePago()
+                {
+                    Id = 3,
+                    Nombre_Medio = "Transferencia bancaria"
+                },
+                new MedioDePago()
+                {
+                    Id = 4,
+                    Nombre_Medio = "Cheque"
+                },
+                new MedioDePago()
+                {
+                    Id = 5,
+                    Nombre_Medio = "Mercado Pago"
+                },
+
+                new MedioDePago()
+                {
+                    Id = 6,
+                    Nombre_Medio = "PayPal"
+                }
+            };
+
+            modelBuilder.Entity<MedioDePago>().HasData(medios);
         }
     }
 }

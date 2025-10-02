@@ -1,48 +1,4 @@
-﻿@* <div class="modal fade show" tabindex="-1" style="display: @(IsVisible ? "block" : "none")">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Confirmación</h5>
-                <button type="button" class="btn-close" @onclick="() => Close(false)"></button>
-            </div>
-            <div class="modal-body">
-                @Message
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" @onclick="() => Close(false)">Cancelar</button>
-                <button type="button" class="btn btn-primary" @onclick="() => Close(true)">Confirmar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-@code {
-    [Parameter]
-    public string Message { get; set; }
-
-    [Parameter]
-    public EventCallback<bool> OnResult { get; set; } // El evento que devolverá el resultado
-
-    public bool IsVisible { get; private set; }
-
-    public void Show(string message)
-    {
-        Message = message;
-        IsVisible = true;
-        StateHasChanged();
-    }
-
-    private async Task Close(bool confirmed)
-    {
-        IsVisible = false;
-        await OnResult.InvokeAsync(confirmed); // Invoca el evento con el resultado
-        StateHasChanged();
-    }
-}
- *@
-
-
-@inherits ComponentBase
+﻿@inherits ComponentBase
 
 @if (IsVisible)
 {
@@ -96,17 +52,7 @@
         Hide(); // <-- AGREGADO
         await OnConfirm.InvokeAsync(false);
     }
-    // private async Task Confirm()
-    // {
-    //     IsVisible = false;
-    //     await OnConfirm.InvokeAsync(true);
-    // }
-
-    // private async Task Cancel()
-    // {
-    //     IsVisible = false;
-    //     await OnConfirm.InvokeAsync(false);
-    // }
+    
 }
 
 <style>

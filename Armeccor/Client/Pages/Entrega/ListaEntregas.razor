@@ -64,9 +64,13 @@ else
     </table>
 }
 
-@code {
+@code 
+{
+    [Parameter] public string? MedioDePago { get; set; }
     private List<EntregaDetalleDTO>? entregas;
     private List<CrearEntregaDTO> EntregaDTOs;
+    private MedioDePagoDTO MedioDePagoDTO = new MedioDePagoDTO();
+    private List<MedioDePagoDTO> MediosDePago = new List<MedioDePagoDTO>();
     private bool loading = true;
     private string? error;
     private string search = string.Empty;
@@ -75,6 +79,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        MedioDePagoDTO.Nombre_Medio = MedioDePago;
         await CargarEntregas();
     }
 
@@ -106,6 +111,8 @@ else
 
         return query;
     }
+
+    
 
     private async Task Eliminar(int id)
     {
