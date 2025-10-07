@@ -13,6 +13,7 @@ namespace Armeccor.Datos.Entidades
         public string Estado { get; set; }
         [Tiempo]
         public int Tiempo { get; set; }
-        public ICollection<Notificacion> Notificaciones { get; set; }
+        public string Comentario { get; set; }
+        //public ICollection<Notificacion> Notificaciones { get; set; }
     }
 }

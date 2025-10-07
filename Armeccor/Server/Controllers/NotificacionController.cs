@@ -203,9 +203,9 @@ namespace Armeccor.API.Controllers
                         Titulo = "Stock crítico",
                         Mensaje = $"El insumo '{i.Nombre}' tiene solo {i.CantDisponible} unidades.",
                         Tipo = "Insumo",
-                        Fecha = DateTime.Now,
+                        Fecha = DateTime.Now.Date,
                         EsLeida = false,
-                        InsumoId = i.Id
+                        //InsumoId = i.Id
                     };
 
                     _context.Notificaciones.Add(nueva);
@@ -213,7 +213,7 @@ namespace Armeccor.API.Controllers
                     {
                         Tipo = "Insumo",
                         ReferenciaId = i.Id,
-                        Fecha = DateTime.Now
+                        Fecha = DateTime.Now.Date
                     });
 
                     notificaciones.Add(nueva);
@@ -237,9 +237,9 @@ namespace Armeccor.API.Controllers
                         Titulo = "Orden finalizada",
                         Mensaje = $"La orden '{o.NroOT}' ha finalizado.",
                         Tipo = "Orden",
-                        Fecha = DateTime.Now,
+                        Fecha = DateTime.Now.Date,
                         EsLeida = false,
-                        OrdenId = o.Id
+                        //OrdenId = o.Id
                     };
 
                     _context.Notificaciones.Add(nueva);
@@ -247,7 +247,7 @@ namespace Armeccor.API.Controllers
                     {
                         Tipo = "Orden",
                         ReferenciaId = o.Id,
-                        Fecha = DateTime.Now
+                        Fecha = DateTime.Now.Date
                     });
 
                     notificaciones.Add(nueva);
@@ -272,9 +272,9 @@ namespace Armeccor.API.Controllers
                         Titulo = "Área finalizada",
                         Mensaje = $"El área ha finalizado",
                         Tipo = ad.Area.NombreArea,
-                        Fecha = DateTime.Now,
+                        Fecha = DateTime.Now.Date   ,
                         EsLeida = false,
-                        AreaDetalleId = ad.Id
+                       // AreaDetalleId = ad.Id
                     };
 
                     _context.Notificaciones.Add(nueva);
@@ -282,7 +282,7 @@ namespace Armeccor.API.Controllers
                     {
                         Tipo = ad.Area.NombreArea,
                         ReferenciaId = ad.Id,
-                        Fecha = DateTime.Now
+                        Fecha = DateTime.Now.Date
                     });
 
                     notificaciones.Add(nueva);

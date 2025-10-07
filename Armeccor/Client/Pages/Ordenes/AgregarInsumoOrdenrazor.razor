@@ -80,13 +80,10 @@ else
     protected override async Task OnInitializedAsync()
     {
         ordenId = NroOT; // ✅ el id viene desde la URL
+        //$"Se agregó {resultado.DetalleOrden.Cantidad} de {insumo.Nombre} a la orden {ordenId}. Stock restante: {insumo.CantDisponible}");
+        //detalle
         await Cargar();
     }
-
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     await Cargar();
-    // }
 
     private async Task Cargar()
     {

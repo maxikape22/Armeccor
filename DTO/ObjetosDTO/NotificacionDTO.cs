@@ -14,8 +14,8 @@ namespace DTO.ObjetosDTO
         public string Tipo { get; set; }
         public DateTime Fecha { get; set; } = DateTime.Now;
         public bool EsLeida { get; set; }
-        public int? InsumoId { get; set; }
-        public int? OrdenId { get; set; }
-        public int? AreaDetalleId { get; set; }
+        //public int? InsumoId { get; set; }
+        //public int? OrdenId { get; set; }
+        //public int? AreaDetalleId { get; set; }
     }
 }

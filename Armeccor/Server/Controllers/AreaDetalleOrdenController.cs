@@ -4,6 +4,7 @@ using AutoMapper;
 using DTO.ObjetosDTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -37,28 +38,79 @@ namespace Armeccor.Server.Controllers
             }
 
             var areasDetalle = await context.AreaDetalleOrdenes
-                .Where(ado => ado.OrdenId == orden.Id)
-                .Include(ado => ado.Area)
+                .Where(where => where.OrdenId == orden.Id)
+                .Include(pe => pe.Area).Include(cliente=>cliente.Orden.Cliente)
                 .Select(ado => new AreaDetalleOrdenListaDTO
                 {
                     Id = ado.Id,
+                    NombreOrden = orden.NombreOrden,
+                    NombreCliente = ado.Orden.Cliente.Nombre,
                     NombreArea = ado.Area.NombreArea,
                     Descripcion = ado.Descripcion,
                     Estado = ado.Estado,
-                    Tiempo = ado.Tiempo
+                    Tiempo = ado.Tiempo,
+                    Comentario = ado.Comentario
                 })
                 .ToListAsync();
 
             return Ok(areasDetalle);
         }
 
+        [HttpPut("{id}/Comentario")]
+        public async Task<IActionResult> ActualizarComentario(int id, [FromBody] ActualizarComentarioDTO dto)
+        {
+            var area = await context.AreaDetalleOrdenes.FindAsync(id);
+            if (area == null)
+                return NotFound("Área no encontrada");
+
+            area.Comentario = dto.Comentario ?? "";
+            await context.SaveChangesAsync();
+
+            return Ok("Comentario actualizado correctamente");
+        }
+
+
         [HttpGet]
         public async Task<ActionResult<List<AreaDetalleOrdenListaDTO>>> GetLista()
         {
-            var areaDetalleOrdenes = await context.AreaDetalleOrdenes.Include(a => a.Area).ToListAsync();
+            var areaDetalleOrdenes = await context.AreaDetalleOrdenes
+                .Include(a => a.Area)
+                .Include(p=>p.Orden)
+                .Include(d=>d.Orden.Cliente)
+                .ToListAsync();
             var areaDetalleOrdenesDTO = _mapper.Map<List<AreaDetalleOrdenListaDTO>>(areaDetalleOrdenes);
             return Ok(areaDetalleOrdenesDTO);
         }
+
+        //[HttpGet]
+        //public async Task<ActionResult<List<AreaDetalleOrdenDTO>>> GetLista()
+        //{
+        //    var areaDetalleOrdenes = await context.AreaDetalleOrdenes
+        //        .Include(a => a.Area)
+        //        .Include(o=>o.Orden)
+        //        .Include(o => o.Orden.Cliente).ToListAsync();
+        //    var areaDetalleOrdenesDTO = _mapper.Map<List<AreaDetalleOrdenDTO>>(areaDetalleOrdenes);
+        //    return Ok(areaDetalleOrdenesDTO);
+        //}
+
+        //[HttpGet]
+        //public async Task<ActionResult<List<AreaDetalleOrdenDTO>>> GetLista()
+        //{
+        //    var areaDetalleOrdenes = await context.AreaDetalleOrdenes
+        //        .Include(a => a.Area).Include(o=>o.Orden).Include(c=>c.Orden.Cliente)
+        //        .ToListAsync();
+        //    var areaDetalleOrdenesDTO = areaDetalleOrdenes.Select(ado => new AreaDetalleOrdenDTO
+        //    {
+        //        OrdenId = ado.OrdenId,
+        //        AreaId = ado.AreaId,
+        //        Descripcion = ado.Descripcion,
+        //        Estado = ado.Estado,
+        //        Tiempo = ado.Tiempo,
+        //        NombreArea = ado.Area?.NombreArea, 
+        //        NombreCliente = string.Empty  
+        //    }).ToList();
+        //    return Ok(areaDetalleOrdenesDTO);
+        //}
 
         [HttpGet("Original")]
         public async Task<ActionResult<List<AreaDetalleOrden>>> GetAreaDetalleOriginal()
@@ -250,7 +302,9 @@ namespace Armeccor.Server.Controllers
                 Descripcion = areaDetalle.Descripcion,
                 Estado = areaDetalle.Estado,
                 Tiempo = areaDetalle.Tiempo,
-                NombreArea = areaDetalle.Area?.NombreArea
+                NombreArea = areaDetalle.Area?.NombreArea,
+                NombreOrden = areaDetalle.Orden?.NombreOrden,
+                NombreCliente = areaDetalle.Orden?.Cliente?.Nombre
             });
         }
 

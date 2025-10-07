@@ -52,7 +52,11 @@
     };
 
     private List<AreaListaDTO> areasDisponibles = new();
-    private List<string> Estados = new() { "Iniciado" };
+    private List<string> Estados = new() 
+    {
+        "Iniciado",
+        "Pendiente"
+    };
     private List<AreaDetalleOrdenListaDTO> listaDTOs = new List<AreaDetalleOrdenListaDTO>();
 
     protected override async Task OnInitializedAsync()

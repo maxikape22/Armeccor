@@ -19,15 +19,27 @@ else
         <ValidationSummary />
 
         <div class="mb-3">
-            <label class="form-label">Fecha de entrega</label>
+            <label class="form-label">Nombre de la orden</label>
             <select class="form-select" @bind="Entrega.IdOrden">
-                <option value="">-- Seleccione una fecha de entrega --</option>
-                @foreach (var orden in OrdenDetalleDisponibles)
+                <option value="">-- Seleccione una orden --</option>
+                @* @foreach (var orden in OrdenDetalleDisponibles)
                 {
                     <option value="@orden.Id">
                         @(orden.FechaEntrega.HasValue ?              
                         orden.FechaEntrega.Value.ToString("dd/MM/yyyy") : "")
                     </option>                    
+                } *@
+
+               @*  @foreach (var orden in OrdenDetalleDisponibles)
+                {
+                    <option value="@orden.Id">
+                        @(orden.NombreOrden)
+                    </option>
+                } *@
+
+                @foreach (var medio in OrdenDetalleDisponibles)
+                {
+                    <option value="@medio.Id">@medio.NombreOrden</option>
                 }
             </select>
         </div>
@@ -81,7 +93,7 @@ else
         try
         {
             MediosDePago = await Http.GetFromJsonAsync<List<MedioDePago>>("api/MediosDePago") ?? new List<Armeccor.Datos.Entidades.MedioDePago>();
-            var ordenes = await Http.GetFromJsonAsync<List<OrdenDetalleDTO>>("api/Ordenes");
+            var ordenes = await Http.GetFromJsonAsync<List<OrdenDetalleDTO>>("api/Ordenes/LISTADO");
             OrdenDetalleDisponibles = ordenes ?? new List<OrdenDetalleDTO>();
         }
         catch (Exception ex)

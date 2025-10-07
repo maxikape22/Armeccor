@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -14,11 +15,72 @@
 </head>
 
 <body>
-    <div id="app">Loading...</div>
+    <!--<div id="app">Cargando ...</div>-->
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #e3e6ea; /* Fondo general más claro */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .bienvenida-armec {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            background: linear-gradient(135deg, #2c2f33, #4a6fa5, #dce3ed); /* Azul suave + gris oscuro */
+            color: white;
+            padding: 2rem;
+        }
+
+            /*.bienvenida-armec h1 {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+                background: linear-gradient(to right, #ffffff, #4a6fa5, #2c2f33);*/ /* Blanco + azul + negro */
+                /*-webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }*/
+
+            .bienvenida-armec h1 {
+                font-size: 2.8rem;
+                margin-bottom: 1rem;
+                line-height: 1.3;
+                padding: 0 1rem;
+                background: linear-gradient(to right, #ffffff, #4a6fa5, #2c2f33);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+            }
+
+        .marca {
+            font-weight: bold;
+        }
+
+        .imagen-armec {
+            max-width: 600px;
+            width: 90%;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            margin-top: 2rem;
+        }
+    </style>
+
+
+    <div id="app">
+        <div class="bienvenida-armec">
+            <h1>Bienvenidos al sistema de gestión <span class="marca">ArmecCor</span></h1>
+            <img src="images/taller-metalurgico.jpg" alt="Taller metalúrgico" class="imagen-armec" />
+        </div>
+    </div>
+
 
     <div id="blazor-error-ui">
-        An unhandled error has occurred.
-        <a href="" class="reload">Reload</a>
+        Ocurrió un error inesperado.
+        <a href="" class="reload">Recargar aplicación</a>
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>

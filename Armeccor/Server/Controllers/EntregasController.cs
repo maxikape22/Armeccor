@@ -5,6 +5,7 @@ using DTO.ObjetosDTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Armeccor.Server.Controllers
@@ -68,6 +69,34 @@ namespace Armeccor.Server.Controllers
         //    return Ok(entregaDTO);
         //}
         #endregion
+
+
+        [HttpPut("ActualizacionPorEstado")]
+        public async Task<ActionResult<EntregaDetalleDTO>> ActualizarEstadoEntregaCheckBox(int Id, bool Entregado = true)
+        {
+            var entrega = await context.Entregas
+                .Include(e => e.Orden) // Asumiendo que Entrega tiene navegación a Orden
+                .Include(e => e.Medio_De_Pago) // Si existe como entidad relacionada
+                .FirstOrDefaultAsync(e => e.Id == Id);
+
+            if (entrega == null) return NotFound();
+
+            entrega.Entregado = Entregado;
+            await context.SaveChangesAsync();
+
+            var dto = new EntregaDetalleDTO
+            {
+                Id = entrega.Id,
+                NroOT = entrega.OrdenId,
+                NombreOrden = entrega.Orden?.Descripcion ?? "Sin descripción",
+                Entregado = entrega.Entregado,
+                MedioDePago = entrega.Medio_De_Pago?.Nombre_Medio ?? "No especificado"
+            };
+
+            return Ok(dto);
+        }
+
+
 
 
         [HttpPost]

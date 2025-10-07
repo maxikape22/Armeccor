@@ -7,9 +7,7 @@
         public int InsumoId { get; set; }
         public int OrdenId { get; set; }
         public int Cantidad { get; set; }
-
         public string Nombre { get; set; } // borrar?
-
 
     }
 }

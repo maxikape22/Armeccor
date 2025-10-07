@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Armeccor.Datos.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251002025445_CambiosNuevos")]
-    partial class CambiosNuevos
+    [Migration("20251007025542_ViendoEstoQueFuncione")]
+    partial class ViendoEstoQueFuncione
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -106,6 +106,9 @@ namespace Armeccor.Datos.Migrations
                     b.Property<int?>("AreaId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Comentario")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Descripcion")
                         .HasColumnType("nvarchar(max)");
 
@@ -180,6 +183,28 @@ namespace Armeccor.Datos.Migrations
                     b.HasIndex("OrdenId");
 
                     b.ToTable("Entregas");
+                });
+
+            modelBuilder.Entity("Armeccor.Datos.Entidades.EventoNotificado", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("date");
+
+                    b.Property<int>("ReferenciaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Tipo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EventosNotificados");
                 });
 
             modelBuilder.Entity("Armeccor.Datos.Entidades.Insumo", b =>
@@ -298,23 +323,14 @@ namespace Armeccor.Datos.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AreaDetalleId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("EsLeida")
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("date");
 
-                    b.Property<int?>("InsumoId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Mensaje")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("OrdenId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Tipo")
                         .HasColumnType("nvarchar(max)");
@@ -323,12 +339,6 @@ namespace Armeccor.Datos.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AreaDetalleId");
-
-                    b.HasIndex("InsumoId");
-
-                    b.HasIndex("OrdenId");
 
                     b.ToTable("Notificaciones");
                 });
@@ -461,30 +471,6 @@ namespace Armeccor.Datos.Migrations
                     b.Navigation("Orden");
                 });
 
-            modelBuilder.Entity("Armeccor.Datos.Entidades.Notificacion", b =>
-                {
-                    b.HasOne("Armeccor.Datos.Entidades.AreaDetalleOrden", "AreaDetalle")
-                        .WithMany("Notificaciones")
-                        .HasForeignKey("AreaDetalleId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Armeccor.Datos.Entidades.Insumo", "Insumo")
-                        .WithMany("Notificaciones")
-                        .HasForeignKey("InsumoId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Armeccor.Datos.Entidades.Orden", "Orden")
-                        .WithMany("Notificaciones")
-                        .HasForeignKey("OrdenId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("AreaDetalle");
-
-                    b.Navigation("Insumo");
-
-                    b.Navigation("Orden");
-                });
-
             modelBuilder.Entity("Armeccor.Datos.Entidades.Orden", b =>
                 {
                     b.HasOne("Armeccor.Datos.Entidades.Cliente", "Cliente")
@@ -508,11 +494,6 @@ namespace Armeccor.Datos.Migrations
                     b.Navigation("AreaOrdenes");
                 });
 
-            modelBuilder.Entity("Armeccor.Datos.Entidades.AreaDetalleOrden", b =>
-                {
-                    b.Navigation("Notificaciones");
-                });
-
             modelBuilder.Entity("Armeccor.Datos.Entidades.Cliente", b =>
                 {
                     b.Navigation("Ordenes");
@@ -521,8 +502,6 @@ namespace Armeccor.Datos.Migrations
             modelBuilder.Entity("Armeccor.Datos.Entidades.Insumo", b =>
                 {
                     b.Navigation("InsumoOrdenes");
-
-                    b.Navigation("Notificaciones");
                 });
 
             modelBuilder.Entity("Armeccor.Datos.Entidades.MedioDePago", b =>
@@ -537,8 +516,6 @@ namespace Armeccor.Datos.Migrations
                     b.Navigation("Entregas");
 
                     b.Navigation("InsumoOrdenes");
-
-                    b.Navigation("Notificaciones");
                 });
 #pragma warning restore 612, 618
         }

@@ -262,9 +262,15 @@ namespace Armeccor.Server.Mapeos
                 .ReverseMap();
 
             CreateMap<Entrega, EntregaDetalleDTO>()
+                .ForMember(dest => dest.NombreOrden,
+                    opt => opt
+                    .MapFrom(src => src.Orden.NombreOrden))
                 .ForMember(dest => dest.FechaEntrega,
                     opt => opt
                     .MapFrom(src => src.Orden != null ? src.Orden.FechaEntrega : DateTime.MinValue))
+                .ForMember(dest => dest.NroOT,
+                    opt => opt
+                    .MapFrom(src => src.Orden.NroOT))
                 .ForMember(dest => dest.MedioDePago,
                    opt => opt.
                    MapFrom(src => src.Medio_De_Pago != null ? src.Medio_De_Pago.Nombre_Medio : string.Empty))
@@ -295,13 +301,24 @@ namespace Armeccor.Server.Mapeos
             CreateMap<InsumoDetalleOrden, InsumoDetalleOrdenListaDTO>().ReverseMap();
 
             // ================== AREA DETALLE ORDEN ==================
-            CreateMap<AreaDetalleOrden, AreaDetalleOrdenListaDTO>()
-                .ForMember(dest => dest.NombreArea,
-                    opt => opt.MapFrom(src => src.Area.NombreArea));
+            CreateMap<AreaDetalleOrden, AreaDetalleOrdenListaDTO>()  
+                .ForMember(dest => dest.NombreArea, opt => opt
+                .MapFrom(src => src.Area.NombreArea))
+                .ForMember(d=>d.NombreOrden,p=>p
+                .MapFrom(d=>d.Orden.NombreOrden))
+                .ForMember(c=>c.NombreCliente,m=>m
+                .MapFrom(e=>e.Orden.Cliente.Nombre));
 
             CreateMap<AreaDetalleOrdenListaDTO, AreaDetalleOrden>();
 
             CreateMap<AreaDetalleOrden, AreaDetalleOrdenDTO>().ReverseMap();
+
+
+            //CreateMap<AreaDetalleOrden, AreaDetalleOrdenDTO>()
+            //    .ForMember(d => d.NombreOrden, o => o
+            //    .MapFrom(e=>e.Orden.NombreOrden))
+            //    .ForMember(l=>l.NombreCliente,ñ=>ñ
+            //    .MapFrom(q=>q.Orden.Cliente.Nombre));
 
             CreateMap<AreaDetalleOrden, RegistrarAreaDetallarDTO>().ReverseMap();
 

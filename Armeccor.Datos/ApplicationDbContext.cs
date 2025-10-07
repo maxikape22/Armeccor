@@ -101,25 +101,25 @@ namespace Armeccor.Datos
             //Configuración de Notificaciones
 
             // Relación con Insumo
-            modelBuilder.Entity<Notificacion>()
-                .HasOne(n => n.Insumo)
-                .WithMany(i => i.Notificaciones)
-                .HasForeignKey(n => n.InsumoId)
-                .OnDelete(DeleteBehavior.Restrict); // Evita borrado en cascada
+            //modelBuilder.Entity<Notificacion>()
+            //    .HasOne(n => n.Insumo)
+            //    .WithMany(i => i.Notificaciones)
+            //    .HasForeignKey(n => n.InsumoId)
+            //    .OnDelete(DeleteBehavior.NoAction); // Evita borrado en cascada
 
-            // Relación con Orden
-            modelBuilder.Entity<Notificacion>()
-                .HasOne(n => n.Orden)
-                .WithMany(o => o.Notificaciones)
-                .HasForeignKey(n => n.OrdenId)
-                .OnDelete(DeleteBehavior.Restrict);
+            //// Relación con Orden
+            //modelBuilder.Entity<Notificacion>()
+            //    .HasOne(n => n.Orden)
+            //    .WithMany(o => o.Notificaciones)
+            //    .HasForeignKey(n => n.OrdenId)
+            //    .OnDelete(DeleteBehavior.NoAction);
 
-            // Relación con AreaDetalleOrden
-            modelBuilder.Entity<Notificacion>()
-                .HasOne(n => n.AreaDetalle)
-                .WithMany(a => a.Notificaciones)
-                .HasForeignKey(n => n.AreaDetalleId)
-                .OnDelete(DeleteBehavior.Restrict);
+            //// Relación con AreaDetalleOrden
+            //modelBuilder.Entity<Notificacion>()
+            //    .HasOne(n => n.AreaDetalle)
+            //    .WithMany(a => a.Notificaciones)
+            //    .HasForeignKey(n => n.AreaDetalleId)
+            //    .OnDelete(DeleteBehavior.NoAction);
 
             base.OnModelCreating(modelBuilder);
 

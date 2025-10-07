@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Armeccor.Datos.Migrations
 {
     /// <inheritdoc />
-    public partial class CambiosNuevos : Migration
+    public partial class ViendoEstoQueFuncione : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -43,6 +43,21 @@ namespace Armeccor.Datos.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EventosNotificados",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Tipo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReferenciaId = table.Column<int>(type: "int", nullable: false),
+                    Fecha = table.Column<DateTime>(type: "date", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventosNotificados", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Insumos",
                 columns: table => new
                 {
@@ -70,6 +85,23 @@ namespace Armeccor.Datos.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MedioDePagos", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Notificaciones",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Titulo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Mensaje = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Tipo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Fecha = table.Column<DateTime>(type: "date", nullable: false),
+                    EsLeida = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notificaciones", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -130,7 +162,8 @@ namespace Armeccor.Datos.Migrations
                     AreaId = table.Column<int>(type: "int", nullable: true),
                     Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Estado = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Tiempo = table.Column<int>(type: "int", nullable: false)
+                    Tiempo = table.Column<int>(type: "int", nullable: false),
+                    Comentario = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -203,44 +236,6 @@ namespace Armeccor.Datos.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Notificaciones",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Titulo = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Mensaje = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Tipo = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Fecha = table.Column<DateTime>(type: "date", nullable: false),
-                    EsLeida = table.Column<bool>(type: "bit", nullable: false),
-                    InsumoId = table.Column<int>(type: "int", nullable: true),
-                    OrdenId = table.Column<int>(type: "int", nullable: true),
-                    AreaDetalleId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Notificaciones", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Notificaciones_AreaDetalleOrdenes_AreaDetalleId",
-                        column: x => x.AreaDetalleId,
-                        principalTable: "AreaDetalleOrdenes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Notificaciones_Insumos_InsumoId",
-                        column: x => x.InsumoId,
-                        principalTable: "Insumos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Notificaciones_Ordenes_OrdenId",
-                        column: x => x.OrdenId,
-                        principalTable: "Ordenes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
             migrationBuilder.InsertData(
                 table: "Areas",
                 columns: new[] { "Id", "NombreArea" },
@@ -309,21 +304,6 @@ namespace Armeccor.Datos.Migrations
                 filter: "[Nombre_Medio] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notificaciones_AreaDetalleId",
-                table: "Notificaciones",
-                column: "AreaDetalleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Notificaciones_InsumoId",
-                table: "Notificaciones",
-                column: "InsumoId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Notificaciones_OrdenId",
-                table: "Notificaciones",
-                column: "OrdenId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Ordenes_ClienteId",
                 table: "Ordenes",
                 column: "ClienteId");
@@ -344,7 +324,13 @@ namespace Armeccor.Datos.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "AreaDetalleOrdenes");
+
+            migrationBuilder.DropTable(
                 name: "Entregas");
+
+            migrationBuilder.DropTable(
+                name: "EventosNotificados");
 
             migrationBuilder.DropTable(
                 name: "InsumoDetalleOrdenes");
@@ -353,16 +339,13 @@ namespace Armeccor.Datos.Migrations
                 name: "Notificaciones");
 
             migrationBuilder.DropTable(
+                name: "Areas");
+
+            migrationBuilder.DropTable(
                 name: "MedioDePagos");
 
             migrationBuilder.DropTable(
-                name: "AreaDetalleOrdenes");
-
-            migrationBuilder.DropTable(
                 name: "Insumos");
-
-            migrationBuilder.DropTable(
-                name: "Areas");
 
             migrationBuilder.DropTable(
                 name: "Ordenes");

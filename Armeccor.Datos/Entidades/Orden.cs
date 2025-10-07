@@ -25,7 +25,7 @@ namespace Armeccor.Datos.Entidades
         public ICollection<Entrega> Entregas { get; set; } 
         public ICollection<AreaDetalleOrden> AreaDetalleOrdenes { get; set; }
         public ICollection<InsumoDetalleOrden> InsumoOrdenes { get; set; }
-        public ICollection<Notificacion> Notificaciones { get; set; }
+       // public ICollection<Notificacion> Notificaciones { get; set; }
 
     }
 }

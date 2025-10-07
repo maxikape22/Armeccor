@@ -34,6 +34,8 @@ else
         <thead>
             <tr>
                 <th>Nro de orden</th>
+                <th>Nombre de la orden</th>
+                <th>Nombre del cliente</th>
                 <th>Nombre del área</th>
                 <th>Descripción</th>
                 <th>Estado</th>
@@ -47,6 +49,8 @@ else
             {
                 <tr>
                     <td>@ordenDetalleDTO.NroOT</td>
+                    <td>@area.NombreOrden</td>
+                    <td>@area.NombreCliente</td>
                     <td>@area.NombreArea</td>
                     <td>@area.Descripcion</td>
                     <td>@area.Estado</td>
@@ -59,6 +63,8 @@ else
                     </td>
                     <td>
                         <select class="form-select" @onchange="async e => await CambiarEstado(area.Id,e)">
+                            <option label="---Cambiar estado del área---"></option>
+                            <option value="Iniciado">Iniciado</option>
                             <option value="Pendiente">Pendiente</option>
                             <option value="Finalizado">Finalizado</option>
                         </select>
@@ -76,16 +82,61 @@ else
 
 @code {
     [Parameter] public int NroOT { get; set; }
+    [Parameter] public string NombreOrden { get; set; }
+    [Parameter] public string NombreCliente { get; set; }
     private List<AreaDetalleOrdenListaDTO> areasDetalle = new();
     private string filtroEstado = "";
     private bool soloFinalizados = false;
     private OrdenDetalleDTO ordenDetalleDTO = new OrdenDetalleDTO();
     private AreaDetalleOrdenDTO AreaDetalle = new AreaDetalleOrdenDTO();
+    private CrearClienteDTO ClienteDTO = new CrearClienteDTO();
+    private AreaDetalleOrdenListaDTO areaDetalleOrdenListaDTO = new AreaDetalleOrdenListaDTO();
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     AreaDetalle.NroOT = NroOT;
+    //     ordenDetalleDTO.NroOT = NroOT;
+    //     areaDetalleOrdenListaDTO.NombreOrden = NombreOrden;
+    //     areaDetalleOrdenListaDTO.NombreCliente = NombreCliente;
+
+    //     try
+    //     {
+    //         areasDetalle = await Http.GetFromJsonAsync<List<AreaDetalleOrdenListaDTO>>(
+    //             $"api/Area_Detalle_Orden/{NroOT}");
+
+    //         if (areasDetalle == null || !areasDetalle.Any())
+    //         {
+    //             Console.WriteLine($"No se encontraron áreas para la orden NroOT {NroOT}");
+    //         }
+    //         else
+    //         {
+    //             // 🔹 Recuperar comentarios de localStorage y sessionStorage
+    //             foreach (var area in areasDetalle)
+    //             {
+    //                 var comentarioLocal = await JS.InvokeAsync<string>(
+    //                     "localStorage.getItem", $"comentario_{area.Id}");
+    //                 var comentarioSession = await JS.InvokeAsync<string>(
+    //                     "sessionStorage.getItem", $"comentario_{area.Id}");
+
+    //                 if (!string.IsNullOrEmpty(comentarioLocal))
+    //                     area.Comentario = comentarioLocal;
+    //                 else if (!string.IsNullOrEmpty(comentarioSession))
+    //                     area.Comentario = comentarioSession;
+    //             }
+    //         }
+    //     }
+    //     catch (HttpRequestException ex)
+    //     {
+    //         Console.WriteLine($"Error al obtener áreas: {ex.Message}");
+    //     }
+    // }
 
     protected override async Task OnInitializedAsync()
     {
         AreaDetalle.NroOT = NroOT;
         ordenDetalleDTO.NroOT = NroOT;
+        areaDetalleOrdenListaDTO.NombreOrden = NombreOrden;
+        areaDetalleOrdenListaDTO.NombreCliente = NombreCliente;
 
         try
         {
@@ -98,18 +149,28 @@ else
             }
             else
             {
-                // 🔹 Recuperar comentarios de localStorage y sessionStorage
                 foreach (var area in areasDetalle)
                 {
-                    var comentarioLocal = await JS.InvokeAsync<string>(
-                        "localStorage.getItem", $"comentario_{area.Id}");
-                    var comentarioSession = await JS.InvokeAsync<string>(
-                        "sessionStorage.getItem", $"comentario_{area.Id}");
+                    // 🔹 Priorizar comentario del backend
+                    if (!string.IsNullOrEmpty(area.Comentario))
+                    {
+                        // Guardar copia en local y session
+                        await JS.InvokeVoidAsync("localStorage.setItem", $"comentario_{area.Id}", area.Comentario);
+                        await JS.InvokeVoidAsync("sessionStorage.setItem", $"comentario_{area.Id}", area.Comentario);
+                    }
+                    else
+                    {
+                        // Si no hay en DB, buscar en storage
+                        var comentarioLocal = await JS.InvokeAsync<string>(
+                            "localStorage.getItem", $"comentario_{area.Id}");
+                        var comentarioSession = await JS.InvokeAsync<string>(
+                            "sessionStorage.getItem", $"comentario_{area.Id}");
 
-                    if (!string.IsNullOrEmpty(comentarioLocal))
-                        area.Comentario = comentarioLocal;
-                    else if (!string.IsNullOrEmpty(comentarioSession))
-                        area.Comentario = comentarioSession;
+                        if (!string.IsNullOrEmpty(comentarioLocal))
+                            area.Comentario = comentarioLocal;
+                        else if (!string.IsNullOrEmpty(comentarioSession))
+                            area.Comentario = comentarioSession;
+                    }
                 }
             }
         }
@@ -118,6 +179,7 @@ else
             Console.WriteLine($"Error al obtener áreas: {ex.Message}");
         }
     }
+
 
     private void Volver()
     {
@@ -142,13 +204,39 @@ else
         return lista;
     }
 
-    // 🔹 Guardar comentario en sessionStorage y localStorage
+    // 🔹 Guardar comentario en sessionStorage y localStorage --> Esta persistencia debe seguir guardandose de las dos formas pero ademas de hacerlo en el DOM de mi navegador, debe hacerlo en DOM de cualquier navegador habido y por haber tambien debe guardarse en el backend, o sea, en la base de datos. Por eso agregue el campo Comentario en AreaDetalleOrdenDTO y en AreaDetalleOrdenListaDTO para hacer que eso sea posible
+    // private async Task GuardarComentario(AreaDetalleOrdenListaDTO area)
+    // {
+    //     var comentario = area.Comentario ?? "";
+    //     await JS.InvokeVoidAsync("sessionStorage.setItem", $"comentario_{area.Id}", comentario);
+    //     await JS.InvokeVoidAsync("localStorage.setItem", $"comentario_{area.Id}", comentario);
+    // }
+
+
+
     private async Task GuardarComentario(AreaDetalleOrdenListaDTO area)
     {
         var comentario = area.Comentario ?? "";
+
+        // Local y session
         await JS.InvokeVoidAsync("sessionStorage.setItem", $"comentario_{area.Id}", comentario);
         await JS.InvokeVoidAsync("localStorage.setItem", $"comentario_{area.Id}", comentario);
+
+        // 🔹 Persistir en backend
+        var payload = new { Comentario = comentario };
+        var response = await Http.PutAsJsonAsync($"api/Area_Detalle_Orden/{area.Id}/Comentario", payload);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var msg = await response.Content.ReadAsStringAsync();
+            await JS.InvokeVoidAsync("alert", $"Error al guardar comentario en servidor: {msg}");
+        }
     }
+
+
+
+
+
 
     // Cambiar estado
     private async Task CambiarEstado(int id, ChangeEventArgs e)
