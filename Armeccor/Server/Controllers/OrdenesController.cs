@@ -2,6 +2,7 @@
 using Armeccor.Datos.Entidades;
 using AutoMapper;
 using DTO.ObjetosDTO;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -295,15 +296,13 @@ namespace Armeccor.Server.Controllers
 
             var orden = _mapper.Map<Orden>(crearOrdenDTO);
 
-            //if (orden.NroOT.Equals(crearOrdenDTO.NroOT))
-            //{
-            //    return Conflict($"La orden {orden.NroOT} ya existe. No se puede agregar de nuevo");
-            //}
+            NoContentResult noContentResult = new NoContentResult();
+
+            if (crearOrdenDTO.FechaPactada <= crearOrdenDTO.FechaInicio) 
+                return Conflict("La fecha pactada debe ser mayor a la fecha de inicio.");
 
             context.Ordenes.Add(orden);
-
             await context.SaveChangesAsync();
-
             var ordenDTO = _mapper.Map<CrearOrdenDTO>(orden);
             return Ok(ordenDTO);
         }

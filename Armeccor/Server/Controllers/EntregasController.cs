@@ -84,13 +84,23 @@ namespace Armeccor.Server.Controllers
             entrega.Entregado = Entregado;
             await context.SaveChangesAsync();
 
+            //var dto = new EntregaDetalleDTO
+            //{
+            //    Id = entrega.Id,
+            //    NroOT = entrega.OrdenId,
+            //    NombreOrden = entrega.Orden?.Descripcion ?? "Sin descripción",
+            //    Entregado = entrega.Entregado,
+            //    MedioDePago = entrega.Medio_De_Pago?.Nombre_Medio ?? "No especificado"
+            //};
+
             var dto = new EntregaDetalleDTO
             {
                 Id = entrega.Id,
-                NroOT = entrega.OrdenId,
-                NombreOrden = entrega.Orden?.Descripcion ?? "Sin descripción",
+                NroOT = entrega.Orden?.NroOT ?? 0, 
+                NombreOrden = entrega.Orden?.NombreOrden ?? entrega.Orden?.Descripcion ?? "Sin nombre",
                 Entregado = entrega.Entregado,
-                MedioDePago = entrega.Medio_De_Pago?.Nombre_Medio ?? "No especificado"
+                MedioDePago = entrega.Medio_De_Pago?.Nombre_Medio ?? "No especificado",
+                FechaEntrega = entrega.Orden!.FechaEntrega
             };
 
             return Ok(dto);

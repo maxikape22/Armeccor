@@ -338,12 +338,45 @@
         DetalleDTO.NroOT = NroOT;
     }
 
+    public class PaginacionOrdenDetalleDTO
+    {
+        public int TotalRegistros { get; set; }
+        public int PaginaActual { get; set; }
+        public int TamanoPagina { get; set; }
+        public int TotalPaginas { get; set; }
+        public List<OrdenDetalleDTO> Datos { get; set; }
+    }
+
+
     private async Task OnStatusChanged(ChangeEventArgs e)
     {
         SelectedStatus = e.Value?.ToString() ?? string.Empty;
         currentPage = 1;
-        await CargarOrdenes(); // usamos el mismo método que consulta al servidor (texto + estado)
+        //await CargarOrdenes(); // usamos el mismo método que consulta al servidor (texto + estado)
+        await FiltrarPorEstado();
     }
+
+    private async Task FiltrarPorEstado()
+    {
+        if (string.IsNullOrWhiteSpace(SelectedStatus))
+        {
+            await CargarOrdenes(); // limpiar filtro
+            return;
+        }
+
+        var url = $"api/ordenes/FiltroPorEstado?estado={SelectedStatus}&pagina={currentPage}&tamanoPagina={pageSize}";
+        var response = await Http.GetFromJsonAsync<RespuestaPaginada>(url);
+
+        if (response != null)
+        {
+            filteredOrders = response.Datos.ToList();
+            totalRecords = response.TotalRegistros;
+            totalPages = response.TotalPaginas;
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
 
     private async Task BuscarOrdenesFiltradas()
     {

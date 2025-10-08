@@ -8,8 +8,10 @@ namespace DTO.ObjetosDTO
 {
     public class RespuestaPaginada
     {
-        public int Total { get; set; }
+        public int TotalRegistros { get; set; }
         public int PaginaActual { get; set; }
+        public int TamanoPagina { get; set; }
+        public int TotalPaginas { get; set; }
         public List<OrdenDetalleDTO> Datos { get; set; } = new();
     }
 
