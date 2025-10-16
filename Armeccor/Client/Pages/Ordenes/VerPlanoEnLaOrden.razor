@@ -1,1 +1,145 @@
-﻿
+﻿@page "/PlanoEnLaOrden/{NroOT:int}"
+@using System.IO
+@using System.Net.Http.Headers
+@inject HttpClient Http
+@inject IJSRuntime JS
+@inject NavigationManager NavigationManager
+
+<h3>📁 Planos de la orden NroOT: @NroOT (@nombreOrden)</h3>
+<h5>📂 Carpeta: @CarpetaCompleta</h5>
+
+@if (planos.Count > 0)
+{
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>📄 Archivo</th>
+                <th>📅 Fecha</th>
+                <th>📂 Ruta completa</th>
+                <th>🔗 Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var plano in planos.OrderByDescending(p => p.FechaCreacion))
+            {
+                <tr>
+                    <td>@plano.RutaOriginal</td>
+                    <td>@plano.FechaCreacion.ToString("dd/MM/yyyy")</td>
+                    <td>@plano.RutaSVG</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" @onclick="@(() => AbrirRutaLocal(plano.RutaSVG))">
+                            Abrir
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-muted">No hay planos cargados para esta orden.</p>
+}
+
+<hr />
+<h5>📤 Subir nuevo plano</h5>
+<InputFile OnChange="OnFileSelected" />
+<button class="btn btn-primary mt-2" @onclick="SubirPlano" disabled="@(!hayArchivo)">Subir plano</button>
+<button class="btn btn-secondary mt-3" @onclick="Volver">Volver</button>
+
+@code {
+    [Parameter] public int NroOT { get; set; }
+
+    private List<PlanoFiltroDTO> planos = new();
+    private bool hayArchivo = false;
+    private string nombreOrden = "";
+    private IBrowserFile archivoSeleccionado;
+
+    private string CarpetaCompleta =>
+     planos is { Count: > 0 } &&
+     !string.IsNullOrWhiteSpace(planos.First().RutaSVG) &&
+     File.Exists(planos.First().RutaSVG)
+         ? Path.GetDirectoryName(planos.First().RutaSVG)
+         : $"C:\\Planos\\{nombreOrden}";
+
+
+
+    // private string SubCarpeta => planos.Count > 0
+    //     ? Path.GetDirectoryName(planos.First().RutaSVG)?.Replace(CarpetaGeneral + "\\", "") ?? "(sin subcarpeta)"
+    //     : "(sin subcarpeta)";
+
+    protected override async Task OnInitializedAsync()
+    {
+        Console.WriteLine($"RutaSVG: {planos.FirstOrDefault()?.RutaSVG}");
+
+        Console.WriteLine($"CarpetaCompleta: {CarpetaCompleta}");
+
+        var response = await Http.GetAsync($"api/Planos/PorNroOT/{NroOT}");
+        if (response.IsSuccessStatusCode)
+        {
+            planos = await response.Content.ReadFromJsonAsync<List<PlanoFiltroDTO>>() ?? new();
+            if (planos.Count > 0)
+            {
+                nombreOrden = planos.First().NombreOrden;
+            }
+            else
+            {
+                nombreOrden = "(sin nombre)";
+            }
+        }
+        else
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            await JS.InvokeVoidAsync("alert", $"Error al obtener planos: {error}");
+        }
+    }
+
+    private void OnFileSelected(InputFileChangeEventArgs e)
+    {
+        archivoSeleccionado = e.File;
+        hayArchivo = true;
+    }
+
+    private async Task SubirPlano()
+    {
+        if (archivoSeleccionado == null)
+        {
+            await JS.InvokeVoidAsync("alert", "No se seleccionó ningún archivo.");
+            return;
+        }
+
+        var content = new MultipartFormDataContent();
+        var fileContent = new StreamContent(archivoSeleccionado.OpenReadStream(long.MaxValue));
+        fileContent.Headers.ContentType = new MediaTypeHeaderValue(archivoSeleccionado.ContentType);
+        content.Add(fileContent, "archivo", archivoSeleccionado.Name);
+
+        var response = await Http.PostAsync($"api/Planos/SubirPlano?NroOT={NroOT}", content);
+        if (response.IsSuccessStatusCode)
+        {
+            await JS.InvokeVoidAsync("alert", "Plano añadido correctamente.");
+            await OnInitializedAsync();
+            hayArchivo = false;
+        }
+        else
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            await JS.InvokeVoidAsync("alert", $"Error al subir plano: {error}");
+        }
+    }
+
+    private async Task AbrirRutaLocal(string ruta)
+    {
+        var response = await Http.PostAsJsonAsync("api/Planos/AbrirRutaLocal", ruta);
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            await JS.InvokeVoidAsync("alert", $"No se pudo abrir la ruta: {error}");
+        }
+    }
+
+    public async Task Volver()
+    {
+        NavigationManager.NavigateTo("/Ordenes");
+        
+    }
+}

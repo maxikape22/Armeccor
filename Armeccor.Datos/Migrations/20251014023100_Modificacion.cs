@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Armeccor.Datos.Migrations
 {
     /// <inheritdoc />
-    public partial class ViendoEstoQueFuncione : Migration
+    public partial class Modificacion : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -105,21 +105,6 @@ namespace Armeccor.Datos.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Planos",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RutaSVG = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RutaOriginal = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    FechaCreacion = table.Column<DateTime>(type: "date", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Planos", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Ordenes",
                 columns: table => new
                 {
@@ -132,8 +117,7 @@ namespace Armeccor.Datos.Migrations
                     FechaInicio = table.Column<DateTime>(type: "date", nullable: false),
                     FechaPactada = table.Column<DateTime>(type: "date", nullable: false),
                     FechaEntrega = table.Column<DateTime>(type: "date", nullable: true),
-                    ClienteId = table.Column<int>(type: "int", nullable: false),
-                    PlanoId = table.Column<int>(type: "int", nullable: true)
+                    ClienteId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -144,12 +128,6 @@ namespace Armeccor.Datos.Migrations
                         principalTable: "Clientes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Ordenes_Planos_PlanoId",
-                        column: x => x.PlanoId,
-                        principalTable: "Planos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -236,6 +214,28 @@ namespace Armeccor.Datos.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Planos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RutaSVG = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RutaOriginal = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FechaCreacion = table.Column<DateTime>(type: "date", nullable: false),
+                    OrdenId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Planos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Planos_Ordenes_OrdenId",
+                        column: x => x.OrdenId,
+                        principalTable: "Ordenes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "Areas",
                 columns: new[] { "Id", "NombreArea" },
@@ -309,15 +309,15 @@ namespace Armeccor.Datos.Migrations
                 column: "ClienteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ordenes_PlanoId",
-                table: "Ordenes",
-                column: "PlanoId");
-
-            migrationBuilder.CreateIndex(
                 name: "NroOT_UQ",
                 table: "Ordenes",
                 column: "NroOT",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Planos_OrdenId",
+                table: "Planos",
+                column: "OrdenId");
         }
 
         /// <inheritdoc />
@@ -339,6 +339,9 @@ namespace Armeccor.Datos.Migrations
                 name: "Notificaciones");
 
             migrationBuilder.DropTable(
+                name: "Planos");
+
+            migrationBuilder.DropTable(
                 name: "Areas");
 
             migrationBuilder.DropTable(
@@ -352,9 +355,6 @@ namespace Armeccor.Datos.Migrations
 
             migrationBuilder.DropTable(
                 name: "Clientes");
-
-            migrationBuilder.DropTable(
-                name: "Planos");
         }
     }
 }

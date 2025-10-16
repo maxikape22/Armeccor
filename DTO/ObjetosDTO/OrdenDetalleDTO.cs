@@ -27,6 +27,7 @@ namespace DTO.ObjetosDTO
         public string AreaActual { get; set; } //Aplanado de Area
         //public List<AreaDetalleOrdenListaDTO> AreasDeLaOrden { get; set; } = new();
         //private DateTime _FechaEntrega;
+        public decimal? Importe { get; set; }
     }
 
    

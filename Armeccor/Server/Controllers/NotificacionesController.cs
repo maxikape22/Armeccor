@@ -13,12 +13,12 @@ namespace Armeccor.API.Controllers
 {
     [ApiController]
     [Route("api/Notificaciones")]
-    public class NotificacionController : ControllerBase
+    public class NotificacionesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
 
-        public NotificacionController(ApplicationDbContext context, IMapper mapper)
+        public NotificacionesController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;

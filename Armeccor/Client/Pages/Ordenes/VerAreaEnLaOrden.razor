@@ -4,7 +4,7 @@
 @inject IJSRuntime JS
 @using Microsoft.AspNetCore.SignalR.Client
 
-<h3>Áreas detalladas de la Orden</h3>
+<h3>Áreas detalladas de la orden N°: @NroOT - con nombre de orden: @NombreOrden - del cliente:  @NombreCliente</h3>
 
 <div class="d-flex justify-content-between mb-3">
     <div>
@@ -14,6 +14,7 @@
             <option value="Pendiente">Pendiente</option>
             <option value="Iniciado">Iniciado</option>
             <option value="Finalizado">Finalizado</option>
+            <option value="Detenido">Detenido</option>
         </select>
 
         <label class="ms-3">
@@ -82,8 +83,8 @@ else
 
 @code {
     [Parameter] public int NroOT { get; set; }
-    [Parameter] public string NombreOrden { get; set; }
-    [Parameter] public string NombreCliente { get; set; }
+    public string NombreOrden;
+    public string NombreCliente;
     private List<AreaDetalleOrdenListaDTO> areasDetalle = new();
     private string filtroEstado = "";
     private bool soloFinalizados = false;
@@ -94,10 +95,11 @@ else
 
     // protected override async Task OnInitializedAsync()
     // {
+       
     //     AreaDetalle.NroOT = NroOT;
     //     ordenDetalleDTO.NroOT = NroOT;
-    //     areaDetalleOrdenListaDTO.NombreOrden = NombreOrden;
-    //     areaDetalleOrdenListaDTO.NombreCliente = NombreCliente;
+    //     NombreOrden = ordenDetalleDTO.NombreOrden;      
+    //     NombreCliente = ordenDetalleDTO.NombreCliente;
 
     //     try
     //     {
@@ -106,22 +108,33 @@ else
 
     //         if (areasDetalle == null || !areasDetalle.Any())
     //         {
-    //             Console.WriteLine($"No se encontraron áreas para la orden NroOT {NroOT}");
+    //             //Console.WriteLine($"No se encontraron áreas para la orden NroOT {NroOT}");
+    //             await JS.InvokeVoidAsync("alert", $"No se encontraron áreas para la orden NroOT {NroOT}");
     //         }
     //         else
     //         {
-    //             // 🔹 Recuperar comentarios de localStorage y sessionStorage
     //             foreach (var area in areasDetalle)
     //             {
-    //                 var comentarioLocal = await JS.InvokeAsync<string>(
-    //                     "localStorage.getItem", $"comentario_{area.Id}");
-    //                 var comentarioSession = await JS.InvokeAsync<string>(
-    //                     "sessionStorage.getItem", $"comentario_{area.Id}");
+    //                 // 🔹 Priorizar comentario del backend
+    //                 if (!string.IsNullOrEmpty(area.Comentario))
+    //                 {
+    //                     // Guardar copia en local y session
+    //                     await JS.InvokeVoidAsync("localStorage.setItem", $"comentario_{area.Id}", area.Comentario);
+    //                     await JS.InvokeVoidAsync("sessionStorage.setItem", $"comentario_{area.Id}", area.Comentario);
+    //                 }
+    //                 else
+    //                 {
+    //                     // Si no hay en DB, buscar en storage
+    //                     var comentarioLocal = await JS.InvokeAsync<string>(
+    //                         "localStorage.getItem", $"comentario_{area.Id}");
+    //                     var comentarioSession = await JS.InvokeAsync<string>(
+    //                         "sessionStorage.getItem", $"comentario_{area.Id}");
 
-    //                 if (!string.IsNullOrEmpty(comentarioLocal))
-    //                     area.Comentario = comentarioLocal;
-    //                 else if (!string.IsNullOrEmpty(comentarioSession))
-    //                     area.Comentario = comentarioSession;
+    //                     if (!string.IsNullOrEmpty(comentarioLocal))
+    //                         area.Comentario = comentarioLocal;
+    //                     else if (!string.IsNullOrEmpty(comentarioSession))
+    //                         area.Comentario = comentarioSession;
+    //                 }
     //             }
     //         }
     //     }
@@ -135,50 +148,52 @@ else
     {
         AreaDetalle.NroOT = NroOT;
         ordenDetalleDTO.NroOT = NroOT;
-        areaDetalleOrdenListaDTO.NombreOrden = NombreOrden;
-        areaDetalleOrdenListaDTO.NombreCliente = NombreCliente;
 
         try
         {
             areasDetalle = await Http.GetFromJsonAsync<List<AreaDetalleOrdenListaDTO>>(
                 $"api/Area_Detalle_Orden/{NroOT}");
 
-            if (areasDetalle == null || !areasDetalle.Any())
+            if (areasDetalle != null && areasDetalle.Any())
             {
-                Console.WriteLine($"No se encontraron áreas para la orden NroOT {NroOT}");
-            }
-            else
-            {
+                NombreOrden = areasDetalle.First().NombreOrden;
+                NombreCliente = areasDetalle.First().NombreCliente;
+
                 foreach (var area in areasDetalle)
                 {
-                    // 🔹 Priorizar comentario del backend
                     if (!string.IsNullOrEmpty(area.Comentario))
                     {
-                        // Guardar copia en local y session
                         await JS.InvokeVoidAsync("localStorage.setItem", $"comentario_{area.Id}", area.Comentario);
                         await JS.InvokeVoidAsync("sessionStorage.setItem", $"comentario_{area.Id}", area.Comentario);
                     }
                     else
                     {
-                        // Si no hay en DB, buscar en storage
                         var comentarioLocal = await JS.InvokeAsync<string>(
                             "localStorage.getItem", $"comentario_{area.Id}");
                         var comentarioSession = await JS.InvokeAsync<string>(
                             "sessionStorage.getItem", $"comentario_{area.Id}");
 
-                        if (!string.IsNullOrEmpty(comentarioLocal))
-                            area.Comentario = comentarioLocal;
-                        else if (!string.IsNullOrEmpty(comentarioSession))
-                            area.Comentario = comentarioSession;
+                        area.Comentario = !string.IsNullOrEmpty(comentarioLocal)
+                            ? comentarioLocal
+                            : comentarioSession ?? "";
                     }
                 }
+            }
+            else
+            {
+                Console.WriteLine($"No se encontraron áreas para la orden NroOT {NroOT}");
+                NombreOrden = "(sin nombre)";
+                NombreCliente = "(sin cliente)";
             }
         }
         catch (HttpRequestException ex)
         {
             Console.WriteLine($"Error al obtener áreas: {ex.Message}");
+            NombreOrden = "(error)";
+            NombreCliente = "(error)";
         }
     }
+
 
 
     private void Volver()

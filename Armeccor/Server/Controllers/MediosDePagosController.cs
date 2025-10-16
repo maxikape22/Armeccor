@@ -11,11 +11,11 @@ namespace Armeccor.Server.Controllers
 {
     [ApiController]
     [Route("api/MediosDePago")]
-    public class MediosDePagoController : ControllerBase
+    public class MediosDePagosController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
-        public MediosDePagoController(ApplicationDbContext context, IMapper mapper)
+        public MediosDePagosController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;

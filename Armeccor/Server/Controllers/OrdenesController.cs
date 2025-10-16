@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Armeccor.Server.Controllers
@@ -85,10 +87,11 @@ namespace Armeccor.Server.Controllers
         {
             var query = context.Ordenes
                 .Include(o => o.Cliente)
-                .Include(o => o.Plano)
+                .Where(e=>e.Estado == "Abierta")
+                .Include(o => o.Planos)
                 .Include(o => o.Entregas)
                 .Include(o => o.AreaDetalleOrdenes)
-                    .ThenInclude(ad => ad.Area);
+                .ThenInclude(ad => ad.Area);
 
             var totalRegistros = await query.CountAsync();
 
@@ -227,7 +230,7 @@ namespace Armeccor.Server.Controllers
         {
             var ordenes = await context.Ordenes
                 .Include(o => o.Cliente)
-                .Include(o => o.Plano)
+                .Include(o => o.Planos)
                 .Include(o => o.Entregas)
                 .Include(o => o.AreaDetalleOrdenes)
                 .ThenInclude(ad => ad.Area)
@@ -274,7 +277,7 @@ namespace Armeccor.Server.Controllers
         {
             var orden = await context.Ordenes
                 .Include(o => o.Cliente)
-                .Include(o => o.Plano)
+                .Include(o => o.Planos)
                 .Include(o => o.Entregas)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
@@ -359,7 +362,7 @@ namespace Armeccor.Server.Controllers
         {
             var ordenes = await context.Ordenes
                 .Include(o => o.Cliente)
-                .Include(o => o.Plano)
+                .Include(o => o.Planos)
                 .Include(o => o.Entregas)
                 .Include(o => o.AreaDetalleOrdenes)
                     .ThenInclude(ad => ad.Area)
@@ -377,7 +380,7 @@ namespace Armeccor.Server.Controllers
             // Query base con includes
             var baseQuery = context.Ordenes
                 .Include(o => o.Cliente)
-                .Include(o => o.Plano)
+                .Include(o => o.Planos)
                 .Include(o => o.Entregas)
                 .Include(o => o.AreaDetalleOrdenes)
                     .ThenInclude(ad => ad.Area)
@@ -448,7 +451,7 @@ namespace Armeccor.Server.Controllers
 
             var ordenesPageGlobal = await context.Ordenes
                 .Include(o => o.Cliente)
-                .Include(o => o.Plano)
+                .Include(o => o.Planos)
                 .Include(o => o.Entregas)
                 .Include(o => o.AreaDetalleOrdenes)
                     .ThenInclude(ad => ad.Area)
@@ -486,7 +489,7 @@ namespace Armeccor.Server.Controllers
         {
             // Query base para empezar a construir
             var baseQuery = context.Ordenes.Include(o => o.Cliente)
-                .Include(o => o.Plano)
+                .Include(o => o.Planos)
                 .Include(o => o.Entregas)
                 .Include(o => o.AreaDetalleOrdenes)
                     .ThenInclude(ad => ad.Area).AsQueryable();
@@ -537,7 +540,7 @@ namespace Armeccor.Server.Controllers
         {
             var baseQuery = context.Ordenes
                 .Include(o => o.Cliente)
-                .Include(o => o.Plano)
+                .Include(o => o.Planos)
                 .Include(o => o.Entregas)
                 .Include(o => o.AreaDetalleOrdenes)
                 .ThenInclude(ad => ad.Area)
@@ -565,5 +568,64 @@ namespace Armeccor.Server.Controllers
                 datos = ordenesDto
             });
         }
+
+        private async Task<decimal> ObtenerInflacionDesdeIndecAsync()
+        {
+            using var http = new HttpClient();
+            var url = "https://datos.gob.ar/series/api/series/?ids=148.3_INIVELNAL_DICI_M_26&format=json";
+
+            var response = await http.GetAsync(url);
+            var json = await response.Content.ReadAsStringAsync();
+
+            // 🔒 Validación: evitar parseo si el contenido no es JSON
+            if (!json.TrimStart().StartsWith("{"))
+            {
+                Console.WriteLine("Respuesta inválida del INDEC:");
+                Console.WriteLine(json);
+                return 12.5m; // Valor simulado si la API falla
+            }
+
+            using var doc = JsonDocument.Parse(json);
+            var data = doc.RootElement.GetProperty("data");
+
+            var ultimoValor = data.EnumerateArray()
+                .Select(e => decimal.TryParse(e[1].GetString(), out var v) ? v : 0)
+                .LastOrDefault();
+
+            return ultimoValor > 0 ? ultimoValor : 12.5m; // Fallback si el valor es 0
+        }
+
+
+        [HttpGet("CalcularImportePorInflacion/{nroOT}")]
+        public async Task<ActionResult<decimal>> CalcularImportePorInflacion(int nroOT)
+        {
+            var orden = await context.Ordenes.FirstOrDefaultAsync(o => o.NroOT == nroOT);
+            if (orden == null || orden.FechaEntrega == null)
+                return BadRequest("Orden no encontrada o sin fecha de entrega.");
+
+            var ipc = await ObtenerInflacionDesdeIndecAsync();
+
+            var valorBase = 10000m;
+            var importeFinal = valorBase * (ipc / 100);
+
+            orden.Importe = Math.Round(importeFinal, 2);
+            await context.SaveChangesAsync();
+
+            return Ok(orden.Importe);
+        }
+
+
+
+
+
+
+
+        public class InflacionDTO
+        {
+            public string Fecha { get; set; } // Ej: "2025-09"
+            public decimal Valor { get; set; } // Ej: 11.8
+        }
+
+
     }
 }

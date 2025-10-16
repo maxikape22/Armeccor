@@ -223,7 +223,7 @@ namespace Armeccor.Server.Mapeos
             CreateMap<OrdenConAreasDTO, Orden>()
                 .ForMember(dest => dest.AreaDetalleOrdenes, opt => opt.Ignore())
                 .ForMember(dest => dest.Cliente, opt => opt.Ignore())
-                .ForMember(dest => dest.Plano, opt => opt.Ignore());
+                .ForMember(dest => dest.Planos, opt => opt.Ignore());
 
             CreateMap<Orden, OrdenConAreasDTO>();
 
@@ -232,7 +232,7 @@ namespace Armeccor.Server.Mapeos
                 .ForMember(dest => dest.Entregas, opt => opt.Ignore())
                 .ForMember(dest => dest.InsumoOrdenes, opt => opt.Ignore())
                 .ForMember(dest => dest.Cliente, opt => opt.Ignore())
-                .ForMember(dest => dest.Plano, opt => opt.Ignore());
+                .ForMember(dest => dest.Planos, opt => opt.Ignore());
 
             CreateMap<Orden, OrdenDTO>()
                 .ForMember(dest => dest.AreaDetalleOrdenes,
@@ -307,7 +307,7 @@ namespace Armeccor.Server.Mapeos
                 .ForMember(d=>d.NombreOrden,p=>p
                 .MapFrom(d=>d.Orden.NombreOrden))
                 .ForMember(c=>c.NombreCliente,m=>m
-                .MapFrom(e=>e.Orden.Cliente.Nombre));
+                .MapFrom(e=>e.Orden.Cliente.Nombre)).ReverseMap();
 
             CreateMap<AreaDetalleOrdenListaDTO, AreaDetalleOrden>();
 
@@ -336,6 +336,12 @@ namespace Armeccor.Server.Mapeos
 
             CreateMap<Notificacion, NotificacionDTO>();
             CreateMap<NotificacionDTO, Notificacion>();
+            //CreateMap<PlanoFiltroDTO, Plano>().ReverseMap();
+
+            CreateMap<Plano, PlanoFiltroDTO>()
+            .ForMember(dest => dest.NroOT, opt => opt.Ignore())
+            .ForMember(dest => dest.NombreOrden, opt => opt.Ignore()).ReverseMap();
+
         }
     } 
 }

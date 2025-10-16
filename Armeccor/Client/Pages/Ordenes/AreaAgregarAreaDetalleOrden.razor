@@ -3,7 +3,7 @@
 @inject NavigationManager Navigation
 @using System.Net.Http.Json
 
-<h3>Agregar área a la orden: @NroOT</h3>
+<h3>Agregar área a la orden: @NroOT - (@NombreOrden) - (@NombreCliente)</h3>
 
 <div class="card p-3">
 
@@ -45,22 +45,33 @@
 
 @code {
     [Parameter] public int NroOT { get; set; }
+    [Parameter] public string NombreOrden { get; set; }
+    [Parameter] public string NombreCliente { get; set; }
+    private OrdenDetalleDTO ordenDetalleDTO = new OrdenDetalleDTO();
+    private AreaDetalleOrdenDTO AreaDetalle = new AreaDetalleOrdenDTO();
+    private CrearClienteDTO ClienteDTO = new CrearClienteDTO();
+    private AreaDetalleOrdenListaDTO areaDetalleOrdenListaDTO = new AreaDetalleOrdenListaDTO();
 
     private AreaDetalleOrdenDTO nuevaArea = new()
     {
-        Estado = "Iniciado" // Valor por defecto
+        Estado = "Pendiente" // Valor por defecto
     };
 
     private List<AreaListaDTO> areasDisponibles = new();
     private List<string> Estados = new() 
-    {
+    {             
+        "Pendiente",
         "Iniciado",
-        "Pendiente"
+        "Detenido"
     };
     private List<AreaDetalleOrdenListaDTO> listaDTOs = new List<AreaDetalleOrdenListaDTO>();
 
     protected override async Task OnInitializedAsync()
     {
+        AreaDetalle.NroOT = NroOT;
+        ordenDetalleDTO.NroOT = NroOT;
+        areaDetalleOrdenListaDTO.NombreOrden = NombreOrden;
+        areaDetalleOrdenListaDTO.NombreCliente = NombreCliente;
         // ✅ Cargar las áreas desde el backend
         areasDisponibles = await Http.GetFromJsonAsync<List<AreaListaDTO>>("api/Areas");
     }

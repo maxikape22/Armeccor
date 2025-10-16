@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Armeccor.Datos.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251007025542_ViendoEstoQueFuncione")]
-    partial class ViendoEstoQueFuncione
+    [Migration("20251016012035_NuevoCampo")]
+    partial class NuevoCampo
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -372,6 +372,9 @@ namespace Armeccor.Datos.Migrations
                     b.Property<DateTime>("FechaPactada")
                         .HasColumnType("date");
 
+                    b.Property<decimal?>("Importe")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("NombreOrden")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -379,14 +382,9 @@ namespace Armeccor.Datos.Migrations
                     b.Property<int>("NroOT")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PlanoId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ClienteId");
-
-                    b.HasIndex("PlanoId");
 
                     b.HasIndex(new[] { "NroOT" }, "NroOT_UQ")
                         .IsUnique();
@@ -405,6 +403,9 @@ namespace Armeccor.Datos.Migrations
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("date");
 
+                    b.Property<int>("OrdenId")
+                        .HasColumnType("int");
+
                     b.Property<string>("RutaOriginal")
                         .HasColumnType("nvarchar(max)");
 
@@ -413,6 +414,8 @@ namespace Armeccor.Datos.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OrdenId");
 
                     b.ToTable("Planos");
                 });
@@ -479,14 +482,18 @@ namespace Armeccor.Datos.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Armeccor.Datos.Entidades.Plano", "Plano")
-                        .WithMany()
-                        .HasForeignKey("PlanoId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.Navigation("Cliente");
+                });
 
-                    b.Navigation("Plano");
+            modelBuilder.Entity("Armeccor.Datos.Entidades.Plano", b =>
+                {
+                    b.HasOne("Armeccor.Datos.Entidades.Orden", "Orden")
+                        .WithMany("Planos")
+                        .HasForeignKey("OrdenId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Orden");
                 });
 
             modelBuilder.Entity("Armeccor.Datos.Entidades.Area", b =>
@@ -516,6 +523,8 @@ namespace Armeccor.Datos.Migrations
                     b.Navigation("Entregas");
 
                     b.Navigation("InsumoOrdenes");
+
+                    b.Navigation("Planos");
                 });
 #pragma warning restore 612, 618
         }

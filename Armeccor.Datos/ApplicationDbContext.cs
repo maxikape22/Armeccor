@@ -70,13 +70,13 @@ namespace Armeccor.Datos
                 .OnDelete(DeleteBehavior.Cascade); // ClienteId se pone null si borran cliente
 
             // ===========================
-            // Relación Orden - Plano (nullable, sin cascada)
+            // Relación Plano - Orden (nullable, sin cascada)
             // ===========================
-            modelBuilder.Entity<Orden>()
-                .HasOne(o => o.Plano)
-                .WithMany()
-                .HasForeignKey(o => o.PlanoId)
-                .OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Plano>()
+                .HasOne(p => p.Orden)
+                .WithMany(o => o.Planos)
+                .HasForeignKey(p => p.OrdenId).OnDelete(DeleteBehavior.Cascade);
+
 
             // ===========================
             // Relación Orden - Entrega
