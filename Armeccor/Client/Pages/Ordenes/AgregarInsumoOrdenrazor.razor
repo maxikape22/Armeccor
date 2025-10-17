@@ -10,9 +10,6 @@
         <input class="form-control" placeholder="Buscar por nombre de insumo..." @bind="filtroNombre" />
         <button class="btn btn-primary" @onclick="BuscarPorNombre">Buscar</button>
     </div>
-    @*     <div>
-        <button class="btn btn-success" @onclick="IrANuevoInsumo">+ Nuevo Insumo</button>
-    </div> *@
 </div>
 
 @if (InsumoDTO == null)
@@ -40,49 +37,71 @@ else
                         <td>@i.CantDisponible</td>
                         <td>
                             <InputNumber @bind-Value="i.CantidadARetirar" class="form-control" />
-
-                            @*                         <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => IrAEditarInsumo(i.Id)">
-                                Editar
-                            </button>
-                            <button class="btn btn-sm btn-danger" @onclick="() => ConfirmarEliminar(i.Id)">
-                                Eliminar
-                            </button> *@
                         </td>
-                        <td>
                         <td>
                             <button class="btn btn-sm btn-success me-1" @onclick="() => AgregarInsumoAOrden(i)">
                                 Agregar
                             </button>
-                        </td>
-
                         </td>
                     </tr>
                 }
             }
             else
             {
-                <tr><td colspan="3" class="text-center">No se encontraron insumos.</td></tr>
+                <tr><td colspan="4" class="text-center">No se encontraron insumos.</td></tr>
+            }
+        </tbody>
+    </table>
+}
+
+<hr />
+
+<h4>🧾 Insumos ya cargados en la orden</h4>
+
+@if (InsumosEnOrden == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else if (!InsumosEnOrden.Any())
+{
+    <p>No hay insumos cargados para esta orden.</p>
+}
+else
+{
+    <table class="table table-bordered table-striped mt-3">
+        <thead>
+            <tr>
+                <th>Insumo</th>
+                <th>Cantidad Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in InsumosEnOrden)
+            {
+                <tr>
+                    <td>@item.Nombre</td>
+                    <td>@item.Cantidad</td>
+                </tr>
             }
         </tbody>
     </table>
 }
 
 @code {
-    private List<CrearInsumoDTO> InsumoDTO = new();           // Lista completa
+    private List<CrearInsumoDTO> InsumoDTO = new();           // Lista completa de insumos
     private List<CrearInsumoDTO> InsumoDTOFiltrados = new(); // Lista filtrada
+    private List<InsumoDetalleOrdenDTO> InsumosEnOrden = new(); // Insumos ya agregados a la orden
     private CrearInsumoDTO insumoDTO = new CrearInsumoDTO();
     private string filtroNombre = string.Empty;
 
     [Parameter] public int NroOT { get; set; }
-
     private int ordenId;
 
     protected override async Task OnInitializedAsync()
     {
-        ordenId = NroOT; // ✅ el id viene desde la URL
-        //$"Se agregó {resultado.DetalleOrden.Cantidad} de {insumo.Nombre} a la orden {ordenId}. Stock restante: {insumo.CantDisponible}");
-        //detalle
-        await Cargar();
+        ordenId = NroOT;
+        await Cargar();               // carga todos los insumos
+        await CargarInsumosDeOrden(); // carga los insumos que ya están agregados a la orden
     }
 
     private async Task Cargar()
@@ -95,7 +114,7 @@ else
     {
         if (string.IsNullOrWhiteSpace(filtroNombre))
         {
-            InsumoDTOFiltrados = InsumoDTO; // Restaurar lista completa
+            InsumoDTOFiltrados = InsumoDTO;
         }
         else
         {
@@ -105,8 +124,6 @@ else
         }
     }
 
-    // private int ordenId = 1; // 👈 Ejemplo: el id de la orden actual. Podés pasarlo como parámetro.
-
     private async Task AgregarInsumoAOrden(CrearInsumoDTO insumo)
     {
         if (insumo.CantidadARetirar == null || insumo.CantidadARetirar <= 0)
@@ -115,15 +132,13 @@ else
             return;
         }
 
-        // Preparar objeto con OrdenId, InsumoId y Cantidad
         var detalleOrden = new
         {
-            OrdenId = ordenId,               // 👈 nuevo
+            OrdenId = ordenId,
             InsumoId = insumo.Id,
             Cantidad = insumo.CantidadARetirar
         };
 
-        // Enviar al backend
         var resp = await Http.PostAsJsonAsync("api/Insumo_Detalle_Orden", detalleOrden);
 
         if (resp.IsSuccessStatusCode)
@@ -132,13 +147,11 @@ else
 
             if (resultado != null)
             {
-                // Actualizar stock con lo que devuelve el backend
                 insumo.CantDisponible = resultado.InsumoActualizado.CantDisponible;
                 insumo.CantidadARetirar = null;
 
-                // Forzar renderizado
-                StateHasChanged();
-
+                // 🔹 Recargar lista de insumos de la orden
+                await CargarInsumosDeOrden();
 
                 await JS.InvokeVoidAsync("alert",
                     $"Se agregó {resultado.DetalleOrden.Cantidad} de {insumo.Nombre} a la orden {ordenId}. Stock restante: {insumo.CantDisponible}");
@@ -151,99 +164,18 @@ else
         }
     }
 
-    // DTO auxiliar para deserializar la respuesta
+    private async Task CargarInsumosDeOrden()
+    {
+        var insumos = await Http.GetFromJsonAsync<List<InsumoDetalleOrdenDTO>>(
+            $"api/Insumo_Detalle_Orden/AgrupadosPorOrden/{ordenId}");
+
+        InsumosEnOrden = insumos ?? new();
+        StateHasChanged();
+    }
+
     public class InsumoDetalleResponse
     {
         public InsumoDetalleOrdenDTO DetalleOrden { get; set; }
         public CrearInsumoDTO InsumoActualizado { get; set; }
     }
-
-
-
-    // private async Task ConfirmarEliminar(int id)
-    // {
-    //     var ok = await JS.InvokeAsync<bool>("confirm", $"¿Desea eliminar el insumo: {insumoDTO.Nombre}?");
-    //     if (!ok) return;
-
-    //     await EliminarInsumo(id);
-    //     await Cargar();
-    // }
-
-    // private async Task EliminarInsumo(int id)
-    // {
-    //     try
-    //     {
-    //         var resp = await Http.DeleteAsync($"/api/Insumos/{id}");
-    //         if (resp.IsSuccessStatusCode)
-    //         {
-    //             InsumoDTO.RemoveAll(i => i.Id == id);
-    //             await JS.InvokeVoidAsync("alert", "Insumo eliminado.");
-    //         }
-    //         else
-    //         {
-    //             var body = await resp.Content.ReadAsStringAsync();
-    //             Console.WriteLine($"Error al eliminar insumo: {resp.StatusCode} - {body}");
-    //             await JS.InvokeVoidAsync("alert", $"Error al eliminar insumo: {resp.StatusCode}");
-    //         }
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         Console.WriteLine($"Error al eliminar insumo: {ex.Message}");
-    //         await JS.InvokeVoidAsync("alert", "Error al eliminar insumo. Ver consola.");
-    //     }
-    // }
-
-    //Eliminar
-    // private void IrANuevoInsumo()
-    // {
-    //     Navigation.NavigateTo("/api/Insumos/AgregarInsumo");
-    // }
-
-    // private void IrAEditarInsumo(int id)
-    // {
-    //     Navigation.NavigateTo($"/api/Insumos/Editar/{id}");
-    // }
 }
-
-
-
-
-
-@* @page "/ListadoInsumosOrden"
-@inject HttpClient Http
-
-<h3>Insumos en Órdenes</h3>
-
-@if (insumosEnOrden == null)
-{
-    <p><em>Cargando...</em></p>
-}
-else
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Nro. de OT</th>
-                <th>Orden</th>
-                <th>Insumo</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in insumosEnOrden)
-            {
-                <tr>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-
-@code 
-{
-    private List<InsumoDetalleOrdenDTO> insumosEnOrden;
-
-    protected override async Task OnInitializedAsync()
-    {
-        insumosEnOrden = await Http.GetFromJsonAsync<List<InsumoDetalleOrdenDTO>>("api/Ordenes/Insumo_Detalle_Orden");
-    }
-} *@

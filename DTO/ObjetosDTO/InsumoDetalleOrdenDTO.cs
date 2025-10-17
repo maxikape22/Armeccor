@@ -9,5 +9,12 @@
         public int Cantidad { get; set; }
         public string Nombre { get; set; } // borrar?
 
+
+
+        // ✅ Propiedad temporal para el textbox de liberar
+        public int? CantidadALiberar { get; set; }
+
+
+
     }
 }

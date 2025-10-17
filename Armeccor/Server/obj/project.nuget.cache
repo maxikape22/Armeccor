@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "18UNvtUDm5g=",
+  "dgSpecHash": "l43XeD7PHRU=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Armeccor\\Server\\Armeccor.Server.csproj",
+  "projectFilePath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor\\Server\\Armeccor.Server.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Maxx\\.nuget\\packages\\automapper\\12.0.0\\automapper.12.0.0.nupkg.sha512",
     "C:\\Users\\Maxx\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.0\\automapper.extensions.microsoft.dependencyinjection.12.0.0.nupkg.sha512",

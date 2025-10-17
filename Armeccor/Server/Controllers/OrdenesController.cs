@@ -127,6 +127,25 @@ namespace Armeccor.Server.Controllers
             });
         }
 
+
+        //para mostrar los label con los datos del cliente
+        [HttpGet("{id}")]
+        public async Task<ActionResult<OrdenDetalleDTO>> CargarDatosOrden(int id)
+        {
+            var orden = await context.Ordenes.FirstOrDefaultAsync(x => x.Id == id);
+            if (orden == null)
+                return NotFound();
+
+            return Ok(new OrdenDetalleDTO
+            {
+                Id = orden.Id,
+                NroOT = orden.NroOT,
+                NombreOrden = orden.NombreOrden,
+                NombreCliente = orden.Cliente.Nombre
+            });
+        }
+
+
         //[HttpGet("FiltroPorNombreDescripcion")]
         //public async Task<ActionResult> GetOrdenesFiltradas(
         //    [FromQuery] string? texto = null,

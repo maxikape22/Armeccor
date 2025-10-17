@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "0uhjL1J07hg=",
+  "dgSpecHash": "0piv+IKkGQo=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj",
+  "projectFilePath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Maxx\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\Maxx\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

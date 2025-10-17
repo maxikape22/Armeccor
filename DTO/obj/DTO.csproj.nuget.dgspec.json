@@ -1,15 +1,15 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj": {}
+    "C:\\Users\\Maxx\\source\\repos\\Armeccor\\DTO\\DTO.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj": {
+    "C:\\Users\\Maxx\\source\\repos\\Armeccor\\DTO\\DTO.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj",
+        "projectUniqueName": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\DTO\\DTO.csproj",
         "projectName": "DTO",
-        "projectPath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj",
+        "projectPath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\DTO\\DTO.csproj",
         "packagesPath": "C:\\Users\\Maxx\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\DTO\\obj\\",
         "projectStyle": "PackageReference",

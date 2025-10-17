@@ -2,15 +2,67 @@
 @inject HttpClient Http
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
-@using Microsoft.AspNetCore.SignalR.Client
 
+@* <h3>Gestión de Insumos de la Orden: @NroOT, nombre: @nombreOrden, para el cliente: @nombreCliente</h3>
+ *@
 
-<h3>Gestión de Insumos de la Orden </h3>
+<style>
+    .info-card {
+        border-radius: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+    }
+
+        .info-card:hover {
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .info-card .card-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .info-card .card-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+</style>
+
+<div class="mb-4">
+    <h3 class="mb-3 text-center text-primary fw-bold">Gestión de Insumos de la Orden</h3>
+
+    <div class="row text-center">
+        <div class="col-md-4 mb-3">
+            <div class="card info-card border-primary">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">Número de OT</h5>
+                    <p class="card-text">@NroOT</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card info-card border-success">
+                <div class="card-body">
+                    <h5 class="card-title text-success">Nombre de la Orden</h5>
+                    <p class="card-text">@nombreOrden</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card info-card border-info">
+                <div class="card-body">
+                    <h5 class="card-title text-info">Cliente</h5>
+                    <p class="card-text">@nombreCliente</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div class="input-group" style="width: 48%;">
         <input class="form-control" placeholder="Buscar por nombre de insumo..." @bind="filtroNombre" />
- @*        <button class="btn btn-primary" @onclick="BuscarPorNombre">Buscar</button> *@
     </div>
     <div>
         <button class="btn btn-success" @onclick="IrANuevoInsumo">+ Agregar Insumos a la Orden</button>
@@ -27,8 +79,8 @@ else
         <thead>
             <tr>
                 <th>Nombre</th>
-                <th>Cantidad</th>
-                <th style="width:120px">Acción</th>
+                <th>Cantidad actual</th>
+                <th style="width:150px">Liberar</th>
             </tr>
         </thead>
         <tbody>
@@ -37,10 +89,20 @@ else
                 @foreach (var i in InsumoDTOFiltrados)
                 {
                     <tr>
-                        <td>@i.Nombre</td>    @* 👈 Mostrar el nombre real del insumo *@
-                        <td>@i.Cantidad</td>  @* 👈 Mostrar la cantidad agrupada *@
+                        <td>@i.Nombre</td>
+                        <td>@i.Cantidad</td>
                         <td>
-                            @* Botones de acción acá si querés *@
+                            @* 
+                                InputNumber permite ingresar la cantidad a liberar.
+                                Se valida que sea mayor que 0 y menor o igual a la cantidad disponible en la orden.
+                            *@
+                            <InputNumber @bind-Value="i.CantidadALiberar" class="form-control" style="width:80px" Min="1" Max="@i.Cantidad" />
+
+                            @* 
+                                Botón que ejecuta el método LiberarInsumo(i) al hacer clic.
+                                Llama al backend para liberar esa cantidad de insumos y actualiza la lista.
+                            *@
+                            <button class="btn btn-warning btn-sm mt-1" @onclick="() => LiberarInsumo(i)">Liberar</button>
                         </td>
                     </tr>
                 }
@@ -51,141 +113,127 @@ else
             }
         </tbody>
     </table>
-
 }
 
 @code {
-    private List<InsumoDetalleOrdenDTO> InsumoDTO = new();           // Lista completa
-    private List<InsumoDetalleOrdenDTO> InsumoDTOFiltrados = new(); // Lista filtrada
-    private InsumoDetalleOrdenDTO insumoDTO = new InsumoDetalleOrdenDTO();
-    private string filtroNombre = string.Empty;
     [Parameter] public int NroOT { get; set; }
 
-    
+    private string nombreOrden = "";
+    private string nombreCliente = "";
+    private string filtroNombre = string.Empty;
 
+    // Lista principal de insumos asociados a la orden
+    private List<InsumoDetalleOrdenDTO> InsumoDTO = new();
+    // Lista que se muestra filtrada según búsqueda
+    private List<InsumoDetalleOrdenDTO> InsumoDTOFiltrados = new();
+
+    // Método que se ejecuta automáticamente al cargar la página
     protected override async Task OnInitializedAsync()
     {
-        await Cargar();
+        await CargarDatosOrden();
+        await CargarInsumos();
     }
 
-    // private async Task Cargar()  ultimo que comente
-    // {
-    //     insumoDTO.NroOT =NroOT;
-    //     InsumoDTO = await Http.GetFromJsonAsync<List<InsumoDetalleOrdenDTO>>("api/Insumo_Detalle_Orden") ?? new();
-    //     InsumoDTOFiltrados = InsumoDTO;
-    // }
-
-    private async Task Cargar()
+    // Obtiene el nombre de la orden y el cliente desde el backend
+    private async Task CargarDatosOrden()
     {
-        var url = $"api/Insumo_Detalle_Orden/AgrupadosPorOrden/{NroOT}";
-        InsumoDTO = await Http.GetFromJsonAsync<List<InsumoDetalleOrdenDTO>>(url) ?? new();
-        InsumoDTOFiltrados = InsumoDTO;
+        try
+        {
+            var orden = await Http.GetFromJsonAsync<OrdenDetalleDTO>($"api/Ordenes/{NroOT}");
+            if (orden != null)
+            {
+                NroOT = orden.NroOT;
+                nombreOrden = orden.NombreOrden ?? "(sin nombre)";
+                nombreCliente = orden.NombreCliente ?? "(sin cliente)";
+            }
+        }
+        catch
+        {
+            nombreOrden = "(error)";
+            nombreCliente = "(error)";
+        }
     }
 
+    // Carga todos los insumos asociados a la orden desde la API
+    private async Task CargarInsumos()
+    {
+        try
+        {
+            var url = $"api/Insumo_Detalle_Orden/AgrupadosPorOrden/{NroOT}";
+            InsumoDTO = await Http.GetFromJsonAsync<List<InsumoDetalleOrdenDTO>>(url) ?? new();
+            InsumoDTOFiltrados = InsumoDTO;
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("alert", $"Error al cargar insumos: {ex.Message}");
+        }
+    }
 
-    // // // // // // private void BuscarPorNombre()
-    // // // // // // {
-    // // // // // //     if (string.IsNullOrWhiteSpace(filtroNombre))
-    // // // // // //     {
-    // // // // // //         InsumoDTOFiltrados = InsumoDTO; // Restaurar lista completa
-    // // // // // //     }
-    // // // // // //     else
-    // // // // // //     {
-    // // // // // //         InsumoDTOFiltrados = InsumoDTO
-    // // // // // //             .Where(i => i.Nombre.Contains(filtroNombre, StringComparison.OrdinalIgnoreCase))
-    // // // // // //             .ToList();
-    // // // // // //     }
-    // // // // // // }
-
-    // private async Task ConfirmarEliminar(int id)
-    // {
-    //     var ok = await JS.InvokeAsync<bool>("confirm", $"¿Desea eliminar el insumo: {insumoDTO.Nombre}?");
-    //     if (!ok) return;
-
-    //     await EliminarInsumo(id);
-    //     await Cargar();
-    // }
-
-    // private async Task EliminarInsumo(int id)
-    // {
-    //     try
-    //     {
-    //         var resp = await Http.DeleteAsync($"/api/Insumos/{id}");
-    //         if (resp.IsSuccessStatusCode)
-    //         {
-    //             InsumoDTO.RemoveAll(i => i.Id == id);
-    //             await JS.InvokeVoidAsync("alert", "Insumo eliminado.");
-    //         }
-    //         else
-    //         {
-    //             var body = await resp.Content.ReadAsStringAsync();
-    //             Console.WriteLine($"Error al eliminar insumo: {resp.StatusCode} - {body}");
-    //             await JS.InvokeVoidAsync("alert", $"Error al eliminar insumo: {resp.StatusCode}");
-    //         }
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         Console.WriteLine($"Error al eliminar insumo: {ex.Message}");
-    //         await JS.InvokeVoidAsync("alert", "Error al eliminar insumo. Ver consola.");
-    //     }
-    // }
-
-    //Eliminar
-    // private void IrANuevoInsumo()
-    // {
-    //     Navigation.NavigateTo("/AgregarInsumosOrden");
-    // }
+    // Redirige a la página para agregar nuevos insumos a la orden
     private void IrANuevoInsumo()
     {
         Navigation.NavigateTo($"/AgregarInsumosOrden/{NroOT}");
     }
-    // private void IrAEditarInsumo(int id)
-    // {
-    //     Navigation.NavigateTo($"/api/Insumos/Editar/{id}");
-    // }
 
-
-}
-
-
-
-
-
-@* @page "/ListadoInsumosOrden"
-@inject HttpClient Http
-
-<h3>Insumos en Órdenes</h3>
-
-@if (insumosEnOrden == null)
-{
-    <p><em>Cargando...</em></p>
-}
-else
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Nro. de OT</th>
-                <th>Orden</th>
-                <th>Insumo</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in insumosEnOrden)
-            {
-                <tr>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-
-@code 
-{
-    private List<InsumoDetalleOrdenDTO> insumosEnOrden;
-
-    protected override async Task OnInitializedAsync()
+    // Método principal: libera una cantidad de insumo de la orden
+    private async Task LiberarInsumo(InsumoDetalleOrdenDTO i)
     {
-        insumosEnOrden = await Http.GetFromJsonAsync<List<InsumoDetalleOrdenDTO>>("api/Ordenes/Insumo_Detalle_Orden");
+        // Validación: debe ingresar una cantidad válida
+        if (i.CantidadALiberar == null || i.CantidadALiberar <= 0)
+        {
+            await JS.InvokeVoidAsync("alert", $"Ingrese una cantidad válida para {i.Nombre}");
+            return;
+        }
+
+        // Validación: no puede liberar más de lo que hay cargado en la orden
+        if (i.CantidadALiberar > i.Cantidad)
+        {
+            await JS.InvokeVoidAsync("alert", $"No puede liberar más insumos de los que tiene la orden ({i.Cantidad})");
+            return;
+        }
+
+        // Armamos el DTO que se envía al backend
+        var dto = new LiberarInsumoDTO
+        {
+            OrdenId = NroOT,
+            InsumoId = i.InsumoId,
+            Cantidad = i.CantidadALiberar.Value
+        };
+
+        // Llamada POST al endpoint de liberación
+        var resp = await Http.PostAsJsonAsync("api/Insumo_Detalle_Orden/Liberar", dto);
+
+        if (resp.IsSuccessStatusCode)
+        {
+            // Si todo salió bien, recargamos la lista completa desde el backend
+            await CargarInsumos();
+
+            // Limpiamos el campo CantidadALiberar y refrescamos la interfaz
+            i.CantidadALiberar = null;
+            StateHasChanged();
+
+            await JS.InvokeVoidAsync("alert", $"Se liberaron {dto.Cantidad} unidades de {i.Nombre}");
+        }
+        else
+        {
+            // Si hay error, mostramos el mensaje del backend
+            var error = await resp.Content.ReadAsStringAsync();
+            await JS.InvokeVoidAsync("alert", $"Error al liberar insumo: {error}");
+        }
     }
-} *@
+
+    // Clase DTO auxiliar (para enviar al backend)
+    public class LiberarInsumoDTO
+    {
+        public int OrdenId { get; set; }
+        public int InsumoId { get; set; }
+        public int Cantidad { get; set; }
+    }
+
+    // Clase auxiliar para respuesta del backend (si quisieras parsear algo más)
+    public class InsumoDetalleResponse
+    {
+        public CrearInsumoDTO InsumoActualizado { get; set; }
+        public InsumoDetalleOrdenDTO DetalleActualizado { get; set; }
+    }
+}

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Armeccor\\Client\\Armeccor.Client.csproj": {}
+    "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor\\Client\\Armeccor.Client.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj": {
+    "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj",
+        "projectUniqueName": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj",
         "projectName": "Armeccor.Datos",
-        "projectPath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj",
+        "projectPath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj",
         "packagesPath": "C:\\Users\\Maxx\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Armeccor.Datos\\obj\\",
+        "outputPath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor.Datos\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -33,8 +33,8 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Validaciones\\Validaciones.csproj": {
-                "projectPath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Validaciones\\Validaciones.csproj"
+              "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Validaciones\\Validaciones.csproj": {
+                "projectPath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Validaciones\\Validaciones.csproj"
               }
             }
           }
@@ -96,14 +96,14 @@
         }
       }
     },
-    "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Armeccor\\Client\\Armeccor.Client.csproj": {
+    "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor\\Client\\Armeccor.Client.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Armeccor\\Client\\Armeccor.Client.csproj",
+        "projectUniqueName": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor\\Client\\Armeccor.Client.csproj",
         "projectName": "Armeccor.Client",
-        "projectPath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Armeccor\\Client\\Armeccor.Client.csproj",
+        "projectPath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor\\Client\\Armeccor.Client.csproj",
         "packagesPath": "C:\\Users\\Maxx\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Armeccor\\Client\\obj\\",
+        "outputPath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor\\Client\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -125,11 +125,11 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj": {
-                "projectPath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj"
+              "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj": {
+                "projectPath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj"
               },
-              "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj": {
-                "projectPath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj"
+              "C:\\Users\\Maxx\\source\\repos\\Armeccor\\DTO\\DTO.csproj": {
+                "projectPath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\DTO\\DTO.csproj"
               }
             }
           }
@@ -201,12 +201,12 @@
         }
       }
     },
-    "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj": {
+    "C:\\Users\\Maxx\\source\\repos\\Armeccor\\DTO\\DTO.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj",
+        "projectUniqueName": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\DTO\\DTO.csproj",
         "projectName": "DTO",
-        "projectPath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj",
+        "projectPath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\DTO\\DTO.csproj",
         "packagesPath": "C:\\Users\\Maxx\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\DTO\\obj\\",
         "projectStyle": "PackageReference",
@@ -267,12 +267,12 @@
         }
       }
     },
-    "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Validaciones\\Validaciones.csproj": {
+    "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Validaciones\\Validaciones.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Validaciones\\Validaciones.csproj",
+        "projectUniqueName": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Validaciones\\Validaciones.csproj",
         "projectName": "Validaciones",
-        "projectPath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Validaciones\\Validaciones.csproj",
+        "projectPath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Validaciones\\Validaciones.csproj",
         "packagesPath": "C:\\Users\\Maxx\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Validaciones\\obj\\",
         "projectStyle": "PackageReference",

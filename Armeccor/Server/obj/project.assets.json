@@ -6272,9 +6272,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Armeccor\\Server\\Armeccor.Server.csproj",
+      "projectUniqueName": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor\\Server\\Armeccor.Server.csproj",
       "projectName": "Armeccor.Server",
-      "projectPath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Armeccor\\Server\\Armeccor.Server.csproj",
+      "projectPath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor\\Server\\Armeccor.Server.csproj",
       "packagesPath": "C:\\Users\\Maxx\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Armeccor\\Server\\obj\\",
       "projectStyle": "PackageReference",
@@ -6298,14 +6298,14 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj": {
-              "projectPath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj"
+            "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj": {
+              "projectPath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor.Datos\\Armeccor.Datos.csproj"
             },
-            "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Armeccor\\Client\\Armeccor.Client.csproj": {
-              "projectPath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\Armeccor\\Client\\Armeccor.Client.csproj"
+            "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor\\Client\\Armeccor.Client.csproj": {
+              "projectPath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\Armeccor\\Client\\Armeccor.Client.csproj"
             },
-            "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj": {
-              "projectPath": "C:\\Users\\Maxx\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj"
+            "C:\\Users\\Maxx\\source\\repos\\Armeccor\\DTO\\DTO.csproj": {
+              "projectPath": "C:\\Users\\Maxx\\source\\repos\\Armeccor\\DTO\\DTO.csproj"
             }
           }
         }

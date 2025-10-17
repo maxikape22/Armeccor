@@ -4,8 +4,61 @@
 @inject IJSRuntime JS
 @using Microsoft.AspNetCore.SignalR.Client
 
-<h3>Áreas detalladas de la orden N°: @NroOT - con nombre de orden: @NombreOrden - del cliente:  @NombreCliente</h3>
+@* <h3>Áreas detalladas de la orden N°: @NroOT - con nombre de orden: @NombreOrden - del cliente:  @NombreCliente</h3> *@
 
+<style>
+    .info-card {
+        border-radius: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+    }
+
+        .info-card:hover {
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .info-card .card-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .info-card .card-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+</style>
+
+<div class="mb-4">
+    <h3 class="mb-3 text-center text-primary fw-bold">Gestión de Insumos de la Orden</h3>
+
+    <div class="row text-center">
+        <div class="col-md-4 mb-3">
+            <div class="card info-card border-primary">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">Número de OT</h5>
+                    <p class="card-text">@NroOT</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card info-card border-success">
+                <div class="card-body">
+                    <h5 class="card-title text-success">Nombre de la Orden</h5>
+                    <p class="card-text">@NombreOrden</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card info-card border-info">
+                <div class="card-body">
+                    <h5 class="card-title text-info">Cliente</h5>
+                    <p class="card-text">@NombreCliente</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="d-flex justify-content-between mb-3">
     <div>
         <label>Filtrar por estado:</label>
