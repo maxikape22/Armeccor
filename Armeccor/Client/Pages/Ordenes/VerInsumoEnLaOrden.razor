@@ -197,7 +197,7 @@ else
         // Armamos el DTO que se envía al backend
         var dto = new LiberarInsumoDTO
         {
-            OrdenId = NroOT,
+            OrdenId = ordenId,
             InsumoId = i.InsumoId,
             Cantidad = i.CantidadALiberar.Value
         };
