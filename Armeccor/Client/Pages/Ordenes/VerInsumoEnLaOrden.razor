@@ -119,6 +119,7 @@ else
     [Parameter] public int NroOT { get; set; }
 
     private string nombreOrden = "";
+    private int ordenId = 0;
     private string nombreCliente = "";
     private string filtroNombre = string.Empty;
 
@@ -145,6 +146,7 @@ else
                 NroOT = orden.NroOT;
                 nombreOrden = orden.NombreOrden ?? "(sin nombre)";
                 nombreCliente = orden.NombreCliente ?? "(sin cliente)";
+                ordenId = orden.Id;
             }
         }
         catch
@@ -159,7 +161,7 @@ else
     {
         try
         {
-            var url = $"api/Insumo_Detalle_Orden/AgrupadosPorOrden/{NroOT}";
+            var url = $"api/Insumo_Detalle_Orden/AgrupadosPorOrden/{ordenId}";
             InsumoDTO = await Http.GetFromJsonAsync<List<InsumoDetalleOrdenDTO>>(url) ?? new();
             InsumoDTOFiltrados = InsumoDTO;
         }
@@ -172,7 +174,7 @@ else
     // Redirige a la página para agregar nuevos insumos a la orden
     private void IrANuevoInsumo()
     {
-        Navigation.NavigateTo($"/AgregarInsumosOrden/{NroOT}");
+        Navigation.NavigateTo($"/AgregarInsumosOrden/{ordenId}");
     }
 
     // Método principal: libera una cantidad de insumo de la orden
