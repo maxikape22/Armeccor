@@ -3,7 +3,59 @@
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
 
-<h3>Agregar Insumos a la Orden</h3>
+<style>
+    .info-card {
+        border-radius: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+    }
+
+        .info-card:hover {
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .info-card .card-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .info-card .card-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+</style>
+
+<div class="mb-4">
+    <h3 class="mb-3 text-center text-primary fw-bold">Gestión de Insumos de la Orden</h3>
+
+    <div class="row text-center">
+        <div class="col-md-4 mb-3">
+            <div class="card info-card border-primary">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">Número de OT</h5>
+                    <p class="card-text">@NroOT</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card info-card border-success">
+                <div class="card-body">
+                    <h5 class="card-title text-success">Nombre de la Orden</h5>
+                    <p class="card-text">@nombreOrden</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card info-card border-info">
+                <div class="card-body">
+                    <h5 class="card-title text-info">Cliente</h5>
+                    <p class="card-text">@nombreCliente</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div class="input-group" style="width: 48%;">
@@ -11,6 +63,8 @@
         <button class="btn btn-primary" @onclick="BuscarPorNombre">Buscar</button>
     </div>
 </div>
+
+<h4>🧾 Stock General Seleccione la Cantidad que Desea Retirar </h4>
 
 @if (InsumoDTO == null)
 {
@@ -94,12 +148,17 @@ else
     private CrearInsumoDTO insumoDTO = new CrearInsumoDTO();
     private string filtroNombre = string.Empty;
 
+    private string nombreOrden = "";
+   
+    private string nombreCliente = "";
     [Parameter] public int NroOT { get; set; }
     private int ordenId;
 
     protected override async Task OnInitializedAsync()
     {
-        ordenId = NroOT;
+        await CargarDatosOrden();
+
+        // ordenId = NroOT;
         await Cargar();               // carga todos los insumos
         await CargarInsumosDeOrden(); // carga los insumos que ya están agregados a la orden
     }
@@ -108,6 +167,26 @@ else
     {
         InsumoDTO = await Http.GetFromJsonAsync<List<CrearInsumoDTO>>("api/Insumos") ?? new();
         InsumoDTOFiltrados = InsumoDTO;
+    }
+    // Obtiene el nombre de la orden y el cliente desde el backend
+    private async Task CargarDatosOrden()
+    {
+        try
+        {
+            var orden = await Http.GetFromJsonAsync<OrdenDetalleDTO>($"api/Ordenes/{NroOT}");
+            if (orden != null)
+            {
+                NroOT = orden.NroOT;
+                nombreOrden = orden.NombreOrden ?? "(sin nombre)";
+                nombreCliente = orden.NombreCliente ?? "(sin cliente)";
+                ordenId = orden.Id;
+            }
+        }
+        catch
+        {
+            nombreOrden = "(error)";
+            nombreCliente = "(error)";
+        }
     }
 
     private void BuscarPorNombre()
