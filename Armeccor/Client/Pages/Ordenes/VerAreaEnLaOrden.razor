@@ -3,6 +3,8 @@
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
 @using Microsoft.AspNetCore.SignalR.Client
+@using Microsoft.AspNetCore.Components.Web;
+
 
 @* <h3>Áreas detalladas de la orden N°: @NroOT - con nombre de orden: @NombreOrden - del cliente:  @NombreCliente</h3> *@
 
@@ -30,7 +32,7 @@
 </style>
 
 <div class="mb-4">
-    <h3 class="mb-3 text-center text-primary fw-bold">Gestión de Insumos de la Orden</h3>
+    <h3 class="mb-3 text-center text-primary fw-bold">Gestión de áreas de la orden</h3>
 
     <div class="row text-center">
         <div class="col-md-4 mb-3">
@@ -78,6 +80,24 @@
     <button class="btn btn-danger" @onclick="() => AgregarArea(NroOT)">➕ Agregar Área</button>
 </div>
 
+@*
+    creo que aca iria esa implementacion para tener la solapíta igual que Windows
+*@
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h5></h5>
+    <div>
+        <label class="form-label me-2">Ordenar por:</label>
+        <select class="form-select form-select-sm d-inline-block w-auto"
+                @onchange="OrdenarPorSeleccion">
+            <option value="default">Orden original</option>
+            <option value="prioridad">Prioridad</option>
+        </select>
+    </div>
+</div>
+
+
+
 @if (areasDetalle == null)
 {
     <p><em>Cargando áreas detalladas...</em></p>
@@ -94,7 +114,8 @@ else
                 <th>Descripción</th>
                 <th>Estado</th>
                 <th>Tiempo</th>
-                <th>Comentario</th> @* 🔹 Nueva columna persistente *@
+                <th>Comentario</th>
+                <th>Prioridad</th>
                 <th>Acción</th>
             </tr>
         </thead>
@@ -115,14 +136,16 @@ else
                                @bind:event="oninput"
                                @onchange="() => GuardarComentario(area)" />
                     </td>
+                    <td>@area.Prioridad</td>
                     <td>
-                        <select class="form-select" @onchange="async e => await CambiarEstado(area.Id,e)">
+                        <select class="form-select" @onchange="async e => await CambiarEstado(area.Id, e)">
                             <option label="---Cambiar estado del área---"></option>
                             <option value="Iniciado">Iniciado</option>
                             <option value="Pendiente">Pendiente</option>
                             <option value="Finalizado">Finalizado</option>
+                            <option value="Detenido">Detenido</option>
                         </select>
-                        <button class="btn btn-sm btn-danger mt-1" 
+                        <button class="btn btn-sm btn-danger mt-1"
                                 @onclick="async () => await EliminarArea(area.Id)">
                             Eliminar
                         </button>
@@ -146,56 +169,27 @@ else
     private CrearClienteDTO ClienteDTO = new CrearClienteDTO();
     private AreaDetalleOrdenListaDTO areaDetalleOrdenListaDTO = new AreaDetalleOrdenListaDTO();
 
-    // protected override async Task OnInitializedAsync()
-    // {
-       
-    //     AreaDetalle.NroOT = NroOT;
-    //     ordenDetalleDTO.NroOT = NroOT;
-    //     NombreOrden = ordenDetalleDTO.NombreOrden;      
-    //     NombreCliente = ordenDetalleDTO.NombreCliente;
+    private string modoOrdenamiento = "default";
 
-    //     try
-    //     {
-    //         areasDetalle = await Http.GetFromJsonAsync<List<AreaDetalleOrdenListaDTO>>(
-    //             $"api/Area_Detalle_Orden/{NroOT}");
+    private async Task OrdenarPorSeleccion(ChangeEventArgs e)
+    {
+        modoOrdenamiento = e.Value?.ToString();
 
-    //         if (areasDetalle == null || !areasDetalle.Any())
-    //         {
-    //             //Console.WriteLine($"No se encontraron áreas para la orden NroOT {NroOT}");
-    //             await JS.InvokeVoidAsync("alert", $"No se encontraron áreas para la orden NroOT {NroOT}");
-    //         }
-    //         else
-    //         {
-    //             foreach (var area in areasDetalle)
-    //             {
-    //                 // 🔹 Priorizar comentario del backend
-    //                 if (!string.IsNullOrEmpty(area.Comentario))
-    //                 {
-    //                     // Guardar copia en local y session
-    //                     await JS.InvokeVoidAsync("localStorage.setItem", $"comentario_{area.Id}", area.Comentario);
-    //                     await JS.InvokeVoidAsync("sessionStorage.setItem", $"comentario_{area.Id}", area.Comentario);
-    //                 }
-    //                 else
-    //                 {
-    //                     // Si no hay en DB, buscar en storage
-    //                     var comentarioLocal = await JS.InvokeAsync<string>(
-    //                         "localStorage.getItem", $"comentario_{area.Id}");
-    //                     var comentarioSession = await JS.InvokeAsync<string>(
-    //                         "sessionStorage.getItem", $"comentario_{area.Id}");
+        if (modoOrdenamiento == "prioridad")
+        {
+            areasDetalle = await Http.GetFromJsonAsync<List<AreaDetalleOrdenListaDTO>>(
+                $"api/Area_Detalle_Orden/OrdenadasPorPrioridad/{NroOT}");
+        }
+        else
+        {
+            areasDetalle = await Http.GetFromJsonAsync<List<AreaDetalleOrdenListaDTO>>(
+                $"api/Area_Detalle_Orden/{NroOT}");
+        }
 
-    //                     if (!string.IsNullOrEmpty(comentarioLocal))
-    //                         area.Comentario = comentarioLocal;
-    //                     else if (!string.IsNullOrEmpty(comentarioSession))
-    //                         area.Comentario = comentarioSession;
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     catch (HttpRequestException ex)
-    //     {
-    //         Console.WriteLine($"Error al obtener áreas: {ex.Message}");
-    //     }
-    // }
+        StateHasChanged();
+    }
+
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -247,7 +241,71 @@ else
         }
     }
 
+    private Queue<AreaDetalleOrdenListaDTO> colaDeAreas = new Queue<AreaDetalleOrdenListaDTO>();
 
+    private void InicializarCola(List<AreaDetalleOrdenListaDTO> areas)
+    {
+        colaDeAreas.Clear();
+
+        foreach (var area in areas)
+        {
+            if (area.Estado != "Finalizado")
+            {
+                colaDeAreas.Enqueue(area);
+            }
+            else
+            {
+                // Se ignora en la cola, pero puede mantenerse en otra lista si querés mostrarlo
+            }
+        }
+
+        ReasignarPrioridades();
+    }
+
+    private void ReasignarPrioridades()
+    {
+        int prioridad = 1;
+
+        foreach (var area in colaDeAreas)
+        {
+            area.Prioridad = prioridad;
+            prioridad++;
+        }
+    }
+
+    private List<AreaDetalleOrdenListaDTO> areasFinalizadas = new();
+
+    private void MoverAFinalizados(AreaDetalleOrdenListaDTO area)
+    {
+        area.Prioridad = 0;
+        areasFinalizadas.Add(area);
+    }
+
+
+    private static readonly Dictionary<string, int> EstadoPeso = new()
+{
+    { "Pendiente", 2 },
+    { "Iniciado", 1 },
+    { "Detenido", 3 },
+    { "Finalizado", 99 } // Lo más bajo, se elimina
+};
+
+
+    private void RecalcularPrioridades()
+    {
+        var areasActivas = areasDetalle
+            .Where(a => a.Estado != "Finalizado")
+            .OrderBy(a => EstadoPeso.ContainsKey(a.Estado) ? EstadoPeso[a.Estado] : 100)
+            .ThenBy(a => a.NombreArea) // o AreaId si querés más precisión
+            .ToList();
+
+        for (int i = 0; i < areasActivas.Count; i++)
+        {
+            areasActivas[i].Prioridad = i + 1;
+        }
+
+        areasDetalle = areasActivas;
+    }
 
     private void Volver()
     {
@@ -272,16 +330,6 @@ else
         return lista;
     }
 
-    // 🔹 Guardar comentario en sessionStorage y localStorage --> Esta persistencia debe seguir guardandose de las dos formas pero ademas de hacerlo en el DOM de mi navegador, debe hacerlo en DOM de cualquier navegador habido y por haber tambien debe guardarse en el backend, o sea, en la base de datos. Por eso agregue el campo Comentario en AreaDetalleOrdenDTO y en AreaDetalleOrdenListaDTO para hacer que eso sea posible
-    // private async Task GuardarComentario(AreaDetalleOrdenListaDTO area)
-    // {
-    //     var comentario = area.Comentario ?? "";
-    //     await JS.InvokeVoidAsync("sessionStorage.setItem", $"comentario_{area.Id}", comentario);
-    //     await JS.InvokeVoidAsync("localStorage.setItem", $"comentario_{area.Id}", comentario);
-    // }
-
-
-
     private async Task GuardarComentario(AreaDetalleOrdenListaDTO area)
     {
         var comentario = area.Comentario ?? "";
@@ -300,11 +348,6 @@ else
             await JS.InvokeVoidAsync("alert", $"Error al guardar comentario en servidor: {msg}");
         }
     }
-
-
-
-
-
 
     // Cambiar estado
     private async Task CambiarEstado(int id, ChangeEventArgs e)
@@ -328,11 +371,15 @@ else
             var msg = await response.Content.ReadAsStringAsync();
             await JS.InvokeVoidAsync("alert", $"Error al actualizar en servidor: {msg}");
         }
+
+
+        areasDetalle = await Http.GetFromJsonAsync<List<AreaDetalleOrdenListaDTO>>(
+                $"api/Area_Detalle_Orden/{NroOT}");
     }
 
     private async Task EliminarArea(int areaDetalleId)
     {
-        var confirm = await JS.InvokeAsync<bool>("confirm", 
+        var confirm = await JS.InvokeAsync<bool>("confirm",
             $"¿Seguro que quieres eliminar esta área asociada al Nro de orden {ordenDetalleDTO.NroOT}?");
         if (!confirm) return;
 

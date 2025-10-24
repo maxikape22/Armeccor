@@ -1,0 +1,106 @@
+﻿@page "/VerDetallePedidoInsumo"
+@inject HttpClient Http
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
+@using System.Net.Http.Json
+
+<PageTitle>Detalles del pedido</PageTitle>
+
+<button class="btn btn-primary ms-3" @onclick="@(() => Navigation.NavigateTo("/RegistrarPedidoDetalleInsumo"))">
+    + Registrar detalle del pedido
+</button>
+
+@if (detalles == null)
+{
+    <p>No se encontraron detalles del pedido</p>
+}
+else
+{
+    <table class="table table-striped table-bordered mt-3">
+        <thead class="table-light">
+            <tr>
+                <th>Item</th>
+                <th>Insumo insuficiente</th>
+                <th>Cantidad</th>
+                <th>Fecha de uso</th>
+                <th>Nro de orden</th>
+                <th>Recibido (Sí/No)</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var d in detalles)
+            {
+                <tr>
+                    <td>@d.Item</td>
+
+                    <td>@d.NombreInsumoInsuficiente</td>
+
+                    <td>
+                        <input type="number"
+                               class="form-control"
+                               value="@d.Cantidad"
+                               @onchange="async e => await ActualizarCantidad(d.Id, Convert.ToInt32(e.Value))" />
+                    </td>
+
+                    <td>@d.FechaUso.ToShortDateString()</td>
+                    <td>@d.NroOT</td>
+
+                    <td>
+                        <input type="checkbox"
+                               checked="@d.EsSolicitado"
+                               @onchange="async e => await CambiarSolicitud(d.Id, ((ChangeEventArgs)e).Value is bool b && b)" />
+                        <span class="ms-2">@((d.EsSolicitado) ? "Sí" : "No")</span>
+                    </td>
+
+                    <td>@d.Estado</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button class="btn btn-secondary mt-3" @onclick="Volver">Volver</button>
+}
+
+@code {
+    [Parameter] public int idPedido { get; set; }
+    List<PedidoDetalleInsumoDTO> detalles;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            detalles = await Http.GetFromJsonAsync<List<PedidoDetalleInsumoDTO>>("api/PedidoDetalleInsumos/ListarDetalleInsumos");
+        }
+        catch
+        {
+            await JS.InvokeVoidAsync("alert", "Error al cargar los detalles del pedido.");
+        }
+    }
+
+    private async Task ActualizarCantidad(int idDetalle, int nuevaCantidad)
+    {
+        var response = await Http.PatchAsJsonAsync($"api/PedidoDetalleInsumos/{idDetalle}/ActualizarCantidad", nuevaCantidad);
+        if (response.IsSuccessStatusCode)
+        {
+            var detalle = detalles.FirstOrDefault(d => d.Id == idDetalle);
+            if (detalle != null)
+                detalle.Cantidad = nuevaCantidad;
+        }
+    }
+
+    private async Task CambiarSolicitud(int idDetalle, bool nuevoEstado)
+    {
+        var response = await Http.PatchAsJsonAsync($"api/PedidoDetalleInsumos/{idDetalle}/ActualizarSolicitud", nuevoEstado);
+        if (response.IsSuccessStatusCode)
+        {
+            var detalle = detalles.FirstOrDefault(d => d.Id == idDetalle);
+            if (detalle != null)
+                detalle.EsSolicitado = nuevoEstado;
+        }
+    }
+
+    private void Volver()
+    {
+        Navigation.NavigateTo("/Pedidos");
+    }
+}

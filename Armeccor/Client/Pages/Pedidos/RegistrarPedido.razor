@@ -1,0 +1,54 @@
+﻿@page "/RegistrarPedido"
+@inject HttpClient Http
+@using System.Net.Http.Json
+@inject NavigationManager Navigation
+
+<h3>Nuevo Pedido</h3>
+
+<EditForm Model="@PedidoDTO" OnValidSubmit="GuardarPedido">
+  @*   <div class="mb-3">
+        <label>Nro de pedido:</label>
+        <InputNumber @bind-Value="PedidoDTO.NroPedido" class="form-control" />
+    </div> *@
+
+    <div class="mb-3">
+        <label>Estado:</label>
+        <InputText @bind-Value="PedidoDTO.Estado" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Proveedor:</label>
+        <InputSelect @bind-Value="PedidoDTO.IdProveedor" class="form-control">
+            <option value="">-- Seleccione un proveedor --</option>
+            @foreach (var proveedor in Proveedores)
+            {
+                <option value="@proveedor.Id">@proveedor.Nombre</option>
+            }
+        </InputSelect>
+    </div>
+    <button class="btn btn-success" type="submit">Guardar</button>
+</EditForm>
+
+@code 
+{
+    //PedidoDetalleInsumoDTO nuevoPedido = new();
+    PedidoDTO PedidoDTO = new PedidoDTO();
+    List<ProveedorDTO> Proveedores = new List<ProveedorDTO>();
+
+    override protected async Task OnInitializedAsync()
+    {
+        Proveedores = await Http.GetFromJsonAsync<List<ProveedorDTO>>("api/Proveedores") ?? new List<ProveedorDTO>();
+        //Ordenes = await Http.GetFromJsonAsync<List<OrdenDetalleDTO>>("api/Ordenes_Detalle") ?? new List<OrdenDetalleDTO>();
+    }
+
+    private async Task GuardarPedido()
+    {
+        var respuesta =  await Http.PostAsJsonAsync("api/Pedidos", PedidoDTO);
+        if (respuesta.IsSuccessStatusCode)
+        {
+            var pedidoCreado = await respuesta.Content.ReadFromJsonAsync<PedidoDTO>();
+            Console.WriteLine($"Pedido creado con Nro: {pedidoCreado!.NroPedido}");
+            Navigation.NavigateTo("/Pedidos");
+        }
+    }
+}

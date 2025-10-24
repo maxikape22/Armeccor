@@ -129,8 +129,8 @@ namespace Armeccor.Server.Controllers
 
 
         //para mostrar los label con los datos del cliente
-        [HttpGet("{id}")]
-        public async Task<ActionResult<OrdenDetalleDTO>> CargarDatosOrden(int id)
+        [HttpGet("Label/{id:int}")]
+        public async Task<ActionResult<object>> CargarDatosOrden(int id)
         {
             var orden = await context.Ordenes.FirstOrDefaultAsync(x => x.Id == id);
             if (orden == null)
@@ -144,105 +144,6 @@ namespace Armeccor.Server.Controllers
                 NombreCliente = orden.Cliente.Nombre
             });
         }
-
-
-        //[HttpGet("FiltroPorNombreDescripcion")]
-        //public async Task<ActionResult> GetOrdenesFiltradas(
-        //    [FromQuery] string? texto = null,
-        //    [FromQuery] int pagina = 1,
-        //    [FromQuery] int tamanoPagina = 4)
-        //{
-        //    var query = context.Ordenes
-        //        .Include(o => o.Cliente)
-        //        .Include(o => o.Plano)
-        //        .Include(o => o.Entregas)
-        //        .Include(o => o.AreaDetalleOrdenes)
-        //            .ThenInclude(ad => ad.Area)
-        //        .AsQueryable();
-
-        //    // 🔍 Filtro por nombre o descripción (case-insensitive)
-        //    if (!string.IsNullOrWhiteSpace(texto))
-        //    {
-        //        texto = texto.ToLower();
-        //        query = query.Where(o =>
-        //            o.NombreOrden.ToLower().Contains(texto) ||
-        //            o.Descripcion.ToLower().Contains(texto));
-        //    }
-
-        //    var totalRegistros = await query.CountAsync();
-
-        //    var ordenes = await query
-        //        .OrderBy(o => o.Id)
-        //        .Skip((pagina - 1) * tamanoPagina)
-        //        .Take(tamanoPagina)
-        //        .ToListAsync();
-
-        //    var ordenesDto = _mapper.Map<List<OrdenDetalleDTO>>(ordenes);
-
-        //    foreach (var dto in ordenesDto)
-        //    {
-        //        var entidad = ordenes.FirstOrDefault(o => o.Id == dto.Id);
-
-        //        var areaActual = entidad?.AreaDetalleOrdenes?
-        //            .FirstOrDefault(ad =>
-        //                ad.Estado != null &&
-        //                ad.Estado.Equals("Iniciado", StringComparison.OrdinalIgnoreCase));
-
-        //        dto.AreaActual = areaActual != null
-        //            ? $"{areaActual.Area?.NombreArea ?? "(Área sin nombre)"} ({areaActual.Estado})"
-        //            : "No hay área cargada con estado inicial";
-        //    }
-
-        //    return Ok(new
-        //    {
-        //        TotalRegistros = totalRegistros,
-        //        PaginaActual = pagina,
-        //        TamanoPagina = tamanoPagina,
-        //        TotalPaginas = (int)Math.Ceiling(totalRegistros / (double)tamanoPagina),
-        //        Datos = ordenesDto
-        //    });
-        //}
-
-
-
-
-        //[HttpGet()]
-        //public async Task<ActionResult<IEnumerable<OrdenDetalleDTO>>> GetOrdenes()
-        //{
-        //    var ordenes = await context.Ordenes
-        //        .Include(o => o.Cliente)
-        //        .Include(o => o.Plano)
-        //        .Include(o => o.Entregas)
-        //        .Include(o => o.AreaDetalleOrdenes)
-        //        .ThenInclude(ad => ad.Area)
-        //        .ToListAsync();
-
-        //    var ordenesDto = _mapper.Map<List<OrdenDetalleDTO>>(ordenes);
-
-        //    foreach (var dto in ordenesDto)
-        //    {
-        //        var entidad = ordenes.FirstOrDefault(o => o.Id == dto.Id);
-
-        //        // Buscar el área con estado "Iniciado"
-        //        var areaActual = entidad?.AreaDetalleOrdenes?
-        //            .FirstOrDefault(ad =>
-        //                ad.Estado != null &&
-        //                ad.Estado.Equals("Iniciado", StringComparison.OrdinalIgnoreCase));
-
-        //        // Si hay un área en estado Iniciado, mostrar Nombre + Estado
-        //        if (areaActual != null)
-        //        {
-        //            var nombre = areaActual.Area?.NombreArea ?? "(Área sin nombre)";
-        //            dto.AreaActual = $"{nombre} ({areaActual.Estado})";
-        //        }
-        //        else
-        //        {
-        //            dto.AreaActual = "No hay área cargada con estado incial";
-        //        }
-        //    }
-
-        //    return Ok(ordenesDto);
-        //}
 
         [HttpGet("LISTADO")]
         public async Task<ActionResult<IEnumerable<OrdenDetalleDTO>>> GetOrdenes()
@@ -587,64 +488,5 @@ namespace Armeccor.Server.Controllers
                 datos = ordenesDto
             });
         }
-
-        private async Task<decimal> ObtenerInflacionDesdeIndecAsync()
-        {
-            using var http = new HttpClient();
-            var url = "https://datos.gob.ar/series/api/series/?ids=148.3_INIVELNAL_DICI_M_26&format=json";
-
-            var response = await http.GetAsync(url);
-            var json = await response.Content.ReadAsStringAsync();
-
-            // 🔒 Validación: evitar parseo si el contenido no es JSON
-            if (!json.TrimStart().StartsWith("{"))
-            {
-                Console.WriteLine("Respuesta inválida del INDEC:");
-                Console.WriteLine(json);
-                return 12.5m; // Valor simulado si la API falla
-            }
-
-            using var doc = JsonDocument.Parse(json);
-            var data = doc.RootElement.GetProperty("data");
-
-            var ultimoValor = data.EnumerateArray()
-                .Select(e => decimal.TryParse(e[1].GetString(), out var v) ? v : 0)
-                .LastOrDefault();
-
-            return ultimoValor > 0 ? ultimoValor : 12.5m; // Fallback si el valor es 0
-        }
-
-
-        [HttpGet("CalcularImportePorInflacion/{nroOT}")]
-        public async Task<ActionResult<decimal>> CalcularImportePorInflacion(int nroOT)
-        {
-            var orden = await context.Ordenes.FirstOrDefaultAsync(o => o.NroOT == nroOT);
-            if (orden == null || orden.FechaEntrega == null)
-                return BadRequest("Orden no encontrada o sin fecha de entrega.");
-
-            var ipc = await ObtenerInflacionDesdeIndecAsync();
-
-            var valorBase = 10000m;
-            var importeFinal = valorBase * (ipc / 100);
-
-            orden.Importe = Math.Round(importeFinal, 2);
-            await context.SaveChangesAsync();
-
-            return Ok(orden.Importe);
-        }
-
-
-
-
-
-
-
-        public class InflacionDTO
-        {
-            public string Fecha { get; set; } // Ej: "2025-09"
-            public decimal Valor { get; set; } // Ej: 11.8
-        }
-
-
     }
 }

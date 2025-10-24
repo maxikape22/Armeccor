@@ -1,0 +1,54 @@
+﻿@page "/Pedidos"
+@inject HttpClient Http
+@using System.Net.Http.Json
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
+
+<PageTitle>Pedidos</PageTitle>
+
+
+<button class="btn btn-primary ms-3" @onclick="@(() => Navigation.NavigateTo("/RegistrarPedido"))">
+        + Registrar pedido 
+</button>
+
+<button class="btn btn-primary ms-3" @onclick="@(() => Navigation.NavigateTo("/VerDetallePedidoInsumo"))">
+        Ver detalle del pedido
+</button>
+
+@if (PedidosDTO is  null)
+{
+    <p>No hay pedidos</p>
+}
+else
+{
+        <table class="table table-striped table-bordered mt-3">
+            <thead class="table-light">
+            <tr>
+                <th>Nro de pedido</th>
+                <th>Estado</th>
+                <th>Nombre del proveedor</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in PedidosDTO)
+            {
+                <tr>
+                    <td>@item.NroPedido</td>
+                    <td>@item.Estado</td>
+                    <td>@item.Nombre</td>
+                </tr>
+            }
+        </tbody>
+        </table>
+    
+}
+@code
+{
+    List<PedidoDTO> PedidosDTO = new List<PedidoDTO>();
+    //List<ProveedorDTO> Proveedores = new List<ProveedorDTO>();
+    override protected async Task OnInitializedAsync()
+    {
+      //  Proveedores = await Http.GetFromJsonAsync<List<ProveedorDTO>>("api/Proveedores") ?? new List<ProveedorDTO>();
+        PedidosDTO = await Http.GetFromJsonAsync<List<PedidoDTO>>("api/Pedidos") ?? new List<PedidoDTO>();
+    }
+}

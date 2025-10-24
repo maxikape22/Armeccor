@@ -115,6 +115,9 @@ namespace Armeccor.Datos.Migrations
                     b.Property<int>("OrdenId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Prioridad")
+                        .HasColumnType("int");
+
                     b.Property<int>("Tiempo")
                         .HasColumnType("int");
 
@@ -369,9 +372,6 @@ namespace Armeccor.Datos.Migrations
                     b.Property<DateTime>("FechaPactada")
                         .HasColumnType("date");
 
-                    b.Property<decimal?>("Importe")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("NombreOrden")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -387,6 +387,71 @@ namespace Armeccor.Datos.Migrations
                         .IsUnique();
 
                     b.ToTable("Ordenes");
+                });
+
+            modelBuilder.Entity("Armeccor.Datos.Entidades.Pedido", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Estado")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("IdProveedor")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NroPedido")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdProveedor");
+
+                    b.HasIndex(new[] { "NroPedido" }, "NroPedido_UQ")
+                        .IsUnique();
+
+                    b.ToTable("Pedidos");
+                });
+
+            modelBuilder.Entity("Armeccor.Datos.Entidades.PedidoDetalleInsumo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("EsSolicitado")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Estado")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaUso")
+                        .HasColumnType("date");
+
+                    b.Property<int?>("IdInsumo")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IdPedido")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Item")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdInsumo");
+
+                    b.HasIndex("IdPedido");
+
+                    b.ToTable("PedidoDetalleInsumos");
                 });
 
             modelBuilder.Entity("Armeccor.Datos.Entidades.Plano", b =>
@@ -415,6 +480,72 @@ namespace Armeccor.Datos.Migrations
                     b.HasIndex("OrdenId");
 
                     b.ToTable("Planos");
+                });
+
+            modelBuilder.Entity("Armeccor.Datos.Entidades.Proveedor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Correo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nombre")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Telefono")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Proveedores");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Correo = "JuanPérez322@gmail.com",
+                            Nombre = "Acme S.A.",
+                            Telefono = "123456789"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Correo = "MaríaGómez323@gmail.com",
+                            Nombre = "Industrias Globales",
+                            Telefono = "987654321"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Correo = "CarlosRodríguez243@gmail.com",
+                            Nombre = "Suministros Técnicos",
+                            Telefono = "456123789"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Correo = "AnaFernández423@gmail.com",
+                            Nombre = "Materiales y Más",
+                            Telefono = "789456123"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Correo = "LuisMartínez902@gmail.com",
+                            Nombre = "Soluciones Industriales",
+                            Telefono = "321654987"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Correo = "SofíaLópez434@gmail.com",
+                            Nombre = "Equipos y Herramientas S.R.L.",
+                            Telefono = "654987321"
+                        });
                 });
 
             modelBuilder.Entity("Armeccor.Datos.Entidades.AreaDetalleOrden", b =>
@@ -482,6 +613,34 @@ namespace Armeccor.Datos.Migrations
                     b.Navigation("Cliente");
                 });
 
+            modelBuilder.Entity("Armeccor.Datos.Entidades.Pedido", b =>
+                {
+                    b.HasOne("Armeccor.Datos.Entidades.Proveedor", "Proveedor")
+                        .WithMany("Pedidos")
+                        .HasForeignKey("IdProveedor")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Proveedor");
+                });
+
+            modelBuilder.Entity("Armeccor.Datos.Entidades.PedidoDetalleInsumo", b =>
+                {
+                    b.HasOne("Armeccor.Datos.Entidades.Insumo", "Insumo")
+                        .WithMany("DetallePedidos")
+                        .HasForeignKey("IdInsumo")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Armeccor.Datos.Entidades.Pedido", "Pedido")
+                        .WithMany("DetallePedidos")
+                        .HasForeignKey("IdPedido")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Insumo");
+
+                    b.Navigation("Pedido");
+                });
+
             modelBuilder.Entity("Armeccor.Datos.Entidades.Plano", b =>
                 {
                     b.HasOne("Armeccor.Datos.Entidades.Orden", "Orden")
@@ -505,6 +664,8 @@ namespace Armeccor.Datos.Migrations
 
             modelBuilder.Entity("Armeccor.Datos.Entidades.Insumo", b =>
                 {
+                    b.Navigation("DetallePedidos");
+
                     b.Navigation("InsumoOrdenes");
                 });
 
@@ -522,6 +683,16 @@ namespace Armeccor.Datos.Migrations
                     b.Navigation("InsumoOrdenes");
 
                     b.Navigation("Planos");
+                });
+
+            modelBuilder.Entity("Armeccor.Datos.Entidades.Pedido", b =>
+                {
+                    b.Navigation("DetallePedidos");
+                });
+
+            modelBuilder.Entity("Armeccor.Datos.Entidades.Proveedor", b =>
+                {
+                    b.Navigation("Pedidos");
                 });
 #pragma warning restore 612, 618
         }

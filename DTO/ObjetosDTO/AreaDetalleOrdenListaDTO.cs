@@ -11,6 +11,8 @@
         public string Descripcion { get; set; }
         public string Estado { get; set; }
         public int Tiempo { get; set; }
+        public int Prioridad { get; set; }
+        public string PrioridadTexto { get; set; }
         public string Comentario { get; set; }
     }
 }

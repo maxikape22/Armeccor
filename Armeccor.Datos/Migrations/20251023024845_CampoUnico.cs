@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Armeccor.Datos.Migrations
 {
     /// <inheritdoc />
-    public partial class Modificacion : Migration
+    public partial class CampoUnico : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -105,6 +105,21 @@ namespace Armeccor.Datos.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Proveedores",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Correo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Telefono = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Proveedores", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Ordenes",
                 columns: table => new
                 {
@@ -131,6 +146,27 @@ namespace Armeccor.Datos.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Pedidos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NroPedido = table.Column<int>(type: "int", nullable: false),
+                    Estado = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IdProveedor = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Pedidos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Pedidos_Proveedores_IdProveedor",
+                        column: x => x.IdProveedor,
+                        principalTable: "Proveedores",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AreaDetalleOrdenes",
                 columns: table => new
                 {
@@ -141,6 +177,7 @@ namespace Armeccor.Datos.Migrations
                     Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Estado = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Tiempo = table.Column<int>(type: "int", nullable: false),
+                    Prioridad = table.Column<int>(type: "int", nullable: false),
                     Comentario = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -236,6 +273,37 @@ namespace Armeccor.Datos.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "PedidoDetalleInsumos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdPedido = table.Column<int>(type: "int", nullable: true),
+                    IdInsumo = table.Column<int>(type: "int", nullable: true),
+                    Item = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Cantidad = table.Column<int>(type: "int", nullable: false),
+                    FechaUso = table.Column<DateTime>(type: "date", nullable: false),
+                    EsSolicitado = table.Column<bool>(type: "bit", nullable: false),
+                    Estado = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PedidoDetalleInsumos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PedidoDetalleInsumos_Insumos_IdInsumo",
+                        column: x => x.IdInsumo,
+                        principalTable: "Insumos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_PedidoDetalleInsumos_Pedidos_IdPedido",
+                        column: x => x.IdPedido,
+                        principalTable: "Pedidos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
             migrationBuilder.InsertData(
                 table: "Areas",
                 columns: new[] { "Id", "NombreArea" },
@@ -264,6 +332,19 @@ namespace Armeccor.Datos.Migrations
                     { 4, "Cheque" },
                     { 5, "Mercado Pago" },
                     { 6, "PayPal" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Proveedores",
+                columns: new[] { "Id", "Correo", "Nombre", "Telefono" },
+                values: new object[,]
+                {
+                    { 1, "JuanPérez322@gmail.com", "Acme S.A.", "123456789" },
+                    { 2, "MaríaGómez323@gmail.com", "Industrias Globales", "987654321" },
+                    { 3, "CarlosRodríguez243@gmail.com", "Suministros Técnicos", "456123789" },
+                    { 4, "AnaFernández423@gmail.com", "Materiales y Más", "789456123" },
+                    { 5, "LuisMartínez902@gmail.com", "Soluciones Industriales", "321654987" },
+                    { 6, "SofíaLópez434@gmail.com", "Equipos y Herramientas S.R.L.", "654987321" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -315,6 +396,27 @@ namespace Armeccor.Datos.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_PedidoDetalleInsumos_IdInsumo",
+                table: "PedidoDetalleInsumos",
+                column: "IdInsumo");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PedidoDetalleInsumos_IdPedido",
+                table: "PedidoDetalleInsumos",
+                column: "IdPedido");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Pedidos_IdProveedor",
+                table: "Pedidos",
+                column: "IdProveedor");
+
+            migrationBuilder.CreateIndex(
+                name: "NroPedido_UQ",
+                table: "Pedidos",
+                column: "NroPedido",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Planos_OrdenId",
                 table: "Planos",
                 column: "OrdenId");
@@ -339,6 +441,9 @@ namespace Armeccor.Datos.Migrations
                 name: "Notificaciones");
 
             migrationBuilder.DropTable(
+                name: "PedidoDetalleInsumos");
+
+            migrationBuilder.DropTable(
                 name: "Planos");
 
             migrationBuilder.DropTable(
@@ -351,7 +456,13 @@ namespace Armeccor.Datos.Migrations
                 name: "Insumos");
 
             migrationBuilder.DropTable(
+                name: "Pedidos");
+
+            migrationBuilder.DropTable(
                 name: "Ordenes");
+
+            migrationBuilder.DropTable(
+                name: "Proveedores");
 
             migrationBuilder.DropTable(
                 name: "Clientes");

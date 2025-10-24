@@ -4,6 +4,7 @@ using AutoMapper;
 using DTO.ObjetosDTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,7 +32,7 @@ namespace Armeccor.Server.Controllers
             return Ok(lista);
         }
 
-        // ✅ Agregar o actualizar insumo en orden (suma cantidades)
+        //// ✅ Agregar o actualizar insumo en orden (suma cantidades)
         [HttpPost]
         public async Task<ActionResult<object>> PostCliente(InsumoDetalleOrdenDTO dto)
         {

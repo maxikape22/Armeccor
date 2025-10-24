@@ -18,7 +18,6 @@ namespace Armeccor.Datos.Entidades
         public DateTime FechaInicio { get; set; } = DateTime.Now;
         public DateTime FechaPactada { get; set; } = DateTime.Now;
         public Nullable<DateTime> FechaEntrega { get; set; }
-        public decimal? Importe { get; set; }
         public int ClienteId { get; set; }
         public Cliente Cliente { get; set; }
         //public Nullable<int> PlanoId { get; set; } = null; // puede ser null si no se cargó aún

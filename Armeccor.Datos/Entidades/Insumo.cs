@@ -12,7 +12,6 @@ namespace Armeccor.Datos.Entidades
         public int CantDisponible { get; set; }
         public string Tipo { get; set; }
         public ICollection<InsumoDetalleOrden> InsumoOrdenes{ get; set; }
-        //public ICollection<Notificacion> Notificaciones { get; set; }
-
+        public ICollection<PedidoDetalleInsumo> DetallePedidos { get; set; }
     }
 }

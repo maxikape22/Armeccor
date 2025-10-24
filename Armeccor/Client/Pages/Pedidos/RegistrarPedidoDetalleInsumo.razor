@@ -1,0 +1,101 @@
+﻿@page "/RegistrarPedidoDetalleInsumo"
+@inject HttpClient Http
+@using System.Net.Http.Json
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
+
+<h3>Registrar detalle del pedido</h3>
+
+<EditForm Model="@NuevoDetalle" OnValidSubmit="GuardarDetalle">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label>Item:</label>
+        <InputText @bind-Value="NuevoDetalle.Item" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Nro de pedido:</label>
+        <InputSelect @bind-Value="NuevoDetalle.IdPedido" class="form-control">
+            <option value="">-- Seleccione un pedido --</option>
+            @foreach (var pedido in PedidoDTOs)
+            {
+                <option value="@pedido.Id">@pedido.NroPedido</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="mb-3">
+        <label>Insumo insuficiente:</label>
+        <InputSelect @bind-Value="NuevoDetalle.IdInsumo" class="form-control">
+            <option value="">-- Seleccione un insumo --</option>
+            @foreach (var insumo in DetalleInsumoDTOs)
+            {
+                <option value="@insumo.IdInsumo">@insumo.Item</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="mb-3">
+        <label>Cantidad:</label>
+        <InputNumber @bind-Value="NuevoDetalle.Cantidad" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Fecha de uso:</label>
+        <InputDate @bind-Value="NuevoDetalle.FechaUso" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>¿Es solicitado?:</label>
+        <div class="form-check">
+            <InputCheckbox @bind-Value="NuevoDetalle.EsSolicitado" class="form-check-input" />
+            <label class="form-check-label">@((NuevoDetalle.EsSolicitado ? "Sí" : "No"))</label>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Estado:</label>
+        <InputText @bind-Value="NuevoDetalle.Estado" class="form-control" />
+    </div>
+
+    <button class="btn btn-success" type="submit">Registrar</button>
+    <button class="btn btn-secondary mt-3" @onclick="Volver">Volver</button>
+
+</EditForm>
+
+
+@code
+{
+    List<PedidoDetalleInsumoDTO> DetalleInsumoDTOs = new List<PedidoDetalleInsumoDTO>();
+    PedidoDetalleInsumoDTO NuevoDetalle = new PedidoDetalleInsumoDTO();
+    List<PedidoDTO> PedidoDTOs = new List<PedidoDTO>();
+
+    override protected async Task OnInitializedAsync()
+    {
+        NuevoDetalle.FechaUso = DateTime.Now;
+        PedidoDTOs = await Http.GetFromJsonAsync<List<PedidoDTO>>("api/Pedidos") ?? new List<PedidoDTO>();
+        DetalleInsumoDTOs = await Http.GetFromJsonAsync<List<PedidoDetalleInsumoDTO>>("api/PedidoDetalleInsumos/ListarInsumosInsuficientes") ?? new List<PedidoDetalleInsumoDTO>();
+    }
+
+    private async Task GuardarDetalle()
+    {
+        var response = await Http.PostAsJsonAsync("api/PedidoDetalleInsumos/CrearDetalleInsumo", NuevoDetalle);
+        if (response.IsSuccessStatusCode)
+        {
+            await JS.InvokeVoidAsync("alert", "Detalle registrado correctamente.");
+            NuevoDetalle = new PedidoDetalleInsumoDTO(); // limpiar
+            Navigation.NavigateTo("/VerDetallePedidoInsumo");
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("alert", "Error al registrar el detalle.");
+        }
+    }
+
+    private void Volver()
+    {
+        Navigation.NavigateTo("/VerDetallePedidoInsumo");
+    }
+}

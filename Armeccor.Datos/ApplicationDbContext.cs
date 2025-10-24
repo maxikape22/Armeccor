@@ -17,7 +17,9 @@ namespace Armeccor.Datos
         public DbSet<MedioDePago> MedioDePagos { get; set; }
         public DbSet<Notificacion> Notificaciones { get; set; }
         public DbSet<EventoNotificado> EventosNotificados { get; set; }
-
+        public DbSet<Pedido> Pedidos { get; set; }
+        public DbSet<PedidoDetalleInsumo> PedidoDetalleInsumos { get; set; }
+        public DbSet<Proveedor> Proveedores { get; set; }
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
         {
             configurationBuilder.Properties<DateTime>().HaveColumnType("date");
@@ -96,30 +98,27 @@ namespace Armeccor.Datos
                 .HasOne(e => e.Medio_De_Pago)
                 .WithMany(m => m.Entregas)   // un medio de pago → muchas entregas
                 .HasForeignKey(e => e.MedioDePagoId)
-                .OnDelete(DeleteBehavior.Cascade); // o Cascade, según lo que prefieras
+                .OnDelete(DeleteBehavior.Cascade); 
 
-            //Configuración de Notificaciones
+            //Configuraciones para DetallePedido - Pedido - Insumo
 
-            // Relación con Insumo
-            //modelBuilder.Entity<Notificacion>()
-            //    .HasOne(n => n.Insumo)
-            //    .WithMany(i => i.Notificaciones)
-            //    .HasForeignKey(n => n.InsumoId)
-            //    .OnDelete(DeleteBehavior.NoAction); // Evita borrado en cascada
+            modelBuilder.Entity<PedidoDetalleInsumo>()
+               .HasOne(ad => ad.Pedido)
+               .WithMany(a => a.DetallePedidos)
+               .HasForeignKey(ad => ad.IdPedido)
+               .OnDelete(DeleteBehavior.SetNull);
 
-            //// Relación con Orden
-            //modelBuilder.Entity<Notificacion>()
-            //    .HasOne(n => n.Orden)
-            //    .WithMany(o => o.Notificaciones)
-            //    .HasForeignKey(n => n.OrdenId)
-            //    .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<PedidoDetalleInsumo>()
+                .HasOne(pd => pd.Insumo)
+                .WithMany(i => i.DetallePedidos)
+                .HasForeignKey(pd => pd.IdInsumo)
+                .OnDelete(DeleteBehavior.SetNull);
 
-            //// Relación con AreaDetalleOrden
-            //modelBuilder.Entity<Notificacion>()
-            //    .HasOne(n => n.AreaDetalle)
-            //    .WithMany(a => a.Notificaciones)
-            //    .HasForeignKey(n => n.AreaDetalleId)
-            //    .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Pedido>()       
+                .HasOne(p => p.Proveedor)  
+                .WithMany(pv => pv.Pedidos)     
+                .HasForeignKey(p => p.IdProveedor)     
+                .OnDelete(DeleteBehavior.Cascade); 
 
             base.OnModelCreating(modelBuilder);
 
@@ -215,6 +214,55 @@ namespace Armeccor.Datos
             };
 
             modelBuilder.Entity<MedioDePago>().HasData(medios);
+
+            var proveedores = new List<Proveedor>
+            {
+                new Proveedor()
+                {
+                    Id = 1,
+                    Nombre = "Acme S.A.",
+                    Correo = "JuanPérez322@gmail.com",
+                    Telefono = "123456789",
+                },
+
+                new Proveedor()
+                {
+                    Id = 2,
+                    Nombre = "Industrias Globales",
+                    Correo = "MaríaGómez323@gmail.com",
+                    Telefono = "987654321",
+                },
+                new Proveedor()
+                {
+                    Id = 3,
+                    Nombre = "Suministros Técnicos",
+                    Correo = "CarlosRodríguez243@gmail.com",
+                    Telefono = "456123789",
+                },
+                new Proveedor()
+                {
+                    Id = 4,
+                    Nombre = "Materiales y Más",
+                    Correo = "AnaFernández423@gmail.com",
+                    Telefono = "789456123",
+                },
+                new Proveedor()
+                {
+                    Id = 5,
+                    Nombre = "Soluciones Industriales",
+                    Correo = "LuisMartínez902@gmail.com",
+                    Telefono = "321654987",
+                },
+                new Proveedor()
+                {
+                    Id = 6,
+                    Nombre = "Equipos y Herramientas S.R.L.",
+                    Correo = "SofíaLópez434@gmail.com", 
+                    Telefono = "654987321",
+                },
+            };
+
+            modelBuilder.Entity<Proveedor>().HasData(proveedores);
         }
     }
 }
