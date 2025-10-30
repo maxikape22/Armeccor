@@ -76,11 +76,11 @@
         <DataAnnotationsValidator />
         <ValidationSummary />
 
-        <div class="form-group">
+      @*   <div class="form-group">
             <label for="nroOT">N° OT:</label>
             <InputNumber id="nroOT" class="form-control" @bind-Value="nuevaOrden.NroOT" />
             <ValidationMessage For="@(() => nuevaOrden.NroOT)" />
-        </div>
+        </div> *@
 
         <div class="form-group">
             <label for="nombreorden">Nombre de orden:</label>
@@ -98,11 +98,6 @@
             <InputSelect @bind-Value="nuevaOrden.Estado">
                 <option value="">-- Seleccionar estado --</option>
                 <option value="Abierta">Abierta</option>
-@*                 <option value="Cerrada">Cerrada</option>
-                <option value="Cancelada">Cancelada</option>
-                <option value="Procesada">Procesada</option>
-                <option value="Iniciada">Iniciada</option>
-                <option value="Finalizada">Finalizada</option> *@
             </InputSelect>
         </div>
 
@@ -117,6 +112,7 @@
             <InputDate class="form-control" @bind-Value="nuevaOrden.FechaPactada" />
             <ValidationMessage For="@(() => nuevaOrden.FechaPactada)" />
         </div>
+
         <div class="form-group">
             <label for="idCliente">Cliente:</label>
             @if (clientes == null)
@@ -139,6 +135,7 @@
                 <ValidationMessage For="@(() => nuevaOrden.ClienteId)" />
             }
         </div>
+
         <button class="btn btn-primary btn-submit" type="submit">Aceptar</button>
         <button class="btn btn-secondary" type="button" @onclick="Cancelar">Cancelar</button>
     </EditForm>

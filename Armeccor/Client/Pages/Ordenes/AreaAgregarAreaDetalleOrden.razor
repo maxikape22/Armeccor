@@ -2,8 +2,9 @@
 @inject HttpClient Http
 @inject NavigationManager Navigation
 @using System.Net.Http.Json
+@inject IJSRuntime js
 
-<h3>Agregar área a la orden: @NroOT - (@NombreOrden) - (@NombreCliente)</h3>
+<h3>Agregar área a la orden: @NroOT</h3>
 
 <div class="card p-3">
 
@@ -76,7 +77,6 @@
         areasDisponibles = await Http.GetFromJsonAsync<List<AreaListaDTO>>("api/Areas");
     }
 
-
     private async Task GuardarArea()
     {
         try
@@ -89,28 +89,23 @@
             if (resp.IsSuccessStatusCode)
             {
                 var result = await resp.Content.ReadFromJsonAsync<AreaDetalleOrdenDTO>();
-                Navigation.NavigateTo($"/AreasDetalleOrden/{result.OrdenId}");
+                await js.InvokeVoidAsync("alert", "Área detallada agregada correctamente.");
+                Navigation.NavigateTo($"/AreasDetalleOrden/{NroOT}");
             }
             else
             {
-                var msg = await resp.Content.ReadAsStringAsync();
-                Console.WriteLine($"Error al guardar: {msg}");
+                var mensajeError = await resp.Content.ReadAsStringAsync();
+                await js.InvokeVoidAsync("alert", mensajeError);
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            Console.WriteLine($"Excepción: {ex.Message}");
+            await js.InvokeVoidAsync("alert", "No se pudó registrar el área detallada");
         }
-
-        Navigation.NavigateTo("https://localhost:7253/Ordenes");
     }
-
-
-   
 
     private void Volver()
     {
-        // Podés volver al listado de órdenes si querés
         Navigation.NavigateTo($"/AreasDetalleOrden/{NroOT}");
     }
 }

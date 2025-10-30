@@ -5,8 +5,10 @@ using DTO.ObjetosDTO;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
@@ -214,12 +216,20 @@ namespace Armeccor.Server.Controllers
             var clienteExiste = await context.Clientes.AnyAsync(c => c.Id == crearOrdenDTO.ClienteId);
             if (!clienteExiste)
             {
-                return BadRequest($"El Cliente con ID {crearOrdenDTO.ClienteId} no existe.");
+                return BadRequest($"El Cliente con Id: {crearOrdenDTO.ClienteId} no existe.");
             }
 
             var orden = _mapper.Map<Orden>(crearOrdenDTO);
 
-            NoContentResult noContentResult = new NoContentResult();
+            var numero = new Random();
+            int nrogenerado;
+            do
+            {
+                nrogenerado = numero.Next(100000, 999999);
+            }
+            while (await context.Ordenes.AnyAsync(o => o.NroOT == nrogenerado));
+            orden.NroOT = nrogenerado;
+
 
             if (crearOrdenDTO.FechaPactada <= crearOrdenDTO.FechaInicio) 
                 return Conflict("La fecha pactada debe ser mayor a la fecha de inicio.");
@@ -488,5 +498,75 @@ namespace Armeccor.Server.Controllers
                 datos = ordenesDto
             });
         }
+
+        [HttpGet("GenerarPDF/{nroOT}")]
+        public async Task<IActionResult> GenerarPDF(int nroOT)
+        {
+            var orden = await context.Ordenes
+                .Include(o => o.Cliente)
+                .Include(o => o.AreaDetalleOrdenes).ThenInclude(d=>d.Area)
+                .FirstOrDefaultAsync(o => o.NroOT == nroOT);
+
+            if (orden == null)
+                return NotFound("Orden no encontrada.");
+
+            // Mapeo a DTO
+            var ordenDto = _mapper.Map<OrdenDetalleDTO>(orden);
+
+            using (var stream = new MemoryStream())
+            {
+                var document = new iTextSharp.text.Document(iTextSharp.text.PageSize.A4, 50, 50, 50, 25);
+                var writer = iTextSharp.text.pdf.PdfWriter.GetInstance(document, stream);
+                document.Open();
+
+                // Fuente principal
+                var fontTitulo = new iTextSharp.text.Font(iTextSharp.text.Font.HELVETICA, 16, iTextSharp.text.Font.BOLD);
+                var fontTexto = new iTextSharp.text.Font(iTextSharp.text.Font.HELVETICA, 12, iTextSharp.text.Font.NORMAL);
+
+                // Encabezado
+                var titulo = new iTextSharp.text.Paragraph($"ORDEN DE TRABAJO N°: {ordenDto.NroOT}\n\n", fontTitulo)
+                {
+                    Alignment = iTextSharp.text.Element.ALIGN_CENTER,
+                    SpacingAfter = 20f
+                };
+                document.Add(titulo);
+
+                // Tabla con datos de la orden (sin IDs)
+                var tabla = new iTextSharp.text.pdf.PdfPTable(2)
+                {
+                    WidthPercentage = 100
+                };
+
+                void AddRow(string label, string value)
+                {
+                    tabla.AddCell(new iTextSharp.text.Phrase(label, fontTexto));
+                    tabla.AddCell(new iTextSharp.text.Phrase(value ?? "—", fontTexto));
+                }
+
+                AddRow("Número de OT", ordenDto.NroOT.ToString());
+                AddRow("Nombre de la orden", ordenDto.NombreOrden);
+                AddRow("Descripción", ordenDto.Descripcion);
+                AddRow("Estado", ordenDto.Estado);
+                AddRow("Fecha de inicio", ordenDto.FechaInicio.ToString("dd/MM/yyyy") ?? "Sin fecha");
+                AddRow("Fecha pactada", ordenDto.FechaPactada.ToString("dd/MM/yyyy") ?? "Sin fecha");
+                AddRow("Fecha de entrega", ordenDto.FechaEntrega?.ToString("dd/MM/yyyy") ?? "Sin fecha de entrega");
+                AddRow("Cliente", ordenDto.NombreCliente ?? "Sin cliente");
+                AddRow("Área actual", ordenDto.AreaActual ?? "");
+
+                document.Add(tabla);
+
+                // Pie de página
+                document.Add(new iTextSharp.text.Paragraph($"\nGenerado el: {DateTime.Now:dd/MM/yyyy HH:mm}", fontTexto));
+
+                document.Close();
+
+                var fileName = $"Orden_N°:{ordenDto.NroOT}.pdf";
+                return File(stream.ToArray(), "application/pdf", fileName);
+            }
+        }
+
+
+
+
     }
 }

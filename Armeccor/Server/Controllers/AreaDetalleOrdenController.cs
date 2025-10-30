@@ -4,7 +4,6 @@ using AutoMapper;
 using DTO.ObjetosDTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,39 +22,6 @@ namespace Armeccor.Server.Controllers
             this.context = context;
             this._mapper = mapper;
         }
-
-        // En tu controlador API del servidor
-        //[HttpGet("{nroOT}")]
-        //public async Task<ActionResult<List<AreaDetalleOrdenListaDTO>>> GetAreasByNroOT(int nroOT)
-        //{
-        //    var orden = await context.Ordenes
-        //        .Where(o => o.NroOT == nroOT)
-        //        .FirstOrDefaultAsync();
-
-        //    if (orden == null)
-        //    {
-        //        return NotFound($"No se encontró la orden con el número de OT: {nroOT}.");
-        //    }
-
-        //    var areasDetalle = await context.AreaDetalleOrdenes
-        //        .Where(where => where.OrdenId == orden.Id)
-        //        .Include(pe => pe.Area).Include(cliente=>cliente.Orden.Cliente)
-        //        .Select(ado => new AreaDetalleOrdenListaDTO
-        //        {
-        //            Id = ado.Id,
-        //            NombreOrden = orden.NombreOrden,
-        //            NombreCliente = ado.Orden.Cliente.Nombre,
-        //            NombreArea = ado.Area.NombreArea,
-        //            Descripcion = ado.Descripcion,
-        //            Estado = ado.Estado,
-        //            Tiempo = ado.Tiempo,
-        //            Comentario = ado.Comentario,
-        //            Prioridad = ado.Prioridad
-        //        })
-        //        .ToListAsync();
-
-        //    return Ok(areasDetalle);
-        //}
 
         [HttpGet("{nroOT}")]
         public async Task<ActionResult<List<AreaDetalleOrdenListaDTO>>> GetAreasByNroOT(int nroOT)
@@ -132,7 +98,6 @@ namespace Armeccor.Server.Controllers
             return Ok("Comentario actualizado correctamente");
         }
 
-
         [HttpGet]
         public async Task<ActionResult<List<AreaDetalleOrdenListaDTO>>> GetLista()
         {
@@ -162,12 +127,9 @@ namespace Armeccor.Server.Controllers
                 .Select(ado => new AreaDetalleOrdenListaDTO
                 {
                     Id = ado.Id,
-                    //OrdenId = ado.OrdenId,
-                    //AreaId = ado.AreaId,
                     Descripcion = ado.Descripcion,
                     Estado = ado.Estado,
                     Tiempo = ado.Tiempo
-                    //NombreArea = ado.Area.NombreArea // 👈 acá se resuelve
                 })
                 .ToListAsync();
 
@@ -177,7 +139,6 @@ namespace Armeccor.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<AreaDetalleOrden>> AreaDetalleOrdenDTO(AreaDetalleOrdenDTO dto)
         {
-            // Validación solo si vienen valores
             if (dto.AreaId.HasValue)
             {
                 var areaExiste = await context.Areas.AnyAsync(a => a.Id == dto.AreaId.Value);
@@ -200,44 +161,6 @@ namespace Armeccor.Server.Controllers
             return Ok(resultDto);
         }
 
-        //[HttpPost("AreaDetallaEnOrden")]
-        //public async Task<ActionResult<AreaDetalleOrdenDTO>> PostAreaDetalleOrden(AreaDetalleOrdenDTO dto)
-        //{
-        //    // ✅ Si viene NroOT, buscar el OrdenId
-        //    if (dto.NroOT.HasValue)
-        //    {
-        //        var orden = await context.Ordenes
-        //            .FirstOrDefaultAsync(o => o.NroOT == dto.NroOT.Value);
-
-        //        if (orden == null)
-        //            return BadRequest($"No existe la orden con NroOT {dto.NroOT}");
-
-        //        dto.OrdenId = orden.Id;
-        //    }
-
-        //    // ✅ Validar existencia de OrdenId y AreaId
-        //    if (!await context.Ordenes.AnyAsync(o => o.Id == dto.OrdenId))
-        //        return BadRequest($"La Orden con Id {dto.OrdenId} no existe.");
-
-        //    if (!await context.Areas.AnyAsync(a => a.Id == dto.AreaId))
-        //        return BadRequest($"El Área con Id {dto.AreaId} no existe.");
-
-        //    // ✅ Guardar entidad
-        //    var entity = _mapper.Map<AreaDetalleOrden>(dto);
-        //    context.AreaDetalleOrdenes.Add(entity);
-        //    await context.SaveChangesAsync();
-
-        //    // ✅ Incluir nombre del área en la respuesta
-        //    var result = await context.AreaDetalleOrdenes
-        //        .Include(x => x.Area)
-        //        .FirstOrDefaultAsync(x => x.Id == entity.Id);
-
-        //    var resultDto = _mapper.Map<AreaDetalleOrdenDTO>(result);
-        //    resultDto.NombreArea = result.Area?.NombreArea;
-
-        //    return Ok(resultDto);
-        //}
-
         [HttpPost("AreaDetallaEnOrden")]
         public async Task<ActionResult<AreaDetalleOrdenDTO>> PostAreaDetalleOrden(AreaDetalleOrdenDTO dto)
         {
@@ -254,8 +177,22 @@ namespace Armeccor.Server.Controllers
             if (!await context.Areas.AnyAsync(a => a.Id == dto.AreaId))
                 return BadRequest($"El Área con Id {dto.AreaId} no existe.");
 
+            // 🚫 Solo bloquear si el nuevo estado es "Iniciado"
+            if (dto.Estado == "Iniciado")
+            {
+                bool yaExisteIniciado = await context.AreaDetalleOrdenes
+                    .AnyAsync(a => a.OrdenId == dto.OrdenId && a.AreaId == dto.AreaId && a.Estado == "Iniciado");
+
+                if (yaExisteIniciado)
+                    return BadRequest("Ya existe un registro de esta área con estado 'Iniciado' en la misma orden.");
+            }
+
+            // ✅ Calcular prioridad como posición en la orden (excluyendo finalizados)
+            int prioridad = await context.AreaDetalleOrdenes
+                .CountAsync(a => a.OrdenId == dto.OrdenId && a.Estado != "Finalizado") + 1;
+
             var entity = _mapper.Map<AreaDetalleOrden>(dto);
-            entity.Prioridad = CalcularPrioridad(entity.Estado, entity.AreaId.Value);
+            entity.Prioridad = dto.Estado == "Finalizado" ? 0 : prioridad;
 
             context.AreaDetalleOrdenes.Add(entity);
             await context.SaveChangesAsync();
@@ -270,45 +207,6 @@ namespace Armeccor.Server.Controllers
             return Ok(resultDto);
         }
 
-
-        private int CalcularPrioridad(string estado, int areaId)
-        {
-            return estado switch
-            {
-                "Iniciado" => 1 + ((areaId - 1) % 3),     // 1–3
-                "Pendiente" => 4 + ((areaId - 1) % 3),    // 4–6
-                "Detenido" => 7 + ((areaId - 1) % 4),     // 7–10
-                "Finalizado" => 0,
-                _ => 0
-            };
-        }
-
-
-        //[HttpPut("{id}/Estado")]
-        //public async Task<ActionResult<AreaDetalleOrdenListaDTO>> CambiarEstado(int id, [FromBody] AreaDetalleOrdenListaDTO dto)
-        //{
-        //    var areaDetalle = await context.AreaDetalleOrdenes.Include(a => a.Area).FirstOrDefaultAsync(x => x.Id == id);
-        //    if (areaDetalle == null) return NotFound();
-
-        //    if (!string.IsNullOrEmpty(dto.Estado))
-        //        areaDetalle.Estado = dto.Estado;
-
-        //    await context.SaveChangesAsync();
-
-        //    var result = new AreaDetalleOrdenListaDTO
-        //    {
-        //        Id = areaDetalle.Id,
-        //        OrdenId = areaDetalle.OrdenId,
-        //        AreaId = areaDetalle.AreaId,
-        //        Descripcion = areaDetalle.Descripcion,
-        //        Estado = areaDetalle.Estado,
-        //        Tiempo = areaDetalle.Tiempo,
-        //        NombreArea = areaDetalle.Area?.NombreArea
-        //    };
-
-        //    return Ok(result);
-        //}
-
         [HttpPut("{id}/Estado")]
         public async Task<ActionResult<AreaDetalleOrdenListaDTO>> CambiarEstado(int id, [FromBody] AreaDetalleOrdenListaDTO dto)
         {
@@ -318,7 +216,23 @@ namespace Armeccor.Server.Controllers
             if (!string.IsNullOrEmpty(dto.Estado))
             {
                 areaDetalle.Estado = dto.Estado;
-                areaDetalle.Prioridad = CalcularPrioridad(dto.Estado, areaDetalle.AreaId.Value);
+
+                if (dto.Estado == "Finalizado")
+                {
+                    areaDetalle.Prioridad = 0;
+
+                    var otrasAreas = await context.AreaDetalleOrdenes
+                        .Where(a => a.OrdenId == areaDetalle.OrdenId && a.Id != areaDetalle.Id && a.Estado != "Finalizado")
+                        .OrderBy(a => a.Prioridad)
+                        .ToListAsync();
+
+                    int nuevaPrioridad = 1;
+                    foreach (var area in otrasAreas)
+                    {
+                        area.Prioridad = nuevaPrioridad;
+                        nuevaPrioridad++;
+                    }
+                }
             }
 
             await context.SaveChangesAsync();
@@ -335,10 +249,8 @@ namespace Armeccor.Server.Controllers
                 Prioridad = areaDetalle.Prioridad,
                 NombreArea = areaDetalle.Area?.NombreArea
             };
-
             return Ok(result);
         }
-
 
         [HttpGet("AreaActual/{nroOT}")]
         public async Task<ActionResult<AreaDetalleOrdenListaDTO>> GetAreaActual(int nroOT)
@@ -372,10 +284,6 @@ namespace Armeccor.Server.Controllers
             });
         }
 
-
-
-
-        // DELETE: api/Area_Detalle_Orden/5
         [HttpDelete("{id}")]
         public async Task<ActionResult> EliminarArea(int id)
         {
@@ -383,7 +291,6 @@ namespace Armeccor.Server.Controllers
             if (areaDetalle == null)
                 return NotFound("Área detallada no encontrada");
 
-            // Set null en las relaciones si corresponde
             areaDetalle.OrdenId = 0;
             areaDetalle.AreaId = null;
 
@@ -392,7 +299,6 @@ namespace Armeccor.Server.Controllers
 
             return NoContent();
         }
-
 
         [HttpGet("EstadoDeUnArea")]
         public async Task<ActionResult<AreaDetalleOrdenListaDTO>> GetEstadoDeUnArea()
@@ -439,7 +345,5 @@ namespace Armeccor.Server.Controllers
 
             return Ok();
         }
-
-
     }
 }

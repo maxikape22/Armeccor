@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "TFnw5ZVIkNw=",
+  "dgSpecHash": "ntVoZXX3/5g=",
   "success": true,
   "projectFilePath": "C:\\Users\\Berserker\\Source\\Repos\\Armeccor\\Armeccor\\Server\\Armeccor.Server.csproj",
   "expectedPackageFiles": [
@@ -8,7 +8,9 @@
     "C:\\Users\\Berserker\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.0\\automapper.extensions.microsoft.dependencyinjection.12.0.0.nupkg.sha512",
     "C:\\Users\\Berserker\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\Berserker\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
+    "C:\\Users\\Berserker\\.nuget\\packages\\bouncycastle.cryptography\\2.6.2\\bouncycastle.cryptography.2.6.2.nupkg.sha512",
     "C:\\Users\\Berserker\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
+    "C:\\Users\\Berserker\\.nuget\\packages\\itextsharp.lgplv2.core\\3.7.7\\itextsharp.lgplv2.core.3.7.7.nupkg.sha512",
     "C:\\Users\\Berserker\\.nuget\\packages\\microsoft.aspnetcore.authorization\\9.0.0\\microsoft.aspnetcore.authorization.9.0.0.nupkg.sha512",
     "C:\\Users\\Berserker\\.nuget\\packages\\microsoft.aspnetcore.components\\9.0.0\\microsoft.aspnetcore.components.9.0.0.nupkg.sha512",
     "C:\\Users\\Berserker\\.nuget\\packages\\microsoft.aspnetcore.components.analyzers\\9.0.0\\microsoft.aspnetcore.components.analyzers.9.0.0.nupkg.sha512",
@@ -77,6 +79,9 @@
     "C:\\Users\\Berserker\\.nuget\\packages\\microsoft.sqlserver.server\\1.0.0\\microsoft.sqlserver.server.1.0.0.nupkg.sha512",
     "C:\\Users\\Berserker\\.nuget\\packages\\microsoft.win32.systemevents\\6.0.0\\microsoft.win32.systemevents.6.0.0.nupkg.sha512",
     "C:\\Users\\Berserker\\.nuget\\packages\\mono.texttemplating\\3.0.0\\mono.texttemplating.3.0.0.nupkg.sha512",
+    "C:\\Users\\Berserker\\.nuget\\packages\\skiasharp\\3.119.0\\skiasharp.3.119.0.nupkg.sha512",
+    "C:\\Users\\Berserker\\.nuget\\packages\\skiasharp.nativeassets.macos\\3.119.0\\skiasharp.nativeassets.macos.3.119.0.nupkg.sha512",
+    "C:\\Users\\Berserker\\.nuget\\packages\\skiasharp.nativeassets.win32\\3.119.0\\skiasharp.nativeassets.win32.3.119.0.nupkg.sha512",
     "C:\\Users\\Berserker\\.nuget\\packages\\swashbuckle.aspnetcore\\9.0.3\\swashbuckle.aspnetcore.9.0.3.nupkg.sha512",
     "C:\\Users\\Berserker\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\9.0.3\\swashbuckle.aspnetcore.swagger.9.0.3.nupkg.sha512",
     "C:\\Users\\Berserker\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\9.0.3\\swashbuckle.aspnetcore.swaggergen.9.0.3.nupkg.sha512",

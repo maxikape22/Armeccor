@@ -176,7 +176,7 @@ else
         modoOrdenamiento = e.Value?.ToString();
 
         if (modoOrdenamiento == "prioridad")
-        {
+        {          
             areasDetalle = await Http.GetFromJsonAsync<List<AreaDetalleOrdenListaDTO>>(
                 $"api/Area_Detalle_Orden/OrdenadasPorPrioridad/{NroOT}");
         }
@@ -235,76 +235,10 @@ else
         }
         catch (HttpRequestException ex)
         {
-            Console.WriteLine($"Error al obtener áreas: {ex.Message}");
+            Console.WriteLine($"Error al obtener áreas: {ex.InnerException}");
             NombreOrden = "(error)";
             NombreCliente = "(error)";
         }
-    }
-
-    private Queue<AreaDetalleOrdenListaDTO> colaDeAreas = new Queue<AreaDetalleOrdenListaDTO>();
-
-    private void InicializarCola(List<AreaDetalleOrdenListaDTO> areas)
-    {
-        colaDeAreas.Clear();
-
-        foreach (var area in areas)
-        {
-            if (area.Estado != "Finalizado")
-            {
-                colaDeAreas.Enqueue(area);
-            }
-            else
-            {
-                // Se ignora en la cola, pero puede mantenerse en otra lista si querés mostrarlo
-            }
-        }
-
-        ReasignarPrioridades();
-    }
-
-    private void ReasignarPrioridades()
-    {
-        int prioridad = 1;
-
-        foreach (var area in colaDeAreas)
-        {
-            area.Prioridad = prioridad;
-            prioridad++;
-        }
-    }
-
-    private List<AreaDetalleOrdenListaDTO> areasFinalizadas = new();
-
-    private void MoverAFinalizados(AreaDetalleOrdenListaDTO area)
-    {
-        area.Prioridad = 0;
-        areasFinalizadas.Add(area);
-    }
-
-
-    private static readonly Dictionary<string, int> EstadoPeso = new()
-{
-    { "Pendiente", 2 },
-    { "Iniciado", 1 },
-    { "Detenido", 3 },
-    { "Finalizado", 99 } // Lo más bajo, se elimina
-};
-
-
-    private void RecalcularPrioridades()
-    {
-        var areasActivas = areasDetalle
-            .Where(a => a.Estado != "Finalizado")
-            .OrderBy(a => EstadoPeso.ContainsKey(a.Estado) ? EstadoPeso[a.Estado] : 100)
-            .ThenBy(a => a.NombreArea) // o AreaId si querés más precisión
-            .ToList();
-
-        for (int i = 0; i < areasActivas.Count; i++)
-        {
-            areasActivas[i].Prioridad = i + 1;
-        }
-
-        areasDetalle = areasActivas;
     }
 
     private void Volver()
@@ -393,7 +327,7 @@ else
             await JS.InvokeVoidAsync("sessionStorage.removeItem", $"comentario_{areaDetalleId}");
 
             await JS.InvokeVoidAsync("alert", "Área eliminada correctamente.");
-            Navigation.NavigateTo("/Ordenes", true);
+            Navigation.NavigateTo($"/AreasDetalleOrden/{NroOT}");
         }
         else
         {

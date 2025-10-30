@@ -222,7 +222,6 @@
                         <th>Fecha de entrega</th>
                         <th>Cliente</th>
                         <th>Área actual</th>                                         
-                        <th>Importe</th>
                         <th>Acción</th>                                            
                     </tr>
                 </thead>
@@ -239,7 +238,6 @@
                             <td>@(orden.FechaEntrega.HasValue? orden.FechaEntrega.Value.ToString("dd/MM/yyyy") : "Sin fecha de entrega")</td>
                             <td>@orden.NombreCliente</td>
                             <td>@orden.AreaActual</td>
-                            <td>@orden.Importe</td>
                             <td>
                                 <div class="dropdown">
                                     <button class="dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="@(openedDropdownId == orden.Id)" @onclick="() => ToggleDropdown(orden.Id)">
@@ -263,11 +261,10 @@
                                             <option value="Finalizada">Finalizada</option>
                                         </select>
 
-                                        <button class="dropdown-item" @onclick="() => MenuViewAreaDetails(orden.NroOT)"><i class="fas fa-map-marker-alt"></i> Ver áreas</button>
+                                        <button class="dropdown-item" @onclick="() => MenuViewAreaDetails(orden.NroOT)"><i class="fas fa-cogs"></i> Ver áreas</button>
                                         <button class="dropdown-item" @onclick="() => MenuViewPlans(orden.NroOT)"><i class="fas fa-file-alt"></i> Ver planos</button>
-@*                                         <button class="dropdown-item" @onclick="() => MenuViewPlans()"><i class="fas fa-file-alt"></i> Ver planos</button>
- *@                                        <button class="dropdown-item" @onclick="() => MenuViewSupplies(orden.Id)"><i class="fas fa-boxes"></i> Ver insumos</button>
-
+                                        <button class="dropdown-item" @onclick="() => MenuViewSupplies(orden.Id)"><i class="fas fa-boxes"></i> Ver insumos</button>
+                                        <button class="dropdown-item" @onclick="() => ImprimirOrden(orden.NroOT)"><i class="fas fa-file-pdf"></i> Imprimir orden</button>
                                         <button class="dropdown-item danger" disabled="@(isDeletingId == orden.Id)" @onclick="() => MenuDelete(orden.NroOT)">
                                             @(isDeletingId == orden.Id ? "Eliminando..." : "Eliminar")
                                         </button>
@@ -501,14 +498,16 @@
         CloseDropdown();
     }
 
-    // private void MenuViewPlans()
-    // {
-    //     NavigationManager.NavigateTo("/PlanoEnLaOrden");
-    //     CloseDropdown();
-    // }
     private void MenuViewSupplies(int id)
     {
         NavigationManager.NavigateTo($"/ListadoInsumosOrden/{id}");
+        CloseDropdown();
+    }
+
+    private void ImprimirOrden(int NroOT)
+    {
+        var pdfUrl = $"/api/Ordenes/GenerarPDF/{NroOT}";
+        NavigationManager.NavigateTo(pdfUrl, forceLoad: true);
         CloseDropdown();
     }
 
