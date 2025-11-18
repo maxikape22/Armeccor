@@ -105,6 +105,10 @@ namespace Armeccor.Server.Mapeos
             CreateMap<InsumoDetalleOrden, InsumoDetalleOrdenDTO>().ReverseMap();
             CreateMap<InsumoDetalleOrden, InsumoDetalleOrdenListaDTO>().ReverseMap();
 
+            CreateMap<InsumoDetalleOrden, InsumoDetalleOrdenDTO>()
+                .ForMember(dest => dest.Nombre, opt => opt
+                .MapFrom(src => src.Insumo.Nombre)); // <-- ¡CLAVE!
+
             // ================== AREA DETALLE ORDEN ==================
             CreateMap<AreaDetalleOrden, AreaDetalleOrdenListaDTO>()  
                 .ForMember(dest => dest.NombreArea, opt => opt

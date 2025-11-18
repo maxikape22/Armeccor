@@ -55,20 +55,20 @@ var app = builder.Build();
 
 //DESDE ACA
 
-//app.UseSwagger();
-//app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json",
-//    "Armeccor"));
+app.UseSwagger();
+app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json",
+    "Armeccor"));
 
-//// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseWebAssemblyDebugging();
-//}
-//else
-//{
-//    app.UseExceptionHandler("/Error");
-//    app.UseHsts();
-//}
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseWebAssemblyDebugging();
+}
+else
+{
+    app.UseExceptionHandler("/Error");
+    app.UseHsts();
+}
 
 //HASTA ACA SOLO COMENTADO
 

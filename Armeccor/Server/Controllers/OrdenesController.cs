@@ -503,167 +503,6 @@ namespace Armeccor.Server.Controllers
             });
         }
 
-        //[HttpGet("GenerarPDF/{nroOT}")]
-        //public async Task<IActionResult> GenerarPDF(int nroOT)
-        //{
-        //    var orden = await context.Ordenes
-        //        .Include(o => o.Cliente)
-        //        .Include(o => o.AreaDetalleOrdenes).ThenInclude(d => d.Area)
-        //        .FirstOrDefaultAsync(o => o.NroOT == nroOT);
-
-        //    if (orden == null)
-        //        return NotFound("Orden no encontrada.");
-
-        //    var ordenDto = _mapper.Map<OrdenDetalleDTO>(orden);
-
-        //    var areas = await context.AreaDetalleOrdenes
-        //        .Include(a => a.Area)
-        //        .Where(a => a.Orden.NroOT == nroOT)
-        //        .OrderBy(a => a.Prioridad)
-        //        .ToListAsync();
-
-        //    var listaAreas = _mapper.Map<List<AreaDetalleOrdenListaDTO>>(areas);
-
-        //    var insumos = await context.InsumoDetalleOrdenes
-        //        .Include(i => i.Insumo)
-        //        .Where(i => i.Orden.NroOT == nroOT)
-        //        .ToListAsync();
-
-        //    var listaInsumos = _mapper.Map<List<InsumoDetalleOrdenDTO>>(insumos);
-
-        //    using (var stream = new MemoryStream())
-        //    {
-        //        var document = new Document(PageSize.A4, 40, 40, 40, 40);
-        //        var writer = PdfWriter.GetInstance(document, stream);
-        //        document.Open();
-
-        //        var fontTitulo = new Font(Font.HELVETICA, 18, Font.BOLD);
-        //        var fontSubtitulo = new Font(Font.HELVETICA, 14, Font.BOLD);
-        //        var fontTexto = new Font(Font.HELVETICA, 11, Font.NORMAL);
-
-        //        // ===============================
-        //        // CABECERA CON LOGO Y TÍTULO
-        //        // ===============================
-
-        //        // ===============================
-        //        // LOGO EN ESQUINA SUPERIOR DERECHA
-        //        // ===============================
-        //        //var logoPath = @"C:\Users\Berserker\Source\Repos\Armeccor\Armeccor\Client\wwwroot\images\logo_meccor.jpg";
-        //        var logoPath = Path.Combine(_env.WebRootPath, "wwwroot/images/logo_meccor.jpg");
-
-        //        //if (System.IO.File.Exists(logoPath))
-        //        //{
-        //        //    var logo = Image.GetInstance(logoPath);
-        //        //    logo.ScaleAbsolute(120f, 120f); // tamaño más equilibrado
-        //        //    logo.SetAbsolutePosition(document.PageSize.Width - 120f - 40f, document.PageSize.Height - 120f - 40f);
-        //        //    document.Add(logo);
-        //        //}
-
-        //        if (System.IO.File.Exists(logoPath))
-        //        {
-        //            var logo = Image.GetInstance(logoPath);
-        //            logo.ScaleToFit(document.PageSize.Width - document.LeftMargin - document.RightMargin, 100f);
-        //            logo.SetAbsolutePosition(document.LeftMargin, document.PageSize.Height - 100f);
-        //            document.Add(logo);
-
-        //            document.Add(new Paragraph("\n\n\n\n\n\n\n")); // espacio para que no se superponga
-        //        }
-
-
-        //        // ===============================
-        //        // ESPACIO PARA QUE EL LOGO NO SE PISE
-        //        // ===============================
-        //        document.Add(new Paragraph("\n\n\n\n\n\n")); // espacio vertical para que el título no se superponga
-
-        //        // ===============================
-        //        // TÍTULO
-        //        // ===============================
-        //        var titulo = new Paragraph($"ORDEN DE TRABAJO N°: {ordenDto.NroOT}\n\n", fontTitulo)
-        //        {
-        //            Alignment = Element.ALIGN_LEFT,
-        //            SpacingAfter = 15f
-        //        };
-        //        document.Add(titulo);
-
-        //        // ===============================
-        //        // TABLA PRINCIPAL DE DATOS
-        //        // ===============================
-        //        var tabla = new PdfPTable(2) { WidthPercentage = 100 };
-        //        tabla.SetWidths(new float[] { 2, 4 });
-
-        //        void AddRow(string label, string value)
-        //        {
-        //            tabla.AddCell(new Phrase(label, fontTexto));
-        //            tabla.AddCell(new Phrase(value ?? "—", fontTexto));
-        //        }
-
-        //        AddRow("Número de OT", ordenDto.NroOT.ToString());
-        //        AddRow("Nombre de la orden", ordenDto.NombreOrden);
-        //        AddRow("Descripción", ordenDto.Descripcion);
-        //        AddRow("Estado", ordenDto.Estado);
-        //        AddRow("Fecha de inicio", ordenDto.FechaInicio.ToString("dd/MM/yyyy"));
-        //        AddRow("Fecha pactada", ordenDto.FechaPactada.ToString("dd/MM/yyyy"));
-        //        AddRow("Fecha de entrega", ordenDto.FechaEntrega?.ToString("dd/MM/yyyy") ?? "Sin fecha");
-        //        AddRow("Cliente", ordenDto.NombreCliente);
-        //        AddRow("Área actual", ordenDto.AreaActual ?? "");
-
-        //        document.Add(tabla);
-
-        //        // ===============================
-        //        // TABLA DE ÁREAS
-        //        // ===============================
-        //        document.Add(new Paragraph("ÁREAS DE LA ORDEN\n\n", fontSubtitulo));
-
-        //        var tablaAreas = new PdfPTable(6) { WidthPercentage = 100 };
-        //        tablaAreas.SetWidths(new float[] { 2, 2, 3, 1.5f, 2, 1 });
-
-        //        string[] headersAreas = { "Área", "Estado", "Descripción", "Tiempo (hs)", "Comentario", "Prioridad" };
-        //        foreach (var header in headersAreas)
-        //            tablaAreas.AddCell(new Phrase(header, fontTexto));
-
-        //        foreach (var a in listaAreas)
-        //        {
-        //            tablaAreas.AddCell(new Phrase(a.NombreArea ?? "—", fontTexto));
-        //            tablaAreas.AddCell(new Phrase(a.Estado ?? "—", fontTexto));
-        //            tablaAreas.AddCell(new Phrase(a.Descripcion ?? "—", fontTexto));
-        //            tablaAreas.AddCell(new Phrase(a.Tiempo.ToString(), fontTexto));
-        //            tablaAreas.AddCell(new Phrase(a.Comentario ?? "—", fontTexto));
-        //            tablaAreas.AddCell(new Phrase(a.Prioridad.ToString(), fontTexto));
-        //        }
-
-        //        document.Add(tablaAreas);
-
-        //        // ===============================
-        //        // TABLA DE INSUMOS
-        //        // ===============================
-        //        document.Add(new Paragraph("INSUMOS UTILIZADOS EN LA ORDEN\n\n", fontSubtitulo));
-
-        //        var tablaInsumos = new PdfPTable(2) { WidthPercentage = 100 };
-        //        tablaInsumos.SetWidths(new float[] { 3, 1.5f });
-
-        //        tablaInsumos.AddCell(new Phrase("Insumo", fontTexto));
-        //        tablaInsumos.AddCell(new Phrase("Cantidad", fontTexto));
-
-        //        foreach (var ins in listaInsumos)
-        //        {
-        //            tablaInsumos.AddCell(new Phrase(ins.Nombre ?? "—", fontTexto));
-        //            tablaInsumos.AddCell(new Phrase(ins.Cantidad.ToString(), fontTexto));
-        //        }
-
-        //        document.Add(tablaInsumos);
-
-        //        // ===============================
-        //        // PIE DE PÁGINA
-        //        // ===============================
-        //        document.Add(new Paragraph($"\n\nGenerado el: {DateTime.Now:dd/MM/yyyy HH:mm}", fontTexto));
-
-        //        document.Close();
-
-        //        var fileName = $"Orden_Nro_{ordenDto.NroOT}.pdf";
-        //        return File(stream.ToArray(), "application/pdf", fileName);
-        //    }
-        //}
-
         [HttpGet("GenerarPDF/{nroOT}")]
         public async Task<IActionResult> GenerarPDF(int nroOT)
         {
@@ -673,6 +512,7 @@ namespace Armeccor.Server.Controllers
             var orden = await context.Ordenes
                 .Include(o => o.Cliente)
                 .Include(o => o.AreaDetalleOrdenes).ThenInclude(d => d.Area)
+                //.Include(d=>d.InsumoOrdenes).ThenInclude(i=>i.Insumo)
                 .FirstOrDefaultAsync(o => o.NroOT == nroOT);
 
             if (orden == null)
@@ -808,17 +648,40 @@ namespace Armeccor.Server.Controllers
                 // ===============================
                 // TABLA DE INSUMOS
                 // ===============================
+                //document.Add(new iTextSharp.text.Paragraph("\n\nINSUMOS UTILIZADOS EN LA ORDEN\n\n", fontSubtitulo));
+
+                //var tablaInsumos = new iTextSharp.text.pdf.PdfPTable(2) { WidthPercentage = 100 };
+                //tablaInsumos.SetWidths(new float[] { 3, 1.5f });
+
+                //tablaInsumos.AddCell(new iTextSharp.text.Phrase("Nombre", fontTexto));
+                //tablaInsumos.AddCell(new iTextSharp.text.Phrase("Cantidad", fontTexto));
+
+                //foreach (var ins in listaInsumos)
+                //{
+                //    tablaInsumos.AddCell(new iTextSharp.text.Phrase(ins.Nombre ?? "-", fontTexto));
+                //    tablaInsumos.AddCell(new iTextSharp.text.Phrase(ins.Cantidad.ToString(), fontTexto));
+                //}
+
+                //document.Add(tablaInsumos);
+
+                // ===============================
+                // TABLA DE INSUMOS
+                // ===============================
                 document.Add(new iTextSharp.text.Paragraph("\n\nINSUMOS UTILIZADOS EN LA ORDEN\n\n", fontSubtitulo));
 
                 var tablaInsumos = new iTextSharp.text.pdf.PdfPTable(2) { WidthPercentage = 100 };
                 tablaInsumos.SetWidths(new float[] { 3, 1.5f });
 
-                tablaInsumos.AddCell(new iTextSharp.text.Phrase("Insumo", fontTexto));
+                // Encabezados
+                tablaInsumos.AddCell(new iTextSharp.text.Phrase("Insumo", fontTexto)); // Cambio de "Nombre" a "Insumo" para coincidir con la imagen
                 tablaInsumos.AddCell(new iTextSharp.text.Phrase("Cantidad", fontTexto));
 
                 foreach (var ins in listaInsumos)
                 {
-                    tablaInsumos.AddCell(new iTextSharp.text.Phrase(ins.Nombre ?? "—", fontTexto));
+                    // 1. Agregar el nombre del insumo (Columna 1)
+                    tablaInsumos.AddCell(new iTextSharp.text.Phrase(ins.Nombre ?? "-", fontTexto));
+
+                    // 2. Agregar la cantidad (Columna 2)
                     tablaInsumos.AddCell(new iTextSharp.text.Phrase(ins.Cantidad.ToString(), fontTexto));
                 }
 
