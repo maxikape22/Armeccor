@@ -202,3 +202,10 @@ C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\obj\Debug\net9.0\refint
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\obj\Debug\net9.0\Armeccor.Server.pdb
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\obj\Debug\net9.0\Armeccor.Server.genruntimeconfig.cache
 C:\Users\BERSERKER\Source\Repos\Armeccor\Armeccor\Server\obj\Debug\net9.0\ref\Armeccor.Server.dll
+C:\Users\Berserker\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\BouncyCastle.Cryptography.dll
+C:\Users\Berserker\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\iTextSharp.LGPLv2.Core.dll
+C:\Users\Berserker\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\SkiaSharp.dll
+C:\Users\Berserker\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\runtimes\osx\native\libSkiaSharp.dylib
+C:\Users\Berserker\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\runtimes\win-arm64\native\libSkiaSharp.dll
+C:\Users\Berserker\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\runtimes\win-x64\native\libSkiaSharp.dll
+C:\Users\Berserker\Source\Repos\Armeccor\Armeccor\Server\bin\Debug\net9.0\runtimes\win-x86\native\libSkiaSharp.dll

@@ -2,6 +2,9 @@
 using Armeccor.Datos.Entidades;
 using AutoMapper;
 using DTO.ObjetosDTO;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,13 +26,14 @@ namespace Armeccor.Server.Controllers
 
         private readonly ApplicationDbContext context;
         private readonly IMapper _mapper;
+        private readonly IWebHostEnvironment _env;
 
-        public OrdenesController(ApplicationDbContext context, IMapper mapper)
+        public OrdenesController(ApplicationDbContext context, IMapper mapper, IWebHostEnvironment env)
         {
             this.context = context;
             this._mapper = mapper;
+            this._env = env;
         }
-
 
         [HttpGet("SoloOrdenIdPorNroOT/{nroOT:int}")]
         public async Task<ActionResult<int>> GetOrdenIdPorNroOT(int nroOT)
@@ -89,7 +93,7 @@ namespace Armeccor.Server.Controllers
         {
             var query = context.Ordenes
                 .Include(o => o.Cliente)
-                .Where(e=>e.Estado == "Abierta")
+                .Where(e => e.Estado == "Abierta")
                 .Include(o => o.Planos)
                 .Include(o => o.Entregas)
                 .Include(o => o.AreaDetalleOrdenes)
@@ -231,7 +235,7 @@ namespace Armeccor.Server.Controllers
             orden.NroOT = nrogenerado;
 
 
-            if (crearOrdenDTO.FechaPactada <= crearOrdenDTO.FechaInicio) 
+            if (crearOrdenDTO.FechaPactada <= crearOrdenDTO.FechaInicio)
                 return Conflict("La fecha pactada debe ser mayor a la fecha de inicio.");
 
             context.Ordenes.Add(orden);
@@ -264,7 +268,7 @@ namespace Armeccor.Server.Controllers
         [HttpDelete("{NroOT:int}")]
         public async Task<ActionResult> DeleteOrden(int NroOT)
         {
-            var orden = await context.Ordenes.FirstOrDefaultAsync(e=>e.NroOT==NroOT);
+            var orden = await context.Ordenes.FirstOrDefaultAsync(e => e.NroOT == NroOT);
             if (orden == null)
             {
                 return NotFound($"No se pudo borrar la orden N°: {NroOT}. No encontrado.");
@@ -499,43 +503,265 @@ namespace Armeccor.Server.Controllers
             });
         }
 
+        //[HttpGet("GenerarPDF/{nroOT}")]
+        //public async Task<IActionResult> GenerarPDF(int nroOT)
+        //{
+        //    var orden = await context.Ordenes
+        //        .Include(o => o.Cliente)
+        //        .Include(o => o.AreaDetalleOrdenes).ThenInclude(d => d.Area)
+        //        .FirstOrDefaultAsync(o => o.NroOT == nroOT);
+
+        //    if (orden == null)
+        //        return NotFound("Orden no encontrada.");
+
+        //    var ordenDto = _mapper.Map<OrdenDetalleDTO>(orden);
+
+        //    var areas = await context.AreaDetalleOrdenes
+        //        .Include(a => a.Area)
+        //        .Where(a => a.Orden.NroOT == nroOT)
+        //        .OrderBy(a => a.Prioridad)
+        //        .ToListAsync();
+
+        //    var listaAreas = _mapper.Map<List<AreaDetalleOrdenListaDTO>>(areas);
+
+        //    var insumos = await context.InsumoDetalleOrdenes
+        //        .Include(i => i.Insumo)
+        //        .Where(i => i.Orden.NroOT == nroOT)
+        //        .ToListAsync();
+
+        //    var listaInsumos = _mapper.Map<List<InsumoDetalleOrdenDTO>>(insumos);
+
+        //    using (var stream = new MemoryStream())
+        //    {
+        //        var document = new Document(PageSize.A4, 40, 40, 40, 40);
+        //        var writer = PdfWriter.GetInstance(document, stream);
+        //        document.Open();
+
+        //        var fontTitulo = new Font(Font.HELVETICA, 18, Font.BOLD);
+        //        var fontSubtitulo = new Font(Font.HELVETICA, 14, Font.BOLD);
+        //        var fontTexto = new Font(Font.HELVETICA, 11, Font.NORMAL);
+
+        //        // ===============================
+        //        // CABECERA CON LOGO Y TÍTULO
+        //        // ===============================
+
+        //        // ===============================
+        //        // LOGO EN ESQUINA SUPERIOR DERECHA
+        //        // ===============================
+        //        //var logoPath = @"C:\Users\Berserker\Source\Repos\Armeccor\Armeccor\Client\wwwroot\images\logo_meccor.jpg";
+        //        var logoPath = Path.Combine(_env.WebRootPath, "wwwroot/images/logo_meccor.jpg");
+
+        //        //if (System.IO.File.Exists(logoPath))
+        //        //{
+        //        //    var logo = Image.GetInstance(logoPath);
+        //        //    logo.ScaleAbsolute(120f, 120f); // tamaño más equilibrado
+        //        //    logo.SetAbsolutePosition(document.PageSize.Width - 120f - 40f, document.PageSize.Height - 120f - 40f);
+        //        //    document.Add(logo);
+        //        //}
+
+        //        if (System.IO.File.Exists(logoPath))
+        //        {
+        //            var logo = Image.GetInstance(logoPath);
+        //            logo.ScaleToFit(document.PageSize.Width - document.LeftMargin - document.RightMargin, 100f);
+        //            logo.SetAbsolutePosition(document.LeftMargin, document.PageSize.Height - 100f);
+        //            document.Add(logo);
+
+        //            document.Add(new Paragraph("\n\n\n\n\n\n\n")); // espacio para que no se superponga
+        //        }
+
+
+        //        // ===============================
+        //        // ESPACIO PARA QUE EL LOGO NO SE PISE
+        //        // ===============================
+        //        document.Add(new Paragraph("\n\n\n\n\n\n")); // espacio vertical para que el título no se superponga
+
+        //        // ===============================
+        //        // TÍTULO
+        //        // ===============================
+        //        var titulo = new Paragraph($"ORDEN DE TRABAJO N°: {ordenDto.NroOT}\n\n", fontTitulo)
+        //        {
+        //            Alignment = Element.ALIGN_LEFT,
+        //            SpacingAfter = 15f
+        //        };
+        //        document.Add(titulo);
+
+        //        // ===============================
+        //        // TABLA PRINCIPAL DE DATOS
+        //        // ===============================
+        //        var tabla = new PdfPTable(2) { WidthPercentage = 100 };
+        //        tabla.SetWidths(new float[] { 2, 4 });
+
+        //        void AddRow(string label, string value)
+        //        {
+        //            tabla.AddCell(new Phrase(label, fontTexto));
+        //            tabla.AddCell(new Phrase(value ?? "—", fontTexto));
+        //        }
+
+        //        AddRow("Número de OT", ordenDto.NroOT.ToString());
+        //        AddRow("Nombre de la orden", ordenDto.NombreOrden);
+        //        AddRow("Descripción", ordenDto.Descripcion);
+        //        AddRow("Estado", ordenDto.Estado);
+        //        AddRow("Fecha de inicio", ordenDto.FechaInicio.ToString("dd/MM/yyyy"));
+        //        AddRow("Fecha pactada", ordenDto.FechaPactada.ToString("dd/MM/yyyy"));
+        //        AddRow("Fecha de entrega", ordenDto.FechaEntrega?.ToString("dd/MM/yyyy") ?? "Sin fecha");
+        //        AddRow("Cliente", ordenDto.NombreCliente);
+        //        AddRow("Área actual", ordenDto.AreaActual ?? "");
+
+        //        document.Add(tabla);
+
+        //        // ===============================
+        //        // TABLA DE ÁREAS
+        //        // ===============================
+        //        document.Add(new Paragraph("ÁREAS DE LA ORDEN\n\n", fontSubtitulo));
+
+        //        var tablaAreas = new PdfPTable(6) { WidthPercentage = 100 };
+        //        tablaAreas.SetWidths(new float[] { 2, 2, 3, 1.5f, 2, 1 });
+
+        //        string[] headersAreas = { "Área", "Estado", "Descripción", "Tiempo (hs)", "Comentario", "Prioridad" };
+        //        foreach (var header in headersAreas)
+        //            tablaAreas.AddCell(new Phrase(header, fontTexto));
+
+        //        foreach (var a in listaAreas)
+        //        {
+        //            tablaAreas.AddCell(new Phrase(a.NombreArea ?? "—", fontTexto));
+        //            tablaAreas.AddCell(new Phrase(a.Estado ?? "—", fontTexto));
+        //            tablaAreas.AddCell(new Phrase(a.Descripcion ?? "—", fontTexto));
+        //            tablaAreas.AddCell(new Phrase(a.Tiempo.ToString(), fontTexto));
+        //            tablaAreas.AddCell(new Phrase(a.Comentario ?? "—", fontTexto));
+        //            tablaAreas.AddCell(new Phrase(a.Prioridad.ToString(), fontTexto));
+        //        }
+
+        //        document.Add(tablaAreas);
+
+        //        // ===============================
+        //        // TABLA DE INSUMOS
+        //        // ===============================
+        //        document.Add(new Paragraph("INSUMOS UTILIZADOS EN LA ORDEN\n\n", fontSubtitulo));
+
+        //        var tablaInsumos = new PdfPTable(2) { WidthPercentage = 100 };
+        //        tablaInsumos.SetWidths(new float[] { 3, 1.5f });
+
+        //        tablaInsumos.AddCell(new Phrase("Insumo", fontTexto));
+        //        tablaInsumos.AddCell(new Phrase("Cantidad", fontTexto));
+
+        //        foreach (var ins in listaInsumos)
+        //        {
+        //            tablaInsumos.AddCell(new Phrase(ins.Nombre ?? "—", fontTexto));
+        //            tablaInsumos.AddCell(new Phrase(ins.Cantidad.ToString(), fontTexto));
+        //        }
+
+        //        document.Add(tablaInsumos);
+
+        //        // ===============================
+        //        // PIE DE PÁGINA
+        //        // ===============================
+        //        document.Add(new Paragraph($"\n\nGenerado el: {DateTime.Now:dd/MM/yyyy HH:mm}", fontTexto));
+
+        //        document.Close();
+
+        //        var fileName = $"Orden_Nro_{ordenDto.NroOT}.pdf";
+        //        return File(stream.ToArray(), "application/pdf", fileName);
+        //    }
+        //}
+
         [HttpGet("GenerarPDF/{nroOT}")]
         public async Task<IActionResult> GenerarPDF(int nroOT)
         {
+            // IMPORTANTE: Este controlador debe estar en el backend (ASP.NET Core Server),
+            // con Static Files habilitado: app.UseStaticFiles(); y el logo en wwwroot/images/logo_meccor.jpg
+
             var orden = await context.Ordenes
                 .Include(o => o.Cliente)
-                .Include(o => o.AreaDetalleOrdenes).ThenInclude(d=>d.Area)
+                .Include(o => o.AreaDetalleOrdenes).ThenInclude(d => d.Area)
                 .FirstOrDefaultAsync(o => o.NroOT == nroOT);
 
             if (orden == null)
                 return NotFound("Orden no encontrada.");
 
-            // Mapeo a DTO
             var ordenDto = _mapper.Map<OrdenDetalleDTO>(orden);
+
+            var areas = await context.AreaDetalleOrdenes
+                .Include(a => a.Area)
+                .Where(a => a.Orden.NroOT == nroOT)
+                .OrderBy(a => a.Prioridad)
+                .ToListAsync();
+
+            var listaAreas = _mapper.Map<List<AreaDetalleOrdenListaDTO>>(areas);
+
+            var insumos = await context.InsumoDetalleOrdenes
+                .Include(i => i.Insumo)
+                .Where(i => i.Orden.NroOT == nroOT)
+                .ToListAsync();
+
+            var listaInsumos = _mapper.Map<List<InsumoDetalleOrdenDTO>>(insumos);
 
             using (var stream = new MemoryStream())
             {
-                var document = new iTextSharp.text.Document(iTextSharp.text.PageSize.A4, 50, 50, 50, 25);
+                var document = new iTextSharp.text.Document(iTextSharp.text.PageSize.A4, 40, 40, 40, 40);
                 var writer = iTextSharp.text.pdf.PdfWriter.GetInstance(document, stream);
                 document.Open();
 
-                // Fuente principal
-                var fontTitulo = new iTextSharp.text.Font(iTextSharp.text.Font.HELVETICA, 16, iTextSharp.text.Font.BOLD);
-                var fontTexto = new iTextSharp.text.Font(iTextSharp.text.Font.HELVETICA, 12, iTextSharp.text.Font.NORMAL);
+                var fontTitulo = new iTextSharp.text.Font(iTextSharp.text.Font.HELVETICA, 18, iTextSharp.text.Font.BOLD);
+                var fontSubtitulo = new iTextSharp.text.Font(iTextSharp.text.Font.HELVETICA, 14, iTextSharp.text.Font.BOLD);
+                var fontTexto = new iTextSharp.text.Font(iTextSharp.text.Font.HELVETICA, 11, iTextSharp.text.Font.NORMAL);
 
-                // Encabezado
+                // ===============================
+                // LOGO COMO BANNER SUPERIOR (robusto para hosting)
+                // ===============================
+                iTextSharp.text.Image logo = null;
+
+                // 1) Intentar cargar desde wwwroot del backend (si existe)
+                try
+                {
+                    // Si este controlador está en el proyecto Server, inyectá IWebHostEnvironment en el ctor y usalo acá:
+                    // var logoPath = Path.Combine(_env.WebRootPath, "images", "logo_meccor.jpg");
+                    // if (System.IO.File.Exists(logoPath)) logo = iTextSharp.text.Image.GetInstance(logoPath);
+
+                    // Si no tenés _env, podés intentar con ContentRoot + wwwroot:
+                    var probableWebRoot = Path.Combine(AppContext.BaseDirectory, "wwwroot", "images", "logo_meccor.jpg");
+                    if (System.IO.File.Exists(probableWebRoot))
+                        logo = iTextSharp.text.Image.GetInstance(probableWebRoot);
+                }
+                catch { /* ignorar */ }
+
+                // 2) Si no está en disco, cargar por URL pública del sitio (sirviendo archivo estático)
+                if (logo == null && HttpContext != null)
+                {
+                    try
+                    {
+                        var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
+                        var logoUrl = $"{baseUrl}/images/logo_meccor.jpg"; // Asegurate que el logo esté accesible como archivo estático
+                        logo = iTextSharp.text.Image.GetInstance(new Uri(logoUrl));
+                    }
+                    catch { /* ignorar */ }
+                }
+
+                // Insertar el logo si se logró cargar
+                if (logo != null)
+                {
+                    logo.ScaleToFit(document.PageSize.Width - document.LeftMargin - document.RightMargin, 100f);
+                    logo.SetAbsolutePosition(document.LeftMargin, document.PageSize.Height - 100f);
+                    document.Add(logo);
+
+                    // Separación para que el contenido no se superponga
+                    document.Add(new iTextSharp.text.Paragraph("\n\n\n\n\n\n\n"));
+                }
+
+                // ===============================
+                // TÍTULO
+                // ===============================
                 var titulo = new iTextSharp.text.Paragraph($"ORDEN DE TRABAJO N°: {ordenDto.NroOT}\n\n", fontTitulo)
                 {
-                    Alignment = iTextSharp.text.Element.ALIGN_CENTER,
-                    SpacingAfter = 20f
+                    Alignment = iTextSharp.text.Element.ALIGN_LEFT,
+                    SpacingAfter = 15f
                 };
                 document.Add(titulo);
 
-                // Tabla con datos de la orden (sin IDs)
-                var tabla = new iTextSharp.text.pdf.PdfPTable(2)
-                {
-                    WidthPercentage = 100
-                };
+                // ===============================
+                // TABLA PRINCIPAL DE DATOS
+                // ===============================
+                var tabla = new iTextSharp.text.pdf.PdfPTable(2) { WidthPercentage = 100 };
+                tabla.SetWidths(new float[] { 2, 4 });
 
                 void AddRow(string label, string value)
                 {
@@ -547,24 +773,68 @@ namespace Armeccor.Server.Controllers
                 AddRow("Nombre de la orden", ordenDto.NombreOrden);
                 AddRow("Descripción", ordenDto.Descripcion);
                 AddRow("Estado", ordenDto.Estado);
-                AddRow("Fecha de inicio", ordenDto.FechaInicio.ToString("dd/MM/yyyy") ?? "Sin fecha");
-                AddRow("Fecha pactada", ordenDto.FechaPactada.ToString("dd/MM/yyyy") ?? "Sin fecha");
-                AddRow("Fecha de entrega", ordenDto.FechaEntrega?.ToString("dd/MM/yyyy") ?? "Sin fecha de entrega");
-                AddRow("Cliente", ordenDto.NombreCliente ?? "Sin cliente");
+                AddRow("Fecha de inicio", ordenDto.FechaInicio.ToString("dd/MM/yyyy"));
+                AddRow("Fecha pactada", ordenDto.FechaPactada.ToString("dd/MM/yyyy"));
+                AddRow("Fecha de entrega", ordenDto.FechaEntrega?.ToString("dd/MM/yyyy") ?? "Sin fecha");
+                AddRow("Cliente", ordenDto.NombreCliente);
                 AddRow("Área actual", ordenDto.AreaActual ?? "");
 
                 document.Add(tabla);
 
-                // Pie de página
-                document.Add(new iTextSharp.text.Paragraph($"\nGenerado el: {DateTime.Now:dd/MM/yyyy HH:mm}", fontTexto));
+                // ===============================
+                // TABLA DE ÁREAS
+                // ===============================
+                document.Add(new iTextSharp.text.Paragraph("\n\nÁREAS DE LA ORDEN\n\n", fontSubtitulo));
+
+                var tablaAreas = new iTextSharp.text.pdf.PdfPTable(6) { WidthPercentage = 100 };
+                tablaAreas.SetWidths(new float[] { 2, 2, 3, 1.5f, 2, 1 });
+
+                string[] headersAreas = { "Área", "Estado", "Descripción", "Tiempo (hs)", "Comentario", "Prioridad" };
+                foreach (var header in headersAreas)
+                    tablaAreas.AddCell(new iTextSharp.text.Phrase(header, fontTexto));
+
+                foreach (var a in listaAreas)
+                {
+                    tablaAreas.AddCell(new iTextSharp.text.Phrase(a.NombreArea ?? "—", fontTexto));
+                    tablaAreas.AddCell(new iTextSharp.text.Phrase(a.Estado ?? "—", fontTexto));
+                    tablaAreas.AddCell(new iTextSharp.text.Phrase(a.Descripcion ?? "—", fontTexto));
+                    tablaAreas.AddCell(new iTextSharp.text.Phrase(a.Tiempo.ToString(), fontTexto));
+                    tablaAreas.AddCell(new iTextSharp.text.Phrase(a.Comentario ?? "—", fontTexto));
+                    tablaAreas.AddCell(new iTextSharp.text.Phrase(a.Prioridad.ToString(), fontTexto));
+                }
+
+                document.Add(tablaAreas);
+
+                // ===============================
+                // TABLA DE INSUMOS
+                // ===============================
+                document.Add(new iTextSharp.text.Paragraph("\n\nINSUMOS UTILIZADOS EN LA ORDEN\n\n", fontSubtitulo));
+
+                var tablaInsumos = new iTextSharp.text.pdf.PdfPTable(2) { WidthPercentage = 100 };
+                tablaInsumos.SetWidths(new float[] { 3, 1.5f });
+
+                tablaInsumos.AddCell(new iTextSharp.text.Phrase("Insumo", fontTexto));
+                tablaInsumos.AddCell(new iTextSharp.text.Phrase("Cantidad", fontTexto));
+
+                foreach (var ins in listaInsumos)
+                {
+                    tablaInsumos.AddCell(new iTextSharp.text.Phrase(ins.Nombre ?? "—", fontTexto));
+                    tablaInsumos.AddCell(new iTextSharp.text.Phrase(ins.Cantidad.ToString(), fontTexto));
+                }
+
+                document.Add(tablaInsumos);
+
+                // ===============================
+                // PIE DE PÁGINA
+                // ===============================
+                document.Add(new iTextSharp.text.Paragraph($"\n\nGenerado el: {DateTime.Now:dd/MM/yyyy HH:mm}", fontTexto));
 
                 document.Close();
 
-                var fileName = $"Orden_N°:{ordenDto.NroOT}.pdf";
+                var fileName = $"Orden_Nro_{ordenDto.NroOT}.pdf";
                 return File(stream.ToArray(), "application/pdf", fileName);
             }
         }
-
 
 
 
