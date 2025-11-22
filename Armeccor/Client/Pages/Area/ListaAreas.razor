@@ -1,116 +1,409 @@
-﻿@page "/api/Areas"
+﻿@page "/Areas"
 @inject HttpClient Http
-@inject NavigationManager Navigation
 @inject IJSRuntime JS
+@inject NavigationManager Navigation
+@inject HttpClient Http
 
-<h3>Gestión de Áreas</h3>
+<h2 class="titulo">Listado de áreas</h2>
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <div class="input-group" style="width: 48%;">
-        <input class="form-control" placeholder="Buscar por nombre de área..." @bind="filtroNombre" />
-        <button class="btn btn-primary" @onclick="BuscarPorNombre">Buscar</button>
-    </div>
-    <div>
-        <button class="btn btn-success" @onclick="IrANuevaArea">+ Nueva Área</button>
-    </div>
+
+@* <script>
+    let angle = 0;
+
+    function renderCarousel() {
+        const items = document.querySelectorAll(".carousel-item");
+        if (items.length === 0) return;
+
+        const fixedSlice = 1000;   // separación fija
+        const radius = 500;      // distancia desde el centro
+
+        const offset = -((items.length - 1) / 2); // ⬅️ distribuye desde el centro
+
+        items.forEach((item, i) => {
+            const rotation = fixedSlice * (i + offset) + angle;
+            const rad = rotation * (Math.PI / 180);
+
+            const x = Math.sin(rad) * radius;
+            const z = Math.cos(rad) * radius;
+
+            item.style.transform = `
+                translateX(${x}px)
+                translateZ(${z}px)
+                translateY(40px)
+                rotateY(${rotation}deg)
+            `;
+        });
+    }
+
+    function nextCarousel() {
+        angle -= 10;
+        renderCarousel();
+    }
+
+    function prevCarousel() {
+        angle += 10;
+        renderCarousel();
+    }
+
+    window.addEventListener("load", renderCarousel);
+</script>
+ *@
+
+<script>
+    let angle = 0;
+
+    function renderCarousel() {
+        const items = document.querySelectorAll(".carousel-item");
+        if (items.length === 0) return;
+
+        const fixedSlice = 1000;   // separación fija (tu valor)
+        const radius = 500;        // distancia desde el centro (tu valor)
+
+        const total = items.length;
+        const offset = -((total - 1) / 2); // distribución simétrica
+
+        const isSingle = total === 1;
+
+        items.forEach((item, i) => {
+            const rotation = isSingle ? 0 : fixedSlice * (i + offset) + angle;
+            const rad = rotation * (Math.PI / 180);
+
+            const x = Math.sin(rad) * radius;
+            const z = Math.cos(rad) * radius;
+
+            item.style.transform = `
+                translateX(${x}px)
+                translateZ(${z}px)
+                translateY(40px)
+                rotateY(${rotation}deg)
+            `;
+        });
+    }
+
+    function nextCarousel() {
+        const step = 10; // mantengo tu paso
+        angle -= step;
+        renderCarousel();
+    }
+
+    function prevCarousel() {
+        const step = 10;
+        angle += step;
+        renderCarousel();
+    }
+
+    // Centrar por índice sin cambiar estructura ni crear deformaciones
+    function centerByIndex(index) {
+        const items = document.querySelectorAll(".carousel-item");
+        if (items.length === 0) return;
+
+        const fixedSlice = 1000;
+        const total = items.length;
+        const offset = -((total - 1) / 2);
+
+        // Ajuste de ángulo para que el ítem elegido quede con rotación 0 (centro visual)
+        angle = -fixedSlice * (index + offset);
+        renderCarousel();
+    }
+
+    // Centrar por texto (ej: nombre en h3), estable y sin efectos colaterales
+    function centerByText(text) {
+        const items = Array.from(document.querySelectorAll(".carousel-item"));
+        if (items.length === 0) return;
+        const query = (text || "").toLowerCase();
+
+        const idx = items.findIndex(el =>
+            (el.textContent || "").toLowerCase().includes(query)
+        );
+
+        centerByIndex(idx >= 0 ? idx : 0);
+    }
+
+    // Inicialización
+    window.addEventListener("load", renderCarousel);
+
+    // Exponer para Blazor
+    window.renderCarousel = renderCarousel;
+    window.nextCarousel = nextCarousel;
+    window.prevCarousel = prevCarousel;
+    window.centerByIndex = centerByIndex;
+    window.centerByText = centerByText;
+</script>
+
+
+
+
+<style>
+    .titulo {
+        text-align: center;
+        margin-top: 40px;
+        margin-bottom: 20px;
+        font-size: 26px;
+        font-weight: 700;
+    }
+
+    .buscador-contenedor {
+        width: 90%;
+        margin: auto;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 30px;
+    }
+
+    .input-buscar {
+        width: 40%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+
+    .btn-buscar {
+        padding: 10px 14px;
+        background: #0066ff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+    }
+
+
+    .btn-buscar,
+
+    .btn-limpiar {
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: none;
+        color: white;
+        background-color: #0066ff;
+        cursor: pointer;
+    }
+
+    .btn-limpiar {
+        background-color: #6c757d; /* gris neutro */
+    }
+
+
+    .btn-nueva {
+        margin-left: auto;
+        background: #28a745;
+        color: white;
+        padding: 10px 14px;
+        border: none;
+        border-radius: 8px;
+    }
+
+    .carousel-wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        position: relative;
+        margin-top: 50px; /* ⬅️ bajamos un poco más */
+        z-index: 0;
+    }
+
+    .carousel-container {
+        width: 100%;
+        max-width: 1200px; /* ⬅️ más ancho para acercarse a las flechas */
+        height: 480px; /* ⬅️ más alto para ganar espacio vertical */
+        perspective: 2000px;
+        margin: auto;
+        overflow: hidden;
+    }
+
+    .carousel {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        margin: 0;
+        padding: 0;
+    }
+
+    .carousel-item {
+        width: 260px;
+        height: 280px;
+        background: #fff;
+        border-radius: 18px;
+        position: absolute;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        backface-visibility: hidden;
+        transition: transform 0.9s ease, opacity 0.5s ease;
+        padding: 16px;
+        text-align: center;
+        word-break: break-word;
+        box-sizing: border-box;
+        transform-origin: center center;
+        z-index: 2;
+        /* ❌ Eliminar esto si lo tenías */
+        left: 40%; 
+        /* right: 20%; */
+    }
+
+
+
+        .carousel-item h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            word-break: break-word;
+        }
+
+        .carousel-item.center {
+            opacity: 1;
+            transform: scale(1.08);
+        }
+
+        .carousel-item.mid {
+            opacity: 0.6;
+        }
+
+        .carousel-item.far {
+            opacity: 0.2;
+        }
+
+    .estado {
+        margin-top: 5px;
+        padding: 4px 10px;
+        font-size: 14px;
+        border-radius: 8px;
+        background: #007bff;
+        color: white;
+    }
+
+    .btn-box {
+        margin-top: 12px;
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-edit {
+        padding: 6px 10px;
+        border-radius: 6px;
+        background: #007bff;
+        color: white;
+        border: none;
+    }
+
+    .btn-delete {
+        padding: 6px 10px;
+        border-radius: 6px;
+        background: #dc3545;
+        color: white;
+        border: none;
+    }
+
+    .nav-btn {
+        position: absolute;
+        top: 52%; /* ⬅️ bajamos un poco más para alinear con tarjetas */
+        transform: translateY(-50%);
+        font-size: 36px;
+        border: none;
+        background: none;
+        cursor: pointer;
+        z-index: 3;
+        color: #333;
+    }
+
+    .left {
+        left: 20px; /* ⬅️ desplazamos hacia adentro */
+    }
+
+    .right {
+        right: 20px; /* ⬅️ desplazamos hacia adentro */
+    }
+
+
+</style>
+
+<div class="buscador-contenedor">
+    <input class="input-buscar" @bind="filtro" placeholder="Buscar por nombre..." />
+    <button class="btn-buscar" @onclick="Buscar">Buscar</button>
+    <button class="btn-limpiar" @onclick="LimpiarFiltro">Limpiar</button>
+    <button class="btn-nueva" @onclick="NuevaArea">+ Nueva Área</button>
 </div>
 
-@if (CrearAreaDTO == null)
-{
-    <p><em>Cargando áreas...</em></p>
-}
-else
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Tiempo</th>
-                <th>Estado</th>
-                <th style="width:120px">Acción</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (CrearAreaDTO != null && CrearAreaDTO.Any())
+<div class="carousel-wrapper">
+    <div class="carousel-container">
+        <div id="carousel" class="carousel">
+            @foreach (var area in areasFiltradas)
             {
-                @foreach (var a in CrearAreaDTO)
-                {
-                    <tr>
-                        <td>@a.NombreArea</td>
-@*                         <td>@a.Tiempo</td>
-                        <td>@a.Estado</td> *@
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => IrAEditarArea(a.Id)">
-                                Editar
-                            </button>
-                            <button class="btn btn-sm btn-danger" @onclick="() => ConfirmarEliminar(a.Id,a.NombreArea)">
-                                Eliminar
-                            </button>
-                        </td>
-                    </tr>
-                }
+                <div class="carousel-item">
+                    <h3>@area.NombreArea</h3>
+                    <div class="btn-box">
+                        <button class="btn-edit" @onclick="() => Editar(area.Id)">
+                            Editar                          
+                        </button>
+                        <button class="btn-delete" @onclick="() => ConfirmarEliminar(area.Id,area.NombreArea)">
+                            Eliminar                          
+                        </button>
+                    </div>
+                </div>
             }
-            else
-            {
-                <tr><td colspan="4" class="text-center">No se encontraron áreas.</td></tr>
-            }
-        </tbody>
-    </table>
-}
+        </div>
+    </div>
+
+    <button class="nav-btn left" @onclick="Prev">&#10094;</button>
+    <button class="nav-btn right" @onclick="Next">&#10095;</button>
+</div>
+
 @code 
 {
-    private List<AreaDTO> areas = new();
-    private List<AreaListaDTO> CrearAreaDTO = new();
-    private AreaListaDTO Areas = new AreaListaDTO();
-    private List<CrearAreaDTO> areaDTOs = new List<CrearAreaDTO>();
-    private bool isLoading = true;
-    private CrearAreaDTO areaDTO = new CrearAreaDTO();
-
-    private string filtroNombre = string.Empty;
+    private List<AreaListaDTO> areas = new();
+    private List<AreaListaDTO> areasFiltradas = new();
+    private string filtro = "";
 
     protected override async Task OnInitializedAsync()
     {
-        await Cargar();
-        Areas = new AreaListaDTO();
+        areas = await Http.GetFromJsonAsync<List<AreaListaDTO>>("api/Areas") ?? new();
+        areasFiltradas = areas.OrderBy(z=>z.Id).ToList();
     }
 
-    private async Task Cargar()
-    {
-        // El controlador devuelve entidades Area en GET, así que mapeamos a List<Area>
-        CrearAreaDTO = await Http.GetFromJsonAsync<List<AreaListaDTO>>("api/Areas") ?? new();
-    }
-
-
-    private List<AreaListaDTO> CrearAreaDTOFiltradas = new(); // lista filtrada
-
-    private async Task BuscarPorNombre()
-    {
-        if (string.IsNullOrWhiteSpace(filtroNombre))
-        {
-            CrearAreaDTO = CrearAreaDTO;
-        }
-        else
-        {
-            CrearAreaDTO = CrearAreaDTO
-                .Where(a => a.NombreArea.Contains(filtroNombre, StringComparison.OrdinalIgnoreCase))
-                .ToList();
-        }
-
-        if (filtroNombre.Equals(string.Empty))
-        {
-            await Cargar();
-        }
-    }
-
-    private async Task ConfirmarEliminar(int id,string nombre)
+    private async Task ConfirmarEliminar(int id, string nombre)
     {
         var ok = await JS.InvokeAsync<bool>("confirm", $"¿Desea eliminar el área: {nombre}?");
         if (!ok) return;
-        await EliminarArea(id);
-        await Cargar();
+        await Eliminar(id);
+        await OnInitializedAsync();
     }
 
-    private async Task EliminarArea(int id)
+    private async Task Buscar()
+    {
+        if (string.IsNullOrWhiteSpace(filtro))
+            areasFiltradas = areas;
+        else
+            areasFiltradas = areas
+                .Where(x => x.NombreArea.Contains(filtro, StringComparison.OrdinalIgnoreCase))
+                .OrderBy(z=>z.Id)
+                .ToList();
+
+        // InvokeAsync(async () =>
+        // {
+        //     await Task.Delay(1);
+        //     await JS.InvokeVoidAsync("renderCarousel");
+        // });
+
+        await InvokeAsync(async () =>    
+        {
+            await JS.InvokeVoidAsync("renderCarousel");
+            await JS.InvokeVoidAsync("centerByText", filtro);
+        });
+
+    }
+
+    private void NuevaArea()
+    {
+        Navigation.NavigateTo("/api/Areas/AgregarArea");
+    }
+
+    private void Editar(int id)
+    {
+        Navigation.NavigateTo($"/api/Areas/Editar/{id}");
+    }
+
+    private async Task Eliminar(int id)
     {
         try
         {
@@ -134,13 +427,23 @@ else
         }
     }
 
-    private void IrANuevaArea()
+    private async Task Next()
     {
-        Navigation.NavigateTo("/api/Areas/AgregarArea");
+        await JS.InvokeVoidAsync("nextCarousel");
     }
 
-    private void IrAEditarArea(int id)
+    private async Task Prev()
     {
-        Navigation.NavigateTo($"/api/Areas/Editar/{id}"); 
+        await JS.InvokeVoidAsync("prevCarousel");
+    }
+
+    private async Task LimpiarFiltro()
+    {
+        filtro = "";
+        areasFiltradas = areas;
+        await InvokeAsync(async () =>    
+        {
+            await JS.InvokeVoidAsync("renderCarousel");
+        });
     }
 }

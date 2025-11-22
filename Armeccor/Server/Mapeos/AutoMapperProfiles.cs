@@ -11,9 +11,6 @@ namespace Armeccor.Server.Mapeos
         public AutoMapperProfiles()
         {
 
-            //SUPUESTAMENTE ESTOS MAPEOS ESTAN LIMPIOS DE ERRORES, REDUNDANCIA Y REPETICIONES
-            //--> SI NO FUNCIONA, VOLVER A LOS DE ARRIBA
-
             // ================== CLIENTE ==================
             CreateMap<CrearClienteDTO, Cliente>().ReverseMap();
             CreateMap<Cliente, CrearClienteDTO>().ReverseMap();
@@ -146,6 +143,9 @@ namespace Armeccor.Server.Mapeos
             CreateMap<Notificacion, NotificacionDTO>();
             CreateMap<NotificacionDTO, Notificacion>();
             //CreateMap<PlanoFiltroDTO, Plano>().ReverseMap();
+
+
+            // ================== PLANO ==================
 
             CreateMap<Plano, PlanoFiltroDTO>()
             .ForMember(dest => dest.NroOT, opt => opt.Ignore())

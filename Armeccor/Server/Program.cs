@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System.IO;
 using System.Text.Json.Serialization;
-using Microsoft.Extensions.FileProviders;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,6 +52,22 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
+
+
+////
+//var rutaPlanos = Path.Combine(app.Environment.WebRootPath, "Planos");
+
+//if (!Directory.Exists(rutaPlanos))
+//    Directory.CreateDirectory(rutaPlanos);
+
+//// ● Esto hace accesible la carpeta /planos/ como archivos públicos
+//app.UseStaticFiles(new StaticFileOptions
+//{
+//    FileProvider = new PhysicalFileProvider(rutaPlanos),
+//    RequestPath = "/Planos"
+//});
+////
+
 
 
 //DESDE ACA

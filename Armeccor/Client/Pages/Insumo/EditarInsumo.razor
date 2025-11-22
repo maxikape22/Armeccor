@@ -46,14 +46,14 @@ else
             if (insumo == null)
             {
                 await JS.InvokeVoidAsync("alert", "No se encontró el insumo.");
-                Navigation.NavigateTo("/api/Insumos");
+                Navigation.NavigateTo("/Insumos");
             }
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error al cargar insumo: {ex.Message}");
             await JS.InvokeVoidAsync("alert", "Error al cargar insumo. Revisar consola.");
-            Navigation.NavigateTo("/api/Insumos");
+            Navigation.NavigateTo("/Insumos");
         }
     }
 
@@ -71,7 +71,7 @@ else
             if (resp.IsSuccessStatusCode)
             {
                 await JS.InvokeVoidAsync("alert", "Insumo actualizado correctamente.");
-                Navigation.NavigateTo("/api/Insumos");
+                Navigation.NavigateTo("/Insumos");
             }
             else
             {
@@ -88,6 +88,6 @@ else
 
     private void Cancelar()
     {
-        Navigation.NavigateTo("/api/Insumos");
+        Navigation.NavigateTo("/Insumos");
     }
 }

@@ -37,7 +37,7 @@
             if (resp.IsSuccessStatusCode)
             {
                 await JS.InvokeVoidAsync("alert", "Insumo agregado correctamente.");
-                Navigation.NavigateTo("/api/Insumos");
+                Navigation.NavigateTo("/Insumos");
             }
             else
             {
@@ -54,6 +54,6 @@
 
     private void Cancelar()
     {
-        Navigation.NavigateTo("/api/Insumos");
+        Navigation.NavigateTo("/Insumos");
     }
 }

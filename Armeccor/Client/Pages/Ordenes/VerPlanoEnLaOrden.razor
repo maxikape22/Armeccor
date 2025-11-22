@@ -8,8 +8,76 @@
 <h3>📁 Planos de la orden NroOT: @NroOT (@nombreOrden)</h3>
 <h5>📂 Carpeta: @CarpetaCompleta</h5>
 
+<style>
+    /* La celda debe ser el contexto de posicionamiento */
+    td.action-cell {
+        position: relative;
+        overflow: visible; /* que no corte el dropdown */
+    }
+
+    /* Contenedor del botón Opciones */
+    .dropdown {
+        position: relative; /* clave para posicionar respecto a este */
+        display: inline-block;
+    }
+
+    /* Menú: absoluto, no empuja layout, alto z-index */
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0; /* abre “hacia adentro” a la derecha del botón */
+        z-index: 1000;
+        background-color: #fff;
+        min-width: 220px;
+        box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+        border-radius: 8px;
+        padding: 6px 0;
+        display: none; /* Blazor la prende con .show */
+    }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+    /* Ítems del menú */
+    .dropdown-item {
+        width: 100%;
+        text-align: left;
+        background: transparent;
+        border: none;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-size: 0.95rem;
+    }
+
+        .dropdown-item:hover {
+            background: #f7f7f7;
+        }
+
+        .dropdown-item.danger {
+            color: #c0392b;
+        }
+
+        .dropdown-item.success {
+            color: #2e7d32;
+        }
+
+        .dropdown-item.primary {
+            color: #1e88e5;
+        }
+</style>
+
+
 @if (planos.Count > 0)
 {
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 8px;">
+        <button class="btn btn-outline-success"
+                title="Descargar planos"
+                @onclick="() => DescargarPlanos(NroOT)">
+            <i class="fas fa-folder-download"></i> Descargar carpeta
+        </button>
+    </div>
+
     <table class="table table-striped table-bordered">
         <thead class="table-dark">
             <tr>
@@ -18,7 +86,9 @@
                 <th>📂 Ruta completa</th>
                 <th>🔗 Acción</th>
             </tr>
-        </thead>
+        </thead> 
+     
+
         <tbody>
             @foreach (var plano in planos.OrderByDescending(p => p.FechaCreacion))
             {
@@ -26,11 +96,41 @@
                     <td>@plano.RutaOriginal</td>
                     <td>@plano.FechaCreacion.ToString("dd/MM/yyyy")</td>
                     <td>@plano.RutaSVG</td>
-                    <td>
+                  @*   <td>
                         <button class="btn btn-sm btn-outline-primary" @onclick="@(() => AbrirRutaLocal(plano.RutaSVG))">
                             Abrir
                         </button>
+                        <button class="btn-warning" @onclick="@(() => EliminarPlano(plano.NroOT, plano.RutaSVG))">
+                            Eliminar
+                        </button>
+                        <button class="btn-outline-success" @onclick ="@(() => DescargarPlanos(plano.NroOT))">
+                            Descargar planos                       
+                        </button>
+                    </td> *@
+                    <td class="action-cell">
+                        <div class="dropdown">
+                            <button class="dropdown-toggle btn btn-sm btn-secondary"
+                                    type="button"
+                                    aria-haspopup="true"
+                                    aria-expanded="@(openedDropdownRuta == plano.RutaSVG)"
+                                    @onclick="() => ToggleDropdown(plano.RutaSVG)">
+                                <i class="fas fa-cogs"></i> Opciones
+                            </button>
+
+                            <div class="dropdown-menu @(openedDropdownRuta == plano.RutaSVG ? "show" : "")">
+                                <button class="dropdown-item primary" @onclick="@(() => { AbrirRutaLocal(plano.RutaSVG); CloseDropdown(); })">
+                                    <i class="fas fa-folder-open"></i> Abrir
+                                </button>
+                                <button class="dropdown-item danger" @onclick="@(() => { EliminarPlano(NroOT, plano.RutaSVG); CloseDropdown(); })">
+                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                </button>
+                                <button class="dropdown-item success" @onclick="@(() => { DescargarPlanoPorRuta(plano.RutaSVG); CloseDropdown(); })">
+                                    <i class="fas fa-download"></i> Descargar plano
+                                </button>
+                            </div>
+                        </div>
                     </td>
+
                 </tr>
             }
         </tbody>
@@ -40,14 +140,52 @@ else
 {
     <p class="text-muted">No hay planos cargados para esta orden.</p>
 }
-
 <hr />
 <h5>📤 Subir nuevo plano</h5>
 <InputFile OnChange="OnFileSelected" />
-<button class="btn btn-primary mt-2" @onclick="SubirPlano" disabled="@(!hayArchivo)">Subir plano</button>
-<button class="btn btn-secondary mt-3" @onclick="Volver">Volver</button>
 
-@code {
+<style>
+    .btn-subir {
+        background-color: #28a745; /* Verde */
+        color: white;
+        border-radius: 50px;
+    }
+
+    .btn-volver {
+        background-color: #17a2b8; /* Celeste */
+        color: white;
+        border-radius: 50px;
+    }
+
+    .btn-subir:hover {
+        background-color: #218838;
+    }
+
+    .btn-volver:hover {
+        background-color: #138496;
+    }
+</style>
+
+@* <button class="btn btn-secondary rounded-pill" @onclick="SubirPlano" disabled="@(!hayArchivo)">Subir plano</button>
+<button class="btn btn-secondary rounded-pill" @onclick="Volver">Volver</button> *@
+<button class="btn btn-subir px-4" @onclick="SubirPlano" disabled="@(!hayArchivo)">Subir plano</button>
+<button class="btn btn-volver px-4" @onclick="Volver">Volver</button>
+
+@code 
+{
+
+    private string openedDropdownRuta = null;
+
+    private void ToggleDropdown(string ruta)
+    {
+        openedDropdownRuta = openedDropdownRuta == ruta ? null : ruta;
+    }
+
+    private void CloseDropdown()
+    {
+        openedDropdownRuta = null;
+    }
+
     [Parameter] public int NroOT { get; set; }
 
     private List<PlanoFiltroDTO> planos = new();
@@ -61,12 +199,6 @@ else
      File.Exists(planos.First().RutaSVG)
          ? Path.GetDirectoryName(planos.First().RutaSVG)
          : $"C:\\Planos\\{nombreOrden}";
-
-
-
-    // private string SubCarpeta => planos.Count > 0
-    //     ? Path.GetDirectoryName(planos.First().RutaSVG)?.Replace(CarpetaGeneral + "\\", "") ?? "(sin subcarpeta)"
-    //     : "(sin subcarpeta)";
 
     protected override async Task OnInitializedAsync()
     {
@@ -130,16 +262,77 @@ else
     private async Task AbrirRutaLocal(string ruta)
     {
         var response = await Http.PostAsJsonAsync("api/Planos/AbrirRutaLocal", ruta);
-        if (!response.IsSuccessStatusCode)
+
+        if (response.IsSuccessStatusCode)
+        {
+            // Recibe la URL pública del archivo
+            var url = await response.Content.ReadAsStringAsync();
+
+            // Abre la imagen en una nueva pestaña
+            await JS.InvokeVoidAsync("open", url, "_blank");
+        }
+        else
         {
             var error = await response.Content.ReadAsStringAsync();
             await JS.InvokeVoidAsync("alert", $"No se pudo abrir la ruta: {error}");
         }
     }
 
-    public async Task Volver()
+    private async Task EliminarPlano(int nroOT, string ruta)
     {
-        NavigationManager.NavigateTo("/Ordenes");
-        
+        var url = $"api/Planos/EliminarPlano?NroOT={nroOT}&ruta={Uri.EscapeDataString(ruta)}";
+        var response = await Http.DeleteAsync(url);
+
+        if (response.IsSuccessStatusCode)
+        {
+            await JS.InvokeVoidAsync("alert", $"Plano eliminado correctamente: {ruta}");
+            // Reconsulta al backend para evitar desincronización
+            await OnInitializedAsync();
+            StateHasChanged();
+        }
+        else
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            await JS.InvokeVoidAsync("alert", $"Error al eliminar plano: {error}");
+        }
+    }
+
+
+    private void DescargarPlanos(int nroOT)
+    {   
+        var ZipURL = $"/api/Planos/DescargarZip/{NroOT}";
+        NavigationManager.NavigateTo(ZipURL, forceLoad: true);
+        CloseDropdown();
+    }
+
+    private void  DescargarPlanoPorRuta(string nombreArchivo)
+    {
+        var url = $"api/Planos/DescargarPlanoPorRuta?ruta={Uri.EscapeDataString(nombreArchivo)}";
+        NavigationManager.NavigateTo(url, forceLoad: true);
+        CloseDropdown();
+        // //Console.WriteLine($"DescargarPorNombre URL: {url}");
+
+        // var response = await Http.GetAsync(url);
+
+        // if (response.IsSuccessStatusCode)
+        // {
+        //     var bytes = await response.Content.ReadAsByteArrayAsync();
+
+        //     var contentType = response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream";
+        //     var nombreFinal = response.Content.Headers.ContentDisposition?.FileName?.Trim('"') ?? nombreArchivo;
+
+        //     await JS.InvokeVoidAsync("BlazorDownloadFile", nombreFinal, contentType, Convert.ToBase64String(bytes));
+        // }
+        // else
+        // {
+        //     var error = await response.Content.ReadAsStringAsync();
+        //     await JS.InvokeVoidAsync("alert", $"Error al descargar: {error}");
+        // }
+    }
+
+
+    public void Volver()
+    {
+         NavigationManager.NavigateTo("/Ordenes");    
     }
 }

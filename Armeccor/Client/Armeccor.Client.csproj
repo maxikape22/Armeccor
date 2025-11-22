@@ -17,4 +17,8 @@
 		<ProjectReference Include="..\..\DTO\DTO.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="wwwroot\Planos\" />
+	</ItemGroup>
+
 </Project>

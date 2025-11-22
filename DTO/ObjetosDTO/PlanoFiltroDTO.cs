@@ -8,6 +8,6 @@
         public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
         public string NombreOrden { get; set; }
         public int OrdenId { get; set; }
-        public int? NroOT { get; set; }
+        public int NroOT { get; set; }
     }
 }

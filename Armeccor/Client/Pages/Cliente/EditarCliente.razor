@@ -77,11 +77,11 @@
     private async Task Grabar()
     {
         var httpRespuesta = await http.PutAsJsonAsync<Cliente>($"api/Clientes/{clienteId}", cliente);
-        navigationManager.NavigateTo("/api/Clientes");
+        navigationManager.NavigateTo("/Clientes");
     }
 
     private void Cancelar()
     {
-        navigationManager.NavigateTo("/api/Clientes");
+        navigationManager.NavigateTo("/Clientes");
     }
 }

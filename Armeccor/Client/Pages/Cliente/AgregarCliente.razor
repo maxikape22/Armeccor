@@ -45,7 +45,7 @@
         var response = await http.PostAsJsonAsync("api/Clientes", cliente);
         if (response.IsSuccessStatusCode)
         {
-            navigationManager.NavigateTo("/api/Clientes");
+            navigationManager.NavigateTo("/Clientes");
         }
         else
         {
@@ -56,6 +56,6 @@
 
     private void Cancelar()
     {
-        navigationManager.NavigateTo("/api/Clientes");
+        navigationManager.NavigateTo("/Clientes");
     }
 }

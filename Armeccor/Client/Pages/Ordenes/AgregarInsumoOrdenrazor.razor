@@ -232,8 +232,8 @@ else
                 // 🔹 Recargar lista de insumos de la orden
                 await CargarInsumosDeOrden();
 
-                await JS.InvokeVoidAsync("alert",
-                    $"Se agregó {resultado.DetalleOrden.Cantidad} de {insumo.Nombre} a la orden {ordenId}. Stock restante: {insumo.CantDisponible}");
+                // await JS.InvokeVoidAsync("alert",
+                //     $"Se agregó {resultado.DetalleOrden.Cantidad} de {insumo.Nombre} a la orden {ordenId}. Stock restante: {insumo.CantDisponible}");
             }
         }
         else
