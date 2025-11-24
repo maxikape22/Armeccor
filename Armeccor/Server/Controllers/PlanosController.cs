@@ -30,6 +30,31 @@ namespace Armeccor.Controllers
             this.env = _web;
         }
 
+        [HttpGet("PlanosOrdenadosPorFecha")]
+        public async Task<ActionResult<List<PlanoFiltroDTO>>> ObtenerPlanosOrdenadosPorFecha(int NroOT)
+        {
+            var orden = await context.Ordenes
+                .Include(o => o.Planos)
+                .FirstOrDefaultAsync(o => o.NroOT == NroOT);
+
+            if (orden == null)
+                return NotFound($"No se encontró la orden N°: {NroOT}");
+
+            var planosOrdenados = orden.Planos
+                .OrderBy(p => p.FechaCreacion)
+                .ToList();
+
+            var planosDTO = mapper.Map<List<PlanoFiltroDTO>>(planosOrdenados);
+
+            foreach (var plano in planosDTO)
+            {
+                plano.NroOT = orden.NroOT;
+                plano.NombreOrden = orden.NombreOrden;
+            }
+
+            return Ok(planosDTO);
+        }
+
 
         [HttpGet("PorOrdenActual")]
         public async Task<ActionResult<List<Plano>>> ObtenerPlanosDeOrdenActual()
@@ -160,7 +185,7 @@ namespace Armeccor.Controllers
             {
                 RutaSVG = rutaPublica,        // ← ESTA es la que vas a mostrar y abrir
                 RutaOriginal = archivo.FileName,
-                FechaCreacion = DateTime.UtcNow,
+                FechaCreacion = DateTime.Now,
                 OrdenId = orden.Id
             };
 

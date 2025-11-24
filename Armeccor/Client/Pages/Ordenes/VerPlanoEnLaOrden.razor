@@ -67,10 +67,56 @@
         }
 </style>
 
+<style>
+    .btn-orden-fecha {
+        background-color: #1e88e5;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        margin-left: 8px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+        .btn-orden-fecha:hover {
+            background-color: #1565c0;
+        }
+</style>
+
+<style>
+    .btn-orden-fecha {
+        background-color: #1e88e5;
+        color: white;
+        border: none;
+        padding: 6px 16px;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+        .btn-orden-fecha:hover {
+            background-color: #1565c0;
+        }
+</style>
+
 
 @if (planos.Count > 0)
 {
-    <div style="display: flex; justify-content: flex-end; margin-bottom: 8px;">
+   @*  <div style="display: flex; justify-content: flex-end; margin-bottom: 8px;">
+        <button class="btn btn-outline-success"
+                title="Descargar planos"
+                @onclick="() => DescargarPlanos(NroOT)">
+            <i class="fas fa-folder-download"></i> Descargar carpeta
+        </button>
+    </div> *@
+    <div style="display: flex; gap: 12px; justify-content: flex-end; align-items: center; margin-bottom: 8px;">
+        <button class="btn-orden-fecha" @onclick="CambiarOrdenFecha">
+            Ordenar por fecha @(ordenarAscendente ? "↑ (Antiguos primero)" : "↓ (Recientes primero)")
+        </button>
+
         <button class="btn btn-outline-success"
                 title="Descargar planos"
                 @onclick="() => DescargarPlanos(NroOT)">
@@ -79,6 +125,7 @@
     </div>
 
     <table class="table table-striped table-bordered">
+
         <thead class="table-dark">
             <tr>
                 <th>📄 Archivo</th>
@@ -86,11 +133,26 @@
                 <th>📂 Ruta completa</th>
                 <th>🔗 Acción</th>
             </tr>
-        </thead> 
+        </thead>
+
+       @*  <thead class="table-dark">
+            <tr>
+                <th>📄 Archivo</th>
+                <th style="white-space: nowrap;">
+                    📅 Fecha de creación
+                    <button class="btn-orden-fecha" @onclick="CambiarOrdenFecha">
+                        Ordenar @(ordenarAscendente ? "↑ (Antiguos primero)" : "↓ (Recientes primero)")
+                    </button>
+                </th>
+                <th>📂 Ruta completa</th>
+                <th>🔗 Acción</th>
+            </tr>
+        </thead> *@
+
      
 
         <tbody>
-            @foreach (var plano in planos.OrderByDescending(p => p.FechaCreacion))
+            @foreach (var plano in ObtenerPlanosOrdenados()@*planos.OrderByDescending(p => p.FechaCreacion) *@)
             {
                 <tr>
                     <td>@plano.RutaOriginal</td>
@@ -173,6 +235,17 @@ else
 
 @code 
 {
+    private IEnumerable<PlanoFiltroDTO> ObtenerPlanosOrdenados()
+    {
+        return ordenarAscendente
+            ? planos.OrderBy(p => p.FechaCreacion)
+            : planos.OrderByDescending(p => p.FechaCreacion);
+    }
+
+    private void CambiarOrdenFecha()
+    {
+        ordenarAscendente = !ordenarAscendente;
+    }
 
     private string openedDropdownRuta = null;
 
@@ -192,6 +265,7 @@ else
     private bool hayArchivo = false;
     private string nombreOrden = "";
     private IBrowserFile archivoSeleccionado;
+    private bool ordenarAscendente = false;
 
     private string CarpetaCompleta =>
      planos is { Count: > 0 } &&
