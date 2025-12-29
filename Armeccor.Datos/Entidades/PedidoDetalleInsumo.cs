@@ -12,5 +12,7 @@
         public DateTime FechaUso { get; set; }
         public bool EsSolicitado { get; set; }
         public string Estado { get; set; } //--> PARA RECIBIR EL ESTADO; EJ:° --> "RECIBIDO"
+        public bool EntregaParcial { get; set; }
+        public bool EntregaTotal { get; set; }
     }
 }

@@ -24,6 +24,79 @@ namespace Armeccor.Server.Controllers
             this._mapper = mapper;
         }
 
+        [HttpPatch("Detalle/{id:int}/Estado")]
+        //    public async Task<ActionResult> PatchEstadoPedidoDetalleInsumo(
+        //int id,
+        //[FromBody] string nuevoEstado)
+        //    {
+        //        var detalle = await _context.PedidoDetalleInsumos
+        //            .FirstOrDefaultAsync(d => d.Id == id);
+
+        //        if (detalle == null)
+        //            return NotFound($"Detalle de pedido no encontrado (ID: {id})");
+
+        //        // 🟢 cambio puntual
+        //        detalle.Estado = nuevoEstado;
+
+        //        try
+        //        {
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateException ex)
+        //        {
+        //            return BadRequest(ex.Message);
+        //        }
+
+        //        return NoContent();
+        //    }
+        public async Task<IActionResult> CambiarEstadoPedidoDetalle(
+    int id,
+    [FromBody] string nuevoEstado)
+        {
+            var detalle = await _context.PedidoDetalleInsumos
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (detalle == null)
+                return NotFound("Detalle de pedido no encontrado.");
+
+            detalle.Estado = nuevoEstado;
+
+            // 🔁 Lógica automática según estado
+            switch (nuevoEstado)
+            {
+                case "Pendiente":
+                case "Solicitado":
+                    detalle.EsSolicitado = false;
+                    detalle.EntregaParcial = false;
+                    detalle.EntregaTotal = false;
+                    break;
+
+                case "Recibido":
+                    detalle.EsSolicitado = true;
+                    detalle.EntregaParcial = false;
+                    detalle.EntregaTotal = false;
+                    break;
+
+                case "Entrega parcial":
+                    detalle.EsSolicitado = true;
+                    detalle.EntregaParcial = true;
+                    detalle.EntregaTotal = false;
+                    break;
+
+                case "Entrega total":
+                    detalle.EsSolicitado = true;
+                    detalle.EntregaParcial = false;
+                    detalle.EntregaTotal = true;
+                    break;
+            }
+
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+
+
+
         [HttpPatch("{id}/ActualizarSolicitud")]
         public async Task<IActionResult> ActualizarSolicitud(int id, [FromBody] bool nuevoEstado)
         {
@@ -44,6 +117,41 @@ namespace Armeccor.Server.Controllers
             }
         }
 
+        [HttpPatch("{id}/ActualizarEntregaParcial")]
+        public async Task<IActionResult> ActualizarEntregaParcial(int id, [FromBody] bool nuevoEstado)
+        {
+            var detalle = await _context.PedidoDetalleInsumos.FindAsync(id);
+            if (detalle == null)
+                return NotFound($"No se encontró el detalle con ID {id}");
+            detalle.EntregaParcial = nuevoEstado;
+            try
+            {
+                await _context.SaveChangesAsync();
+                return NoContent(); // o return Ok(detalle) si querés devolver el objeto actualizado
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al actualizar el estado: {ex.Message}");
+            }
+        }
+
+        [HttpPatch("{id}/ActualizarEntregaTotal")]
+        public async Task<IActionResult> ActualizarEntregaTotal(int id, [FromBody] bool nuevoEstado)
+        {
+            var detalle = await _context.PedidoDetalleInsumos.FindAsync(id);
+            if (detalle == null)
+                return NotFound($"No se encontró el detalle con ID {id}");
+            detalle.EntregaTotal = nuevoEstado;
+            try
+            {
+                await _context.SaveChangesAsync();
+                return NoContent(); // o return Ok(detalle) si querés devolver el objeto actualizado
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al actualizar el estado: {ex.Message}");
+            }
+        }
 
         // ✅ GET: Listar detalles de un pedido
         [HttpGet("{idPedido}")]
@@ -80,15 +188,14 @@ namespace Armeccor.Server.Controllers
         [HttpGet("ListarDetalleInsumos")]
         public async Task<ActionResult<IEnumerable<PedidoDetalleInsumoDTO>>> GetDetalleInsumos()
         {
-            var detalles = await _context.PedidoDetalleInsumos
+            var detalles = await _context.PedidoDetalleInsumos              
                 .Include(p => p.Insumo)
                     .ThenInclude(i => i.InsumoOrdenes)
-                        .ThenInclude(io => io.Orden)
-                .Include(p => p.Pedido)
+                    .ThenInclude(io => io.Orden)          
+                    .Include(p => p.Pedido)
                     .ThenInclude(pe => pe.Proveedor)
-                .ProjectTo<PedidoDetalleInsumoDTO>(_mapper.ConfigurationProvider)
-                .ToListAsync();
-
+                    .ProjectTo<PedidoDetalleInsumoDTO>(_mapper.ConfigurationProvider)
+                    .ToListAsync();
             return Ok(detalles);
         }
 
@@ -159,7 +266,7 @@ namespace Armeccor.Server.Controllers
                 {
                     IdInsumo = i.Id,
                     Item = i.Nombre,
-                    Cantidad = i.CantDisponible,
+                    Cantidad = (int)i.CantDisponible,
                     FechaUso = DateTime.Now,
                     Estado = "Pendiente"
                 })

@@ -96,7 +96,35 @@ namespace Armeccor.Server.Mapeos
 
             // ================== INSUMO ==================
             CreateMap<CrearInsumoDTO, Insumo>().ReverseMap();
-            CreateMap<Insumo, CrearInsumoDTO>().ReverseMap(); 
+            CreateMap<Insumo, CrearInsumoDTO>().ReverseMap();
+
+
+            // Entidad → DTO
+            //CreateMap<Insumo, CrearInsumoDTO>()
+            //    .ForMember(
+            //        dest => dest.NombreCombinadoUnidadMedida,
+            //        opt => opt.MapFrom(src =>
+            //            $"{src.Nombre} {src.Detalle}"
+            //        )
+            //    );
+
+            //// DTO → Entidad
+            //CreateMap<CrearInsumoDTO, Insumo>()
+            //    .ForMember(dest => dest.Id, opt => opt.Ignore())
+            //    .ForMember(dest => dest.UnidadBase, opt => opt.Ignore())
+            //    // ⛔ este campo NO se persiste
+            //    .ForSourceMember(
+            //        src => src.NombreCombinadoUnidadMedida,
+            //        opt => opt.DoNotValidate()
+            //    );
+
+            CreateMap<Insumo, CrearInsumoDTO>()
+                .ForMember(dest => dest.NombreCombinadoUnidadMedida,
+                    opt => opt.MapFrom(src => src.Nombre + Environment.NewLine + src.Detalle))
+                .ReverseMap();
+
+           
+
 
             // ================== INSUMO DETALLE ORDEN ==================
             CreateMap<InsumoDetalleOrden, InsumoDetalleOrdenDTO>().ReverseMap();
@@ -105,6 +133,24 @@ namespace Armeccor.Server.Mapeos
             CreateMap<InsumoDetalleOrden, InsumoDetalleOrdenDTO>()
                 .ForMember(dest => dest.Nombre, opt => opt
                 .MapFrom(src => src.Insumo.Nombre)); // <-- ¡CLAVE!
+
+            CreateMap<InsumoDetalleOrden, InsumoDetalleOrdenDTO>()
+           .ForMember(d => d.Nombre,
+               o => o.MapFrom(s => s.Insumo.Nombre))
+
+           // 🔹 valores directos
+           .ForMember(d => d.Cantidad,
+               o => o.MapFrom(s => s.Cantidad))
+
+           .ForMember(d => d.CantidadDescontada,
+               o => o.MapFrom(s => s.CantidadDescontada))
+
+           .ForMember(d => d.CantidadPendiente,
+               o => o.MapFrom(s => s.CantidadPendiente))
+
+           // 🔹 estado REAL
+           .ForMember(d => d.Insuficiente,
+               o => o.MapFrom(s => s.CantidadPendiente > 0));
 
             // ================== AREA DETALLE ORDEN ==================
             CreateMap<AreaDetalleOrden, AreaDetalleOrdenListaDTO>()  
@@ -171,12 +217,46 @@ namespace Armeccor.Server.Mapeos
                 .Select(x => x.Orden.NroOT).FirstOrDefault()))
                 .ForMember(d=>d.NombreInsumoInsuficiente,p=>p
                 .MapFrom(d=>d.Insumo.Nombre))
+                .ForMember(x => x.NroPedido, y => y
+                .MapFrom(z => z.Pedido.NroPedido))
                 .ReverseMap();
+
+            //CreateMap<PedidoDetalleInsumo , PedidoDetalleInsumoDTO>()
+            //    .ForMember(x=>x.NroPedido, y=>y
+            //    .MapFrom(z=>z.Pedido.NroPedido))
+            //    .ReverseMap();
 
             // ================== PROVEEDOR ==================
 
             CreateMap<Proveedor, ProveedorDTO>().ReverseMap();
 
+            // ================== CONVERSION UNIDAD ==================
+
+
+            CreateMap<Insumo, InsumoConConversionesDTO>()
+               .ForMember(dest => dest.Item,
+                   opt => opt.MapFrom(src => src.Nombre + Environment.NewLine + src.Detalle))
+               .ReverseMap();
+
+            CreateMap<InsumoConConversionesDTO, ConversionUnidadResultadoDTO>()
+                .ForMember(d => d.CantidadConvertida, a => a
+                .MapFrom(da => da.CantidadConvertida))
+                .ReverseMap();
+
+            CreateMap<ConversionUnidadResultadoDTO, ConversionUnidadResultadoDTO>()
+     .ForMember(d => d.UnidadConvertidaTexto, a => a.MapFrom(src =>
+         src.CantidadConvertida == 0
+             ? "Sin insumos para convertir"
+             : $"{src.CantidadConvertida} {src.UnidadDestinoAbreviatura}"
+     ));
+
+            CreateMap<InsumoConConversionesDTO, UnidadMedida>()
+                .ForMember(x=>x.Tipo,j=>j.MapFrom(v=>v.Tipo))
+                .ReverseMap();
+
+            CreateMap<ConversionUnidadResultadoDTO, UnidadMedida>()
+                .ForMember(x => x.Id, j => j.MapFrom(v => v.UnidadOrigenId))
+                .ReverseMap();
         }
     } 
 }

@@ -6,9 +6,9 @@
 
 <PageTitle>Detalles del pedido</PageTitle>
 
-<button class="btn btn-primary ms-3" @onclick="@(() => Navigation.NavigateTo("/RegistrarPedidoDetalleInsumo"))">
+@* <button class="btn btn-primary ms-3" @onclick="@(() => Navigation.NavigateTo("/RegistrarPedidoDetalleInsumo"))">
     + Registrar detalle del pedido
-</button>
+</button> *@
 
 @if (detalles == null)
 {
@@ -19,6 +19,7 @@ else
     <table class="table table-striped table-bordered mt-3">
         <thead class="table-light">
             <tr>
+                <th>Nro de pedido</th>
                 <th>Item</th>
                 <th>Insumo insuficiente</th>
                 <th>Cantidad</th>
@@ -26,14 +27,17 @@ else
                 <th>Nro de orden</th>
                 <th>Recibido (Sí/No)</th>
                 <th>Estado</th>
+                <th>Entrega parcial</th>
+                <th>Entrega total</th>
+                <th>Cambiar estado</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var d in detalles)
             {
                 <tr>
+                    <td>@d.NroPedido</td>
                     <td>@d.Item</td>
-
                     <td>@d.NombreInsumoInsuficiente</td>
 
                     <td>
@@ -48,20 +52,75 @@ else
 
                     <td>
                         <input type="checkbox"
-                               checked="@d.EsSolicitado"
+                               checked="@d.EsSolicitado" disabled
                                @onchange="async e => await CambiarSolicitud(d.Id, ((ChangeEventArgs)e).Value is bool b && b)" />
                         <span class="ms-2">@((d.EsSolicitado) ? "Sí" : "No")</span>
                     </td>
 
-                    <td>@d.Estado</td>
+                    @*<td>@d.Estado</td>*@
+                   @*  <select class="form-select form-select-sm"
+                            value="@d.Estado"
+                            @onchange="async e => await CambiarEstado(d.Id, e.Value.ToString())">
+                        @foreach (var estado in EstadosDisponibles)
+                        {
+                            <option value="@estado">@estado</option>
+                        }
+                    </select> *@
+                    <td>
+                        @d.Estado
+                        @* <span class="badge @GetEstadoClass(d.Estado)">
+                            @d.Estado
+                        </span> *@
+                    </td>
+
+
+
+
+
+                    <td>
+                        <input type="checkbox" checked="@d.EntregaParcial" disabled
+                        @onchange="async e => await CambiarEntregaParcial(d.Id, ((ChangeEventArgs)e).Value is bool b && b)" />
+                        <span class="ms-2">@((d.EntregaParcial) ? "Sí" : "No")</span>
+                    </td>
+
+                    <td>
+                        <input type="checkbox" checked="@d.EntregaTotal" disabled
+                        @onchange="async e => await CambiarEntregaTotal(d.Id, ((ChangeEventArgs)e).Value is bool b && b)" />
+                        <span class="ms-2">@((d.EntregaTotal) ? "Sí" : "No")</span>
+                    </td>
+
+                    <td style="min-width: 180px">
+                        <select class="form-select form-select-sm"
+                                value="@d.Estado"
+                                @onchange="e => CambiarEstado(d.Id, e.Value.ToString())">
+                            <option value="">Seleccione un estado</option>
+                            <option value="Recibido">Recibido</option>
+                            <option value="Solicitado">Solicitado</option>
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Entrega parcial">Entrega parcial</option>
+                            <option value="Entrega total">Entrega total</option>
+                        </select>
+                    </td>
+
                 </tr>
             }
         </tbody>
     </table>
-    <button class="btn btn-secondary mt-3" @onclick="Volver">Volver</button>
+@*     <button class="btn btn-secondary mt-3" @onclick="Volver">Volver</button>
+ *@
 }
 
-@code {
+@code 
+{
+    //Estados
+    private readonly List<string> EstadosDisponibles = new()
+    {
+        "Pendiente",
+        "Solicitado",
+        "Entrega Parcial",
+        "Entrega Total"
+    };
+
     [Parameter] public int idPedido { get; set; }
     List<PedidoDetalleInsumoDTO> detalles;
 
@@ -75,7 +134,35 @@ else
         {
             await JS.InvokeVoidAsync("alert", "Error al cargar los detalles del pedido.");
         }
+
+        EstadosDisponibles.ToList();
+        StateHasChanged();
+
     }
+
+    private async Task CambiarEstado(int detalleId, string nuevoEstado)
+    {
+        var response = await Http.PatchAsync(
+            $"api/PedidoDetalleInsumos/Detalle/{detalleId}/Estado",
+            JsonContent.Create(nuevoEstado));
+
+        if (!response.IsSuccessStatusCode)
+        {
+            await JS.InvokeVoidAsync("alert", "No se pudo actualizar el estado");
+            return;
+        }
+
+        // 🔄 refrescar visual
+        var detalle = detalles.First(d => d.Id == detalleId);
+        detalle.Estado = nuevoEstado;
+        await OnInitializedAsync();
+    }
+
+
+
+   
+
+
 
     private async Task ActualizarCantidad(int idDetalle, int nuevaCantidad)
     {
@@ -85,6 +172,28 @@ else
             var detalle = detalles.FirstOrDefault(d => d.Id == idDetalle);
             if (detalle != null)
                 detalle.Cantidad = nuevaCantidad;
+        }
+    }
+
+    private async Task CambiarEntregaTotal(int idDetalle, bool nuevoEstado)
+    {
+        var response = await Http.PatchAsJsonAsync($"api/PedidoDetalleInsumos/{idDetalle}/ActualizarEntregaTotal", nuevoEstado);
+        if (response.IsSuccessStatusCode)
+        {
+            var detalle = detalles.FirstOrDefault(d => d.Id == idDetalle);
+            if (detalle != null)
+                detalle.EntregaTotal = nuevoEstado;
+        }
+    }
+
+    private async Task CambiarEntregaParcial(int idDetalle, bool nuevoEstado)
+    {
+        var response = await Http.PatchAsJsonAsync($"api/PedidoDetalleInsumos/{idDetalle}/ActualizarEntregaParcial", nuevoEstado);
+        if (response.IsSuccessStatusCode)
+        {
+            var detalle = detalles.FirstOrDefault(d => d.Id == idDetalle);
+            if (detalle != null)
+                detalle.EntregaParcial = nuevoEstado;
         }
     }
 
@@ -99,8 +208,4 @@ else
         }
     }
 
-    private void Volver()
-    {
-        Navigation.NavigateTo("/Pedidos");
-    }
 }

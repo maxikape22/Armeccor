@@ -4,6 +4,7 @@ using Armeccor.Datos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Armeccor.Datos.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251216125328_Tablas")]
+    partial class Tablas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -438,12 +441,6 @@ namespace Armeccor.Datos.Migrations
                     b.Property<int>("Cantidad")
                         .HasColumnType("int");
 
-                    b.Property<bool>("EntregaParcial")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("EntregaTotal")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("EsSolicitado")
                         .HasColumnType("bit");
 
@@ -573,7 +570,7 @@ namespace Armeccor.Datos.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("FactorConversion")
+                    b.Property<decimal>("Factor")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("UnidadDestinoId")
@@ -605,21 +602,9 @@ namespace Armeccor.Datos.Migrations
                     b.Property<bool>("EsBase")
                         .HasColumnType("bit");
 
-                    b.Property<decimal?>("LongitudPorUnidad")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Tipo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("UnidadesPorAgrupacion")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UnidadesPorCaja")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

@@ -4,6 +4,7 @@ using Armeccor.Datos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Armeccor.Datos.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251218101348_AgrupacionesRaras")]
+    partial class AgrupacionesRaras
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -437,12 +440,6 @@ namespace Armeccor.Datos.Migrations
 
                     b.Property<int>("Cantidad")
                         .HasColumnType("int");
-
-                    b.Property<bool>("EntregaParcial")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("EntregaTotal")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("EsSolicitado")
                         .HasColumnType("bit");

@@ -11,8 +11,24 @@
 </div>
 
 <div class="mb-3">
+    <label>Detalle</label>
+    <input class="form-control" @bind="insumo.Detalle" placeholder="Ingrese detalle del insumo" />
+</div>
+
+<div class="mb-3">
     <label>Cantidad Disponible</label>
     <input class="form-control" type="number" @bind="insumo.CantDisponible" />
+</div>
+
+<div class="mb-3">
+    <label>Unidad de Medida</label>
+    <select class="form-select" @bind="insumo.UnidadMedidaId">
+        <option value="">-- Seleccione unidad --</option>
+        @foreach (var u in unidades)
+        {
+            <option value="@u.Id">@u.Nombre (@u.Abreviatura)</option>
+        }
+    </select>
 </div>
 
 <div class="mb-3">
@@ -22,6 +38,12 @@
 
 @code {
     private CrearInsumoDTO insumo = new CrearInsumoDTO();
+    private List<UnidadMedidaDTO> unidades = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        unidades = await Http.GetFromJsonAsync<List<UnidadMedidaDTO>>("api/Insumos/Unidades");
+    }
 
     private async Task Guardar()
     {

@@ -110,7 +110,10 @@ else
 
 <hr />
 
-<h4>🧾 Insumos ya cargados en la orden</h4>
+
+
+
+<h4>🧾 Insumos cargados en la orden</h4>
 
 @if (InsumosEnOrden == null)
 {
@@ -126,30 +129,78 @@ else
         <thead>
             <tr>
                 <th>Insumo</th>
-                <th>Cantidad Total</th>
+                <th>Cantidad total</th>
+                <th>Cantidad a descontar</th>
+                <th>Cantidad a solicitar</th>
+                <th>Estado</th>
+                <th>Pedido</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in InsumosEnOrden)
             {
-                <tr>
+                <tr class="@(item.Insuficiente ? "table-danger" : "")">
                     <td>@item.Nombre</td>
                     <td>@item.Cantidad</td>
+                    <td>@item.CantidadDescontada</td>
+                    <td>@item.CantidadPendiente</td>
+                    <td>
+                        @(item.Insuficiente ? "Insuficiente" : "Suficiente")
+                       @*  @if (item.Insuficiente)
+                        {
+                            <span class="badge bg-danger">INSUFICIENTE</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">OK</span>
+                        } *@
+                    </td>
+                    <td>
+                       @*  <button class="btn btn-warning btn-sm"
+                                disabled="@(!item.Insuficiente)"
+                                @onclick="() => GenerarPedido(item)">
+                            Generar Pedido
+                        </button> 
+ *@
+
+                       
+                        
+                        
+                                
+                        <button class="btn btn-warning btn-sm"
+                                disabled="@(!item.Insuficiente)"
+                                @onclick="() => GenerarPedido(
+                                item.NroOT,
+                                item.Nombre,                                 
+                                item.Insuficiente)">                                            
+                               Generar Pedido                                                                                                       
+                            </button> 
+ 
+                       
+
+ 
+
+
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
 }
 
-@code {
+
+@code 
+{
     private List<CrearInsumoDTO> InsumoDTO = new();           // Lista completa de insumos
     private List<CrearInsumoDTO> InsumoDTOFiltrados = new(); // Lista filtrada
     private List<InsumoDetalleOrdenDTO> InsumosEnOrden = new(); // Insumos ya agregados a la orden
     private CrearInsumoDTO insumoDTO = new CrearInsumoDTO();
+    public InsumoDetalleOrdenDTO? DetalleOrden { get; set; }
+    public CrearInsumoDTO? InsumoActualizado { get; set; }
     private string filtroNombre = string.Empty;
 
     private string nombreOrden = "";
-   
+
     private string nombreCliente = "";
     [Parameter] public int NroOT { get; set; }
     private int ordenId;
@@ -243,6 +294,40 @@ else
         }
     }
 
+    // private async Task AgregarInsumoAOrden(CrearInsumoDTO insumo)
+    // {
+    //     if (insumo.CantidadARetirar == null || insumo.CantidadARetirar <= 0)
+    //     {
+    //         await JS.InvokeVoidAsync("alert",
+    //             $"Debe ingresar una cantidad válida para {insumo.Nombre}");
+    //         return;
+    //     }
+
+    //     var dto = new
+    //     {
+    //         OrdenId = ordenId,
+    //         InsumoId = insumo.Id,
+    //         CantidadSolicitada = insumo.CantidadARetirar
+    //     };
+
+    //     var resp = await Http.PostAsJsonAsync("api/Insumo_Detalle_Orden", dto);
+
+    //     if (!resp.IsSuccessStatusCode)
+    //     {
+    //         var error = await resp.Content.ReadAsStringAsync();
+    //         await JS.InvokeVoidAsync("alert", error);
+    //         return;
+    //     }
+
+    //     // 🔴 NO tocar stock manualmente
+    //     insumo.CantidadARetirar = null;
+
+    //     // 🔴 SIEMPRE refrescar desde backend
+    //     await Cargar();               // insumos generales
+    //     await CargarInsumosDeOrden(); // insumos de la OT
+    // }
+
+
     private async Task CargarInsumosDeOrden()
     {
         var insumos = await Http.GetFromJsonAsync<List<InsumoDetalleOrdenDTO>>(
@@ -251,6 +336,48 @@ else
         InsumosEnOrden = insumos ?? new();
         StateHasChanged();
     }
+
+
+    // private async Task PostGenerarPedido()
+    // {   
+    //     var response = await Http.PostAsJsonAsync("api/Insumo_Detalle_Orden/GenerarPedidoDetallePorOT", NroOT);
+    //     if (!response.IsSuccessStatusCode)
+    //     {
+    //         var error = await response.Content.ReadAsStringAsync();
+    //         await JS.InvokeVoidAsync("alert", error);
+    //         return;
+    //     }
+    //     await CargarInsumosDeOrden();
+    //     await Cargar();
+    //     await JS.InvokeVoidAsync("alert", "Pedido generado correctamente.");
+        
+    // }
+
+    private async Task GenerarPedido(
+        int nroOt,
+        string nombreInsumo,
+        bool insuficiente)
+    {
+        //var url = $"api/Insumo_Detalle_Orden/GenerarPedidoDetallePorOT?nroOt={nroOt}&nombreInsumo={nombreInsumo}&insuficiente={insuficiente}";
+        var url = $"api/Insumo_Detalle_Orden/GenerarPedidoDetallePorOT?nroOt={nroOt}&nombreInsumo={Uri.EscapeDataString(nombreInsumo)}&insuficiente={insuficiente}";
+
+
+        var response = await Http.PostAsync(url, null);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            await JS.InvokeVoidAsync("alert", error);
+            return;
+        }
+
+        await CargarInsumosDeOrden();
+        await Cargar();
+
+        await JS.InvokeVoidAsync("alert", $"Pedido generado correctamente para la orden N°: {NroOT}.");
+        //return response.Content;
+    }
+
 
     public class InsumoDetalleResponse
     {

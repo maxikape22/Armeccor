@@ -20,6 +20,8 @@ namespace Armeccor.Datos
         public DbSet<Pedido> Pedidos { get; set; }
         public DbSet<PedidoDetalleInsumo> PedidoDetalleInsumos { get; set; }
         public DbSet<Proveedor> Proveedores { get; set; }
+        public DbSet<UnidadMedida> UnidadMedidas { get; set; }
+        public DbSet<UnidadConversion> UnidadConversiones { get; set; }
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
         {
             configurationBuilder.Properties<DateTime>().HaveColumnType("date");
@@ -118,7 +120,8 @@ namespace Armeccor.Datos
                 .HasOne(p => p.Proveedor)  
                 .WithMany(pv => pv.Pedidos)     
                 .HasForeignKey(p => p.IdProveedor)     
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired(false); // 👈 permite NULL
 
             base.OnModelCreating(modelBuilder);
 

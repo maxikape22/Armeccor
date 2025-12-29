@@ -32,9 +32,11 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAllOrigins",
         policy =>
         {
-            policy.AllowAnyOrigin()
+            policy//.AllowAnyOrigin()
                   .AllowAnyMethod()
-                  .AllowAnyHeader();
+                  .AllowAnyHeader()
+                  .SetIsOriginAllowed(origin => true)            
+                  .AllowCredentials();
         });
 });
 // ✅ FIN DE LA CONFIGURACIÓN DE CORS

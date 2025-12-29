@@ -8,7 +8,7 @@ namespace Armeccor.Datos.Entidades
         public int Id { get; set; }
         public int NroPedido { get; set; } //--> se debe generar aleatoriamente y no se repita
         public string Estado { get; set; } //--> PARA ENVIAR EL ESTADO; EJ:° --> "ENVIADO A PROVEEDOR"
-        public int IdProveedor { get; set; }
+        public int? IdProveedor { get; set; }
         public Proveedor Proveedor { get; set; }
         public ICollection<PedidoDetalleInsumo> DetallePedidos { get; set; }
     }

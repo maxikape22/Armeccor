@@ -12,6 +12,9 @@
         public bool EsSolicitado { get; set; }
         public string Estado { get; set; } //--> PARA RECIBIR EL ESTADO; EJ:° --> "RECIBIDO"
         public string NombreInsumoInsuficiente { get; set; } // <-- NUEVO
-
+        public int NroPedido { get; set; }
+        public bool EntregaParcial { get; set; }
+        public bool EntregaTotal { get; set; }
+        public string NuevoEstado { get; set; }
     }
 }

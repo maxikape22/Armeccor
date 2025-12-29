@@ -1,505 +1,424 @@
 ﻿@page "/Insumos"
 @inject HttpClient Http
-@inject NavigationManager Navigation
+@inject NavigationManager Nav
 @inject IJSRuntime JS
 
-<h3>Gestión de Insumos</h3>
+<h3>Listado de insumos</h3>
 
-    @* <script>
-        let angle = 0;
+<div class="toolbar mb-3">
+    <input type="text"
+           class="form-control me-2"
+           placeholder="Buscar insumo..."
+           @bind="search"
+           @bind:event="oninput"
+           style="max-width:280px" />
 
-        function renderCarousel() {
-            const items = document.querySelectorAll(".carousel-item");
-            if (items.length === 0) return;
-
-            const fixedSlice = 1000;   // separación fija
-            const radius = 500;      // distancia desde el centro
-
-            const offset = -((items.length - 1) / 2); // ⬅️ distribuye desde el centro
-
-            items.forEach((item, i) => {
-                const rotation = fixedSlice * (i + offset) + angle;
-                const rad = rotation * (Math.PI / 180);
-
-                const x = Math.sin(rad) * radius;
-                const z = Math.cos(rad) * radius;
-
-                item.style.transform = `
-                    translateX(${x}px)
-                    translateZ(${z}px)
-                    translateY(40px)
-                    rotateY(${rotation}deg)
-                `;
-            });
-        }
-
-        function nextCarousel() {
-            angle -= 10;
-            renderCarousel();
-        }
-
-        function prevCarousel() {
-            angle += 10;
-            renderCarousel();
-        }
-
-        window.addEventListener("load", renderCarousel);
-    </script> *@
-
-<script>
-    let angle = 0;
-
-    function renderCarousel() {
-        const items = document.querySelectorAll(".carousel-item");
-        if (items.length === 0) return;
-
-        const fixedSlice = 1000;   // separación fija (tu valor)
-        const radius = 500;        // distancia desde el centro (tu valor)
-
-        const total = items.length;
-        const offset = -((total - 1) / 2); // distribución simétrica
-
-        const isSingle = total === 1;
-
-        items.forEach((item, i) => {
-            const rotation = isSingle ? 0 : fixedSlice * (i + offset) + angle;
-            const rad = rotation * (Math.PI / 180);
-
-            const x = Math.sin(rad) * radius;
-            const z = Math.cos(rad) * radius;
-
-            item.style.transform = `
-                translateX(${x}px)
-                translateZ(${z}px)
-                translateY(40px)
-                rotateY(${rotation}deg)
-            `;
-        });
-    }
-
-    function nextCarousel() {
-        const step = 10; // mantengo tu paso
-        angle -= step;
-        renderCarousel();
-    }
-
-    function prevCarousel() {
-        const step = 10;
-        angle += step;
-        renderCarousel();
-    }
-
-    // Centrar por índice sin cambiar estructura ni crear deformaciones
-    function centerByIndex(index) {
-        const items = document.querySelectorAll(".carousel-item");
-        if (items.length === 0) return;
-
-        const fixedSlice = 1000;
-        const total = items.length;
-        const offset = -((total - 1) / 2);
-
-        // Ajuste de ángulo para que el ítem elegido quede con rotación 0 (centro visual)
-        angle = -fixedSlice * (index + offset);
-        renderCarousel();
-    }
-
-    // Centrar por texto (ej: nombre en h3), estable y sin efectos colaterales
-    function centerByText(text) {
-        const items = Array.from(document.querySelectorAll(".carousel-item"));
-        if (items.length === 0) return;
-        const query = (text || "").toLowerCase();
-
-        const idx = items.findIndex(el =>
-            (el.textContent || "").toLowerCase().includes(query)
-        );
-
-        centerByIndex(idx >= 0 ? idx : 0);
-    }
-
-    // Inicialización
-    window.addEventListener("load", renderCarousel);
-
-    // Exponer para Blazor
-    window.renderCarousel = renderCarousel;
-    window.nextCarousel = nextCarousel;
-    window.prevCarousel = prevCarousel;
-    window.centerByIndex = centerByIndex;
-    window.centerByText = centerByText;
-</script>
-
-
-
-<style>
-    .titulo {
-        text-align: center;
-        margin-top: 40px;
-        margin-bottom: 20px;
-        font-size: 26px;
-        font-weight: 700;
-    }
-
-    .buscador-contenedor {
-        width: 90%;
-        margin: auto;
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin-bottom: 30px;
-    }
-
-    .input-buscar {
-        width: 40%;
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-    }
-
-    .btn-buscar {
-        padding: 10px 14px;
-        background: #0066ff;
-        color: white;
-        border: none;
-        border-radius: 8px;
-    }
-
-    .btn-limpiar {
-        padding: 10px 14px;
-        border-radius: 8px;
-        border: none;
-        color: white;
-        background-color: #0066ff;
-        cursor: pointer;
-    }
-
-    .btn-limpiar {
-        background-color: #6c757d; /* gris neutro */
-    }
-
-
-
-
-
-    .btn-nueva {
-        margin-left: auto;
-        background: #28a745;
-        color: white;
-        padding: 10px 14px;
-        border: none;
-        border-radius: 8px;
-    }
-
-    .carousel-wrapper {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        position: relative;
-        margin-top: 50px; /* ⬅️ bajamos un poco más */
-        z-index: 0;
-    }
-
-    .carousel-container {
-        width: 100%;
-        max-width: 1200px; /* ⬅️ más ancho para acercarse a las flechas */
-        height: 480px; /* ⬅️ más alto para ganar espacio vertical */
-        perspective: 2000px;
-        margin: auto;
-        overflow: hidden;
-    }
-
-    .carousel {
-        width: 100%;
-        height: 100%;
-        position: relative;
-        transform-style: preserve-3d;
-        margin: 0;
-        padding: 0;
-    }
-
-    .carousel-item {
-        width: 260px;
-        height: 280px;
-        background: #fff;
-        border-radius: 18px;
-        position: absolute;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        backface-visibility: hidden;
-        transition: transform 0.9s ease, opacity 0.5s ease;
-        padding: 16px;
-        text-align: center;
-        word-break: break-word;
-        box-sizing: border-box;
-        transform-origin: center center;
-        z-index: 2;
-        /* ❌ Eliminar esto si lo tenías */
-        left: 40%;
-        /* right: 20%; */
-    }
-
-
-
-        .carousel-item h3 {
-            font-size: 18px;
-            margin-bottom: 10px;
-            word-break: break-word;
-        }
-
-        .carousel-item.center {
-            opacity: 1;
-            transform: scale(1.08);
-        }
-
-        .carousel-item.mid {
-            opacity: 0.6;
-        }
-
-        .carousel-item.far {
-            opacity: 0.2;
-        }
-
-    .estado {
-        margin-top: 5px;
-        padding: 4px 10px;
-        font-size: 14px;
-        border-radius: 8px;
-        background: #007bff;
-        color: white;
-    }
-
-    .btn-box {
-        margin-top: 12px;
-        display: flex;
-        gap: 8px;
-    }
-
-    .btn-edit {
-        padding: 6px 10px;
-        border-radius: 6px;
-        background: #007bff;
-        color: white;
-        border: none;
-    }
-
-    .btn-delete {
-        padding: 6px 10px;
-        border-radius: 6px;
-        background: #dc3545;
-        color: white;
-        border: none;
-    }
-
-    .nav-btn {
-        position: absolute;
-        top: 52%; /* ⬅️ bajamos un poco más para alinear con tarjetas */
-        transform: translateY(-50%);
-        font-size: 36px;
-        border: none;
-        background: none;
-        cursor: pointer;
-        z-index: 3;
-        color: #333;
-    }
-
-    .left {
-        left: 20px; /* ⬅️ desplazamos hacia adentro */
-    }
-
-    .right {
-        right: 20px; /* ⬅️ desplazamos hacia adentro */
-    }
-
-</style>
-
-
-@* <div class="d-flex justify-content-between align-items-center mb-3">
-    <div class="input-group" style="width: 48%;">
-        <input class="form-control" placeholder="Buscar por nombre de insumo..." @bind="filtroNombre" />
-        <button class="btn btn-primary" @onclick="BuscarPorNombre">Buscar</button>
-    </div>
-    <div>
-        <button class="btn btn-success" @onclick="IrANuevoInsumo">+ Nuevo Insumo</button>
-    </div>
+    <button class="btn btn-primary ms-3" @onclick="IrANuevoInsumo">
+        + Agregar insumo
+    </button>
 </div>
 
-@if (InsumoDTO == null)
+@if (loading)
 {
-    <p><em>Cargando insumos...</em></p>
+    <div class="alert alert-info">Cargando insumos...</div>
+}
+else if (!string.IsNullOrEmpty(error))
+{
+    <div class="alert alert-danger">Error: @error</div>
+}
+else if (insumos is null || !insumos.Any())
+{
+    <div class="alert alert-warning">No hay insumos registrados.</div>
 }
 else
 {
     <table class="table table-striped">
         <thead>
             <tr>
+                <th>Item</th>
                 <th>Nombre</th>
-                <th>Cantidad Disponible</th>
-                <th style="width:120px">Acción</th>
+                <th>Cantidad</th>
+                <th>Detalle</th>
+                <th>Unidad de medida</th>
+                <th>Unidad convertida</th>
+                <th>Tipo</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
-            @if (InsumoDTOFiltrados != null && InsumoDTOFiltrados.Any())
-            {
-                @foreach (var i in InsumoDTOFiltrados)
-                {
-                    <tr>
-                        <td>@i.Nombre</td>
-                        <td>@i.CantDisponible</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => IrAEditarInsumo(i.Id)">
-                                Editar
+            @foreach (var i in Filtrar(insumos))
+            {             
+              @*   <tr>
+                    <td>@i.Item</td>
+                    <td>@i.Nombre</td>
+                    <td>@i.CantDisponible</td>
+                    <td>@i.Detalle</td>
+                    <td>@i.UnidadMedidaNombre) (@i.UnidadMedidaAbreviatura)</td>
+                    <td>
+                        @if (i.Conversiones != null && i.Conversiones.Any())
+                        {
+                            <ul>
+                                @foreach (var c in i.Conversiones)
+                                {
+                                    <li>
+                                        @c.CantidadConvertida @c.UnidadDestinoAbreviatura
+                                        <small class="text-muted">
+                                            (desde @c.CantidadOrigen @c.UnidadOrigenAbreviatura)
+                                        </small>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Sin conversiones</span>
+                        }
+                    </td>
+
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1"
+                                @onclick="() => IrAEditarInsumo(i.Id)">
+                            Editar
+                        </button>
+
+                        <button class="btn btn-sm btn-danger"
+                                @onclick="() => ConfirmarEliminar(i)">
+                            🗑
+                        </button>
+                    </td>
+                </tr> *@ 
+                                  
+                <tr>
+                    <td>@i.Item</td>
+                    <td>@i.Nombre</td>
+                    <td>@i.CantDisponible</td>
+                    <td>@i.Detalle</td>
+@*                     <td>@i.UnidadMedidaNombre (@i.UnidadMedidaAbreviatura)</td>
+ *@
+                   @*  <td>
+                        @if (i.Conversiones != null && i.Conversiones.Any())
+                        {
+                            var mejor = i.Conversiones.First();
+                            <span>@mejor.CantidadConvertida.ToString("0.##") @mejor.UnidadDestinoAbreviatura</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">–</span>
+                        }
+                    </td>
+ *@
+                    <td>@i.UnidadMedidaNombre</td>
+@*                     <td>@i.CantidadConvertida</td>
+ *@
+                   
+ 
+                   @*<td>@i.CantidadConvertida.ToString("0.##") @i.Conversiones.FirstOrDefault()?.UnidadDestinoAbreviatura</td>*@
+
+
+
+
+                    @*   <td>@i.UnidadConvertidaTexto</td> *@
+
+                     <td style="min-width:220px">
+                        <div class="mb-1">
+
+                            <select class="form-select form-select-sm" disabled>
+                                <option value="@i.Tipo">@i.Tipo</option>
+                            </select>
+
+                        </div>
+
+                        <div class="mb-1">
+                            <select class="form-select form-select-sm"
+                                    @bind="i.UnidadOrigenId">
+                                @foreach (var u in i.UnidadesOrigen)
+                                {
+                                    <option value="@u.Id">@u.Nombre (@u.Abreviatura)</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-1">
+                            <select class="form-select form-select-sm"
+                                    @bind="i.UnidadDestinoId">
+                                @foreach (var u in i.UnidadesDestino)
+                                {
+                                    <option value="@u.Id">@u.Nombre (@u.Abreviatura)</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-1">
+                            <button class="btn btn-sm btn-outline-secondary w-100"
+                                    @onclick="() => Convertir(i)">
+                                Convertir
                             </button>
-                            <button class="btn btn-sm btn-danger" @onclick="() => ConfirmarEliminar(i.Id)">
-                                Eliminar
-                            </button>
-                        </td>
-                    </tr>
-                }
-            }
-            else
-            {
-                <tr><td colspan="3" class="text-center">No se encontraron insumos.</td></tr>
+                        </div>
+
+                        <div class="text-success fw-bold">
+                            @i.UnidadConvertidaTexto
+                        </div>
+                    </td>
+
+                    <td>@i.Tipo</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1"
+                                @onclick="() => IrAEditarInsumo(i.Id)">
+                            Editar
+                        </button>
+
+                        <button class="btn btn-sm btn-danger"
+                                @onclick="() => ConfirmarEliminar(i)">
+                            🗑
+                        </button>
+                    </td>
+                </tr>
+                
+
             }
         </tbody>
     </table>
-} *@
+}
 
-<div class="buscador-contenedor">
-    <input class="input-buscar" @bind="filtroNombre" placeholder="Buscar por nombre..." />
-    <button class="btn-buscar" @onclick="BuscarPorNombre">Buscar</button>
-    <button class="btn-limpiar" @onclick="LimpiarFiltro">Limpiar</button>
-    <button class="btn-nueva" @onclick="IrANuevoInsumo">+ Nuevo insumo</button>
-</div>
+@code 
+{
+   
 
-<div class="carousel-wrapper">
-    <div class="carousel-container">
-        <div id="carousel" class="carousel">
-            @foreach (var insumo in InsumoDTOFiltrados)
+
+    private List<string> tipos = new() { "Masa", "Longitud", "Volumen", "Superficie", "Agrupacion" };
+   
+    //private List<string> tipos = new();
+
+    private string tipoSeleccionado = "";
+
+    private string _tipoSeleccionado
+    {
+        get => _tipoSeleccionado;
+        set
+        {
+            _tipoSeleccionado = value;
+            FiltrarUnidades(); // sin parámetro
+        }
+    }
+
+    private List<UnidadMedida> todasUnidades = new();
+    private List<UnidadMedida> unidadesFiltradas = new();
+    private int unidadOrigenId;
+    private int unidadDestinoId;
+
+
+    private void FiltrarUnidades()
+    {
+        unidadesFiltradas = todasUnidades
+            .Where(u => u.Tipo == tipoSeleccionado)
+            .OrderBy(u => u.Nombre)
+            .ToList();
+
+        unidadOrigenId = unidadesFiltradas.FirstOrDefault()?.Id ?? 0;
+        unidadDestinoId = unidadesFiltradas.FirstOrDefault()?.Id ?? 0;
+    }
+
+    private List<string> ObtenerUnidadesPorTipo(string tipo)
+    {
+        switch (tipo)
+        {
+            case "Masa":
+                return new() { "Gramo", "Kilogramo", "Libra", "Tonelada" };
+
+            case "Longitud":
+                return new() { "Metro", "Centímetro", "Pulgada", "Pie", "Yarda" };
+
+            case "Volumen":
+                return new() { "Litro", "Mililitro", "Metro cúbico", "Centímetro cúbico" };
+
+            case "Superficie":
+                return new() { "Metro cuadrado", "Centímetro cuadrado", "Milímetro cuadrado", "Pie cuadrado" };
+
+            case "Agrupacion":
+                return new() { "Unidad", "Caja", "Paquete", "Bolsa", "Barra", "Perfil", "Planchuela", "Rollo" };
+
+            default:
+                return new();
+        }
+    }
+
+
+    private async void OnTipoChanged(InsumoConConversionesDTO insumo, ChangeEventArgs e)
+    {
+        insumo.TipoDestino = e.Value?.ToString() ?? "";
+
+        var unidades = await Http.GetFromJsonAsync<List<UnidadMedida>>(
+            $"/api/Insumos/UnidadesDeMedidaSegunTipoAsociadosaUnidadesDeFiltradoPorCadaTipo?tipo={insumo.TipoDestino}"
+        );
+
+
+        //unidades origen
+        insumo.UnidadesOrigen = unidades
+            .Select(u => new UnidadDestinoItem
+                {
+                    Id = u.Id,
+                    Nombre = u.Nombre,
+                    Abreviatura = u.Abreviatura
+                })
+            .ToList();
+
+
+        //unidades destino
+        insumo.UnidadesDestino = unidades
+            .Select(u => new UnidadDestinoItem
             {
-                <div class="carousel-item">
-                    <h3>@insumo.Nombre</h3>
-                    <h3>@insumo.CantDisponible</h3>
-                    <div class="btn-box">
-                        <button class="btn-edit" @onclick="() => IrAEditarInsumo(insumo.Id)">
-                            Editar
-                        </button>
-                        <button class="btn-delete" @onclick="() => ConfirmarEliminar(insumo.Id)">
-                            Eliminar
-                        </button>
-                    </div>
-                </div>
-            }
-        </div>
-    </div>
-    <button class="nav-btn left" @onclick="Prev">&#10094;</button>
-    <button class="nav-btn right" @onclick="Next">&#10095;</button>
-</div>
+                Id = u.Id,
+                Nombre = u.Nombre,
+                Abreviatura = u.Abreviatura
+            })
+            .ToList();
+
+        insumo.UnidadOrigenId = insumo.UnidadesOrigen.FirstOrDefault()?.Id ?? 0;
+
+        insumo.UnidadDestinoId = insumo.UnidadesDestino.FirstOrDefault()?.Id ?? 0;
+
+        StateHasChanged();
+    }
 
 
-@code {
-    private List<CrearInsumoDTO> InsumoDTO = new();           // Lista completa
-    private List<CrearInsumoDTO> InsumoDTOFiltrados = new(); // Lista filtrada
-    private CrearInsumoDTO insumoDTO = new CrearInsumoDTO();
-    private string filtroNombre = string.Empty;
+
+
+    private void ActualizarUnidadesDestino(InsumoConConversionesDTO insumo)
+    {
+        // Diccionario de tipos → unidades permitidas
+        //var permitidas = ObtenerUnidadesPorTipo(insumo.TipoDestino);
+
+        var permitidas = ObtenerUnidadesPorTipo(insumo.Tipo);
+
+        //Unidad origen
+        insumo.UnidadesOrigen = todasUnidades
+      .Where(u => permitidas.Contains(u.Nombre)) //|| permitidas.Contains(u.Abreviatura))
+      .Select(u => new UnidadDestinoItem
+      {
+          Id = u.Id,
+          Nombre = u.Nombre,
+          Abreviatura = u.Abreviatura
+      })
+      .OrderBy(u => u.Nombre)
+      .ToList();
+
+
+        //Unidad destino
+      insumo.UnidadesDestino = todasUnidades
+            .Where(u => permitidas.Contains(u.Nombre) || permitidas.Contains(u.Abreviatura))
+            .Select(u => new UnidadDestinoItem
+            {
+                Id = u.Id,
+                Nombre = u.Nombre,
+                Abreviatura = u.Abreviatura
+            })
+            .OrderBy(u => u.Nombre)
+            .ToList();
+
+        insumo.UnidadOrigenId = insumo.UnidadesOrigen.FirstOrDefault()?.Id ?? 0;
+
+        insumo.UnidadDestinoId = insumo.UnidadesDestino.FirstOrDefault()?.Id ?? 0;
+    }
+  
+    private async Task Convertir(InsumoConConversionesDTO insumo)
+    {
+        var origenNombre = insumo.UnidadesOrigen
+            .FirstOrDefault(u => u.Id == insumo.UnidadOrigenId)?.Nombre ?? "";
+
+        var destinoNombre = insumo.UnidadesDestino
+            .FirstOrDefault(u => u.Id == insumo.UnidadDestinoId)?.Nombre ?? "";
+
+        var resp = await Http.GetFromJsonAsync<ConversionUnidadResultadoDTO>(
+            $"/api/Insumos/ConvertirSoloTexto?insumoId={insumo.Id}" +
+            $"&unidadOrigenNombre={Uri.EscapeDataString(origenNombre)}" +
+            $"&unidadDestinoNombre={Uri.EscapeDataString(destinoNombre)}"
+        );
+
+        insumo.UnidadConvertidaTexto = resp?.UnidadConvertidaTexto ?? "No se pudo convertir";
+        StateHasChanged();
+    }
+
+
+
+
+
+    private string Formatear(decimal valor) { if (valor == 0) return "0"; if (valor < 1 && valor > 0) return valor.ToString("0.####################"); return valor.ToString("0.##"); }
+   //
+
+    private List<InsumoConConversionesDTO>? insumos;
+    private bool loading = true;
+    private string? error;
+    private string search = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        await Cargar();
-    }
-
-    private async Task Cargar()
-    {
-        InsumoDTO = await Http.GetFromJsonAsync<List<CrearInsumoDTO>>("api/Insumos") ?? new();
-        InsumoDTOFiltrados = InsumoDTO;
-    }
-
-    private async Task BuscarPorNombre()
-    {
-        if (string.IsNullOrWhiteSpace(filtroNombre))
+        //await CargarInsumos();
+        await CargarInsumos();
+        todasUnidades = await Http.GetFromJsonAsync<List<UnidadMedida>>("api/Insumos/Unidades");
+        foreach (var i in insumos ?? Enumerable.Empty<InsumoConConversionesDTO>()) 
         {
-            InsumoDTOFiltrados = InsumoDTO; // Restaurar lista completa
-        }
-        else
-        {
-            InsumoDTOFiltrados = InsumoDTO
-                .Where(i => i.Nombre.Contains(filtroNombre, StringComparison.OrdinalIgnoreCase))
-                .ToList();
-
-            // InvokeAsync(async () =>
-            // {
-            //     await Task.Delay(10);
-            //     await JS.InvokeVoidAsync("renderCarousel");
-            // });
-
-            await InvokeAsync(async () =>        
-            {
-                 await JS.InvokeVoidAsync("renderCarousel");
-                 await JS.InvokeVoidAsync("centerByText", filtroNombre);
-             });
+            i.TipoDestino = i.Tipo; ActualizarUnidadesDestino(i);
         }
     }
 
-    private async Task Next()
-    {
-        await JS.InvokeVoidAsync("nextCarousel");
-    }
-
-    private async Task Prev()
-    {
-        await JS.InvokeVoidAsync("prevCarousel");
-    }
-
-    private async Task ConfirmarEliminar(int id)
-    {
-        var ok = await JS.InvokeAsync<bool>("confirm", $"¿Desea eliminar el insumo: {insumoDTO.Nombre}?");
-        if (!ok) return;
-
-        await EliminarInsumo(id);
-        await Cargar();
-    }
-
-    private async Task EliminarInsumo(int id)
+    private async Task CargarInsumos()
     {
         try
         {
-            var resp = await Http.DeleteAsync($"/api/Insumos/{id}");
-            if (resp.IsSuccessStatusCode)
-            {
-                InsumoDTO.RemoveAll(i => i.Id == id);
-                await JS.InvokeVoidAsync("alert", "Insumo eliminado.");
-            }
-            else
-            {
-                var body = await resp.Content.ReadAsStringAsync();
-                Console.WriteLine($"Error al eliminar insumo: {resp.StatusCode} - {body}");
-                await JS.InvokeVoidAsync("alert", $"Error al eliminar insumo: {resp.StatusCode}");
-            }
+            insumos = await Http.GetFromJsonAsync<List<InsumoConConversionesDTO>>(
+                "api/Insumos/ConConversiones"
+            );
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error al eliminar insumo: {ex.Message}");
-            await JS.InvokeVoidAsync("alert", "Error al eliminar insumo. Ver consola.");
+            error = ex.Message;
         }
+        loading = false;
+    }
+
+    private IEnumerable<InsumoConConversionesDTO> Filtrar(IEnumerable<InsumoConConversionesDTO> lista)
+    {
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            lista = lista.Where(i =>
+                i.Nombre.Contains(search, StringComparison.OrdinalIgnoreCase));
+        }
+
+        return lista;
     }
 
     private void IrANuevoInsumo()
     {
-        Navigation.NavigateTo("/api/Insumos/AgregarInsumo");
+        Nav.NavigateTo("/api/Insumos/AgregarInsumo");
     }
 
     private void IrAEditarInsumo(int id)
     {
-        Navigation.NavigateTo($"/api/Insumos/Editar/{id}");
+        Nav.NavigateTo($"/api/Insumos/Editar/{id}");
     }
 
-    private async Task LimpiarFiltro()
+    private async Task ConfirmarEliminar(InsumoConConversionesDTO insumo)
     {
-        filtroNombre = string.Empty;
-        InsumoDTOFiltrados = InsumoDTO;
-        await InvokeAsync(async () =>
+        var ok = await JS.InvokeAsync<bool>(
+            "confirm",
+            $"¿Desea eliminar el insumo \"{insumo.Nombre}\"?"
+        );
+
+        if (!ok) return;
+
+        await Eliminar(insumo.Id);
+    }
+
+    private async Task Eliminar(int id)
+    {
+        var resp = await Http.DeleteAsync($"api/Insumos/{id}");
+        if (resp.IsSuccessStatusCode)
         {
-            await JS.InvokeVoidAsync("renderCarousel");
-        });
+            insumos = insumos?.Where(i => i.Id != id).ToList();
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("alert", "Error al eliminar el insumo");
+        }
     }
 }
