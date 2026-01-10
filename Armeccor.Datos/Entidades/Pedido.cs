@@ -11,5 +11,6 @@ namespace Armeccor.Datos.Entidades
         public int? IdProveedor { get; set; }
         public Proveedor Proveedor { get; set; }
         public ICollection<PedidoDetalleInsumo> DetallePedidos { get; set; }
+
     }
 }

@@ -134,6 +134,7 @@ else
                 <th>Cantidad a solicitar</th>
                 <th>Estado</th>
                 <th>Pedido</th>
+                <th>Eliminar insumo</th>
             </tr>
         </thead>
         <tbody>
@@ -161,12 +162,7 @@ else
                                 @onclick="() => GenerarPedido(item)">
                             Generar Pedido
                         </button> 
- *@
-
-                       
-                        
-                        
-                                
+ *@    
                         <button class="btn btn-warning btn-sm"
                                 disabled="@(!item.Insuficiente)"
                                 @onclick="() => GenerarPedido(
@@ -174,28 +170,43 @@ else
                                 item.Nombre,                                 
                                 item.Insuficiente)">                                            
                                Generar Pedido                                                                                                       
-                            </button> 
- 
-                       
-
- 
-
-
+                            </button>
                     </td>
+
+
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-danger"
+                                @onclick="() => Eliminar(item.Id)">
+                            Eliminar
+                        </button>
+                    </td>
+
                 </tr>
             }
         </tbody>
     </table>
 }
 
+<!-- ✅ ACÁ VA EL BOTÓN (SIEMPRE VISIBLE) -->
+<button class="btn btn-secondary mt-3"
+        @onclick="VolverAInsumoOrden">
+    Volver a insumo orden
+</button>
 
 @code 
 {
+
+    void VolverAInsumoOrden()
+    {
+        Navigation.NavigateTo($"/ListadoInsumosOrden/{NroOT}");
+    }
+
     private List<CrearInsumoDTO> InsumoDTO = new();           // Lista completa de insumos
     private List<CrearInsumoDTO> InsumoDTOFiltrados = new(); // Lista filtrada
     private List<InsumoDetalleOrdenDTO> InsumosEnOrden = new(); // Insumos ya agregados a la orden
     private CrearInsumoDTO insumoDTO = new CrearInsumoDTO();
-    public InsumoDetalleOrdenDTO? DetalleOrden { get; set; }
+    public InsumoDetalleOrdenDTO DetalleOrden = new InsumoDetalleOrdenDTO();
+    private OrdenDetalleDTO ordenDetalleDTO = new OrdenDetalleDTO();
     public CrearInsumoDTO? InsumoActualizado { get; set; }
     private string filtroNombre = string.Empty;
 
@@ -207,6 +218,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        //DetalleOrden.NroOT = NroOT;
+        //ordenDetalleDTO.NroOT = NroOT;
         await CargarDatosOrden();
 
         // ordenId = NroOT;
@@ -224,6 +237,8 @@ else
     {
         try
         {
+            //DetalleOrden.NroOT = NroOT;
+            //ordenDetalleDTO.NroOT = NroOT;
             var orden = await Http.GetFromJsonAsync<OrdenDetalleDTO>($"api/Ordenes/{NroOT}");
             if (orden != null)
             {
@@ -330,8 +345,10 @@ else
 
     private async Task CargarInsumosDeOrden()
     {
+        //DetalleOrden.NroOT = NroOT;
+        //ordenDetalleDTO.NroOT = NroOT;
         var insumos = await Http.GetFromJsonAsync<List<InsumoDetalleOrdenDTO>>(
-            $"api/Insumo_Detalle_Orden/AgrupadosPorOrden/{ordenId}");
+            $"api/Insumo_Detalle_Orden/AgrupadosPorOrden/{NroOT}");
 
         InsumosEnOrden = insumos ?? new();
         StateHasChanged();
@@ -350,7 +367,7 @@ else
     //     await CargarInsumosDeOrden();
     //     await Cargar();
     //     await JS.InvokeVoidAsync("alert", "Pedido generado correctamente.");
-        
+
     // }
 
     private async Task GenerarPedido(
@@ -378,6 +395,41 @@ else
         //return response.Content;
     }
 
+    private async Task Eliminar(int id)
+    {
+        // var resp = await Http.DeleteAsync(
+        //     $"api/Insumo_Detalle_Orden/{insumoDTO.Id}");
+        // if (resp.IsSuccessStatusCode)
+        // {
+        //     await CargarInsumosDeOrden();
+        //     await Cargar();
+        //     await JS.InvokeVoidAsync("alert", $"Insumo {insumoDTO.Nombre} eliminado de la orden.");
+        // }
+        // else
+        // {
+        //     var error = await resp.Content.ReadAsStringAsync();
+        //     await JS.InvokeVoidAsync("alert", $"Error al eliminar insumo: {error}");
+        // }
+
+        var ok = await JS.InvokeAsync<bool>(
+           "confirm",
+           "¿Desea eliminar este insumo?"
+       );
+
+        if (!ok) return;
+
+        var resp = await Http.DeleteAsync($"api/Insumo_Detalle_Orden/{id}");
+        if (resp.IsSuccessStatusCode)
+        {
+            await JS.InvokeVoidAsync("alert",$"El insumo fue eliminado");
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("alert", $"No se pudo eliminar el insumo {insumoDTO.Nombre}.");
+        }
+         await CargarInsumosDeOrden();
+         StateHasChanged();
+    }
 
     public class InsumoDetalleResponse
     {

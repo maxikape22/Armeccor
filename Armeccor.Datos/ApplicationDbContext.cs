@@ -22,6 +22,9 @@ namespace Armeccor.Datos
         public DbSet<Proveedor> Proveedores { get; set; }
         public DbSet<UnidadMedida> UnidadMedidas { get; set; }
         public DbSet<UnidadConversion> UnidadConversiones { get; set; }
+        public DbSet<Estante> Estantes { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
+
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
         {
             configurationBuilder.Properties<DateTime>().HaveColumnType("date");
@@ -44,7 +47,7 @@ namespace Armeccor.Datos
                 .HasMany(o => o.InsumoOrdenes)
                 .WithOne(i => i.Orden)
                 .HasForeignKey(i => i.OrdenId)
-                .OnDelete(DeleteBehavior.Cascade); // SetNull para no exigir cascade
+                .OnDelete(DeleteBehavior.SetNull); // SetNull para no exigir cascade
 
             // ===========================
             // Relación AreaDetalleOrden - Area
@@ -62,7 +65,7 @@ namespace Armeccor.Datos
                 .HasOne(id => id.Insumo)
                 .WithMany(i => i.InsumoOrdenes)
                 .HasForeignKey(id => id.InsumoId)
-                .OnDelete(DeleteBehavior.Cascade); // Similar, se pone null
+                .OnDelete(DeleteBehavior.SetNull); // Similar, se pone null
 
             // ===========================
             // Relación Orden - Cliente
@@ -71,7 +74,7 @@ namespace Armeccor.Datos
                 .HasOne(o => o.Cliente)
                 .WithMany(c => c.Ordenes)
                 .HasForeignKey(o => o.ClienteId)
-                .OnDelete(DeleteBehavior.Cascade); // ClienteId se pone null si borran cliente
+                .OnDelete(DeleteBehavior.SetNull); // ClienteId se pone null si borran cliente
 
             // ===========================
             // Relación Plano - Orden (nullable, sin cascada)
@@ -79,7 +82,8 @@ namespace Armeccor.Datos
             modelBuilder.Entity<Plano>()
                 .HasOne(p => p.Orden)
                 .WithMany(o => o.Planos)
-                .HasForeignKey(p => p.OrdenId).OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(p => p.OrdenId)
+                .OnDelete(DeleteBehavior.SetNull);
 
 
             // ===========================
@@ -89,7 +93,7 @@ namespace Armeccor.Datos
                 .HasMany(o => o.Entregas)
                 .WithOne(e => e.Orden)
                 .HasForeignKey(e => e.OrdenId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Entrega>()
                 .HasOne(e => e.Orden)
@@ -100,7 +104,7 @@ namespace Armeccor.Datos
                 .HasOne(e => e.Medio_De_Pago)
                 .WithMany(m => m.Entregas)   // un medio de pago → muchas entregas
                 .HasForeignKey(e => e.MedioDePagoId)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.SetNull); 
 
             //Configuraciones para DetallePedido - Pedido - Insumo
 
@@ -120,8 +124,68 @@ namespace Armeccor.Datos
                 .HasOne(p => p.Proveedor)  
                 .WithMany(pv => pv.Pedidos)     
                 .HasForeignKey(p => p.IdProveedor)     
-                .OnDelete(DeleteBehavior.Cascade)
+                .OnDelete(DeleteBehavior.SetNull)
                 .IsRequired(false); // 👈 permite NULL
+
+            //Configuracion de Estante - Insumo
+
+            modelBuilder.Entity<Insumo>()
+                .HasOne(i => i.Estante)
+                .WithMany(e => e.Insumos)
+                .HasForeignKey(i => i.EstanteId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            //Configuracion eliminacion fecha de baja para todas las entidades para la eliminación logica
+
+            modelBuilder
+                .Entity<Estante>()
+                .Property(e => e.FechaBaja)
+                .HasColumnType("datetime2(7)");
+
+            modelBuilder
+                .Entity<PedidoDetalleInsumo>()
+                .Property(d=>d.FechaBaja)
+                .HasColumnType("datetime2(7)");
+
+            modelBuilder
+                .Entity<Insumo>()
+                .Property(i => i.FechaBorrado)
+                .HasColumnType("datetime2(7)");
+
+            modelBuilder
+                .Entity<InsumoDetalleOrden>()
+                .Property(d=>d.FechaBaja)
+                .HasColumnType("datetime2(7)");
+
+            modelBuilder
+               .Entity<Cliente>()
+               .Property(d => d.FechaBaja)
+               .HasColumnType("datetime2(7)");
+
+            modelBuilder
+               .Entity<Area>()
+               .Property(d => d.FechaBaja)
+               .HasColumnType("datetime2(7)");
+
+            modelBuilder
+               .Entity<AreaDetalleOrden>()
+               .Property(d => d.FechaBaja)
+               .HasColumnType("datetime2(7)");
+
+            modelBuilder
+               .Entity<Orden>()
+               .Property(d => d.FechaBaja)
+               .HasColumnType("datetime2(7)");
+
+            modelBuilder
+               .Entity<Entrega>()
+               .Property(d => d.FechaBaja)
+               .HasColumnType("datetime2(7)");
+
+            modelBuilder
+               .Entity<Plano>()
+               .Property(d => d.FechaBaja)
+               .HasColumnType("datetime2(7)");
 
             base.OnModelCreating(modelBuilder);
 

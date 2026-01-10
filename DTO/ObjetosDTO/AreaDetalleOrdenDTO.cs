@@ -1,4 +1,6 @@
-﻿namespace DTO.ObjetosDTO
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace DTO.ObjetosDTO
 {
     public class AreaDetalleOrdenDTO
     {

@@ -221,8 +221,8 @@
                         <th>Fecha pactada</th>
                         <th>Fecha de entrega</th>
                         <th>Cliente</th>
-                        <th>Área actual</th>                                         
-                        <th>Acción</th>                                            
+                        <th>Área actual</th>
+                        <th>Acción</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -263,7 +263,7 @@
 
                                         <button class="dropdown-item" @onclick="() => MenuViewAreaDetails(orden.NroOT)"><i class="fas fa-cogs"></i> Ver áreas</button>
                                         <button class="dropdown-item" @onclick="() => MenuViewPlans(orden.NroOT)"><i class="fas fa-file-alt"></i> Ver planos</button>
-                                        <button class="dropdown-item" @onclick="() => MenuViewSupplies(orden.Id)"><i class="fas fa-boxes"></i> Ver insumos</button>
+                                        <button class="dropdown-item" @onclick="() => MenuViewSupplies(orden.NroOT)"><i class="fas fa-boxes"></i> Ver insumos</button>
                                         <button class="dropdown-item" @onclick="() => ImprimirOrden(orden.NroOT)"><i class="fas fa-file-pdf"></i> Imprimir orden</button>
                                         <button class="dropdown-item danger" disabled="@(isDeletingId == orden.Id)" @onclick="() => MenuDelete(orden.NroOT)">
                                             @(isDeletingId == orden.Id ? "Eliminando..." : "Eliminar")
@@ -486,9 +486,9 @@
         CloseDropdown();
     }
 
-    private void MenuViewAreaDetails(int id)
+    private void MenuViewAreaDetails(int nroOT)
     {
-        NavigationManager.NavigateTo($"/AreasDetalleOrden/{id}");
+        NavigationManager.NavigateTo($"/AreasDetalleOrden/{nroOT}");
         CloseDropdown();
     }
 
@@ -498,9 +498,9 @@
         CloseDropdown();
     }
 
-    private void MenuViewSupplies(int id)
+    private void MenuViewSupplies(int nroOT)
     {
-        NavigationManager.NavigateTo($"/ListadoInsumosOrden/{id}");
+        NavigationManager.NavigateTo($"/ListadoInsumosOrden/{nroOT}");
         CloseDropdown();
     }
 

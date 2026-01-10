@@ -1,11 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Armeccor.Datos.Entidades
+﻿namespace Armeccor.Datos.Entidades
 {
     public class UnidadConversion
     {
         public int Id { get; set; }
-
         public int UnidadOrigenId { get; set; }
         public UnidadMedida UnidadOrigen { get; set; }
 

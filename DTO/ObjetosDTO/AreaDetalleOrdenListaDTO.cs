@@ -14,5 +14,7 @@
         public int Prioridad { get; set; }
         public string PrioridadTexto { get; set; }
         public string Comentario { get; set; }
+        public DateTime? FechaBaja { get; set; }
+        public bool EstaActivo { get; set; }
     }
 }

@@ -1,0 +1,86 @@
+﻿@page "/EditarItemPedidoDetalladoDTO/{id:int}"
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<h3>Editar Pedido</h3>
+
+@if (pedido == null)
+{
+    <p>Cargando pedido...</p>
+}
+else
+{
+    <EditForm Model="pedido" OnValidSubmit="GuardarCambios">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label for="item" class="form-label">Item</label>
+            <InputText id="item" class="form-control" @bind-Value="pedido.Item" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="button" class="btn btn-secondary ms-2" @onclick="Volver">Cancelar</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+    private PedidoDetalleInsumoDTO pedido;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            pedido = await Http.GetFromJsonAsync<PedidoDetalleInsumoDTO>(
+                $"api/PedidoDetalleInsumos/EditarItemPedidoDTO?id={id}"
+            );
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("alert", $"Error al cargar el pedido: {ex.Message}");
+        }
+    }
+
+    // private async Task GuardarCambios()
+    // {
+    //     var response = await Http.PutAsJsonAsync(
+    //         $"api/PedidoDetalleInsumos/EditarItemPedidoDTO?id={id}", pedido
+    //     );
+
+    //     if (response.IsSuccessStatusCode)
+    //     {
+    //         await JS.InvokeVoidAsync("alert", "Pedido editado correctamente.");
+    //         Navigation.NavigateTo("/VerDetallePedidoInsumo");
+    //     }
+    //     else
+    //     {
+    //         Exception exception = new Exception();
+    //         var error = await response.Content.ReadAsStringAsync();
+    //         await JS.InvokeVoidAsync("alert", $"Error al editar pedido: {exception.InnerException}");
+    //     }
+    // }
+
+    private async Task GuardarCambios()
+    {
+        var response = await Http.PutAsJsonAsync(
+            $"api/PedidoDetalleInsumos/EditarItemPedidoDTO/{id}", pedido
+        );
+
+        if (response.IsSuccessStatusCode)
+        {
+            await JS.InvokeVoidAsync("alert", "Pedido editado correctamente.");
+            Navigation.NavigateTo("/VerDetallePedidoInsumo", forceLoad: true); // fuerza recarga
+        }
+        else
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            await JS.InvokeVoidAsync("alert", $"Error al editar pedido: {error}");
+        }
+    }
+
+
+    private void Volver() => Navigation.NavigateTo("/VerDetallePedidoInsumo");
+}

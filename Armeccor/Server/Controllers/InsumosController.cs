@@ -35,6 +35,7 @@ namespace Armeccor.Server.Controllers
         public async Task<ActionResult<List<CrearInsumoDTO>>> GetInsumos()
         {
             var insumos = await context.Insumos
+                .Where(d=>d.EstaActivo)
                 .Include(i => i.UnidadBase)
                 .ToListAsync();
 
@@ -55,8 +56,6 @@ namespace Armeccor.Server.Controllers
             }
             return mapper.Map<CrearInsumoDTO>(insumo);
         }
-
-
 
         [HttpPost]
         public async Task<ActionResult<InsumoConConversionesDTO>> PostInsumo(CrearInsumoDTO crearInsumoDTO)
@@ -109,8 +108,6 @@ namespace Armeccor.Server.Controllers
 
             return Ok(dto);
         }
-
-
 
 
         [HttpGet("Unidades")]
@@ -233,15 +230,33 @@ namespace Armeccor.Server.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteInsumo(int id)
         {
-            var insumo = await context.Insumos.FindAsync(id);
-            if (insumo == null)
-            {
-                return NotFound($"No se encontró el insumo de Id: {id}");
-            }
-            context.Insumos.Remove(insumo);
+            //var insumo = await context.Insumos.FindAsync(id);
+            //if (insumo == null)
+            //{
+            //    return NotFound($"No se encontró el insumo de Id: {id}");
+            //}
+            //insumo.EstaActivo = false;
+            //insumo.FechaBorrado = DateTime.Now;
+            //context.Insumos.Remove(insumo);
+            //await context.SaveChangesAsync();
+            //var areaDTO = mapper.Map<CrearInsumoDTO>(insumo);
+            //return Ok(areaDTO);
+
+
+            var estante = await context.Insumos.FirstOrDefaultAsync(e => e.Id == id);
+
+            if (estante == null)
+                return NotFound("Insumo no encontrado.");
+
+            if (!estante.EstaActivo)
+                return BadRequest("El insumo ya está dado de baja.");
+
+            estante.EstaActivo = false;
+            estante.FechaBorrado = DateTime.Now;
+
             await context.SaveChangesAsync();
-            var areaDTO = mapper.Map<CrearInsumoDTO>(insumo);
-            return Ok(areaDTO);
+
+            return NoContent();
         }
 
         [HttpDelete("NombreInsumo/{nombreInsumo}")]
@@ -536,8 +551,9 @@ namespace Armeccor.Server.Controllers
             var conversiones = await context.UnidadConversiones.ToListAsync();
 
             var insumos = await context.Insumos
+                .Where(d=>d.EstaActivo)
                 .Include(i => i.UnidadBase)
-                .Where(i => i.FechaBorrado == null)
+                //.Where(i => i.FechaBorrado == null)
                 .ToListAsync();
 
             var resultado = new List<InsumoConConversionesDTO>();
@@ -753,14 +769,5 @@ namespace Armeccor.Server.Controllers
                     : "No se pudo convertir"
             });
         }
-
-
-
-
-
-
-
-
     }
-
 }

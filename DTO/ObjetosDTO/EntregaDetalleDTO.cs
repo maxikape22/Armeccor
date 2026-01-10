@@ -14,6 +14,8 @@ namespace DTO.ObjetosDTO
         public DateTime? FechaEntrega { get; set; }
         public bool Entregado { get; set; }
         public string MedioDePago { get; set; }
+        public DateTime? FechaBaja { get; set; }
+        public bool EstaActivo { get; set; }
     }
 
 }

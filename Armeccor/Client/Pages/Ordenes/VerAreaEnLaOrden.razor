@@ -2,7 +2,6 @@
 @inject HttpClient Http
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
-@using Microsoft.AspNetCore.SignalR.Client
 @using Microsoft.AspNetCore.Components.Web;
 
 
@@ -136,7 +135,31 @@ else
                                @bind:event="oninput"
                                @onchange="() => GuardarComentario(area)" />
                     </td>
-                    <td>@area.Prioridad</td>
+
+                    <td style="width:110px">
+                        @if (area.Estado != "Finalizado")
+                        {
+                            <div class="d-flex flex-column align-items-stretch gap-1">
+                                <select class="form-select form-select-sm"
+                                        @bind="area.Prioridad">
+                                    @for (int i = 1; i <= areasDetalle.Count; i++)
+                                    {
+                                        <option value="@i">@i</option>
+                                    }
+                                </select>
+
+                                <button class="btn btn-sm btn-primary"
+                                        @onclick="() => AplicarPrioridad(area)">
+                                    Aplicar
+                                </button>
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="text-muted">—</span>
+                        }
+                    </td>
+
                     <td>
                         <select class="form-select" @onchange="async e => await CambiarEstado(area.Id, e)">
                             <option label="---Cambiar estado del área---"></option>
@@ -157,7 +180,29 @@ else
     <button class="btn btn-secondary mt-3" @onclick="Volver">Volver</button>
 }
 
-@code {
+@code 
+{
+    private async Task AplicarPrioridad(AreaDetalleOrdenListaDTO area)
+    {
+        var response = await Http.PutAsJsonAsync(
+            $"api/Area_Detalle_Orden/ReordenarPrioridad/{area.Id}",
+            area.Prioridad
+        );
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var msg = await response.Content.ReadAsStringAsync();
+            await JS.InvokeVoidAsync("alert", $"Error al reordenar prioridad: {msg}");
+            return;
+        }
+
+        // 🔁 Recargar la lista ya ordenada desde backend
+        areasDetalle = await Http.GetFromJsonAsync<List<AreaDetalleOrdenListaDTO>>(
+            $"api/Area_Detalle_Orden/{NroOT}");
+        await OnInitializedAsync();
+    }
+
+
     [Parameter] public int NroOT { get; set; }
     public string NombreOrden;
     public string NombreCliente;
@@ -248,7 +293,7 @@ else
 
     private void AgregarArea(int OrdenId)
     {
-        Navigation.NavigateTo($"/AgregarAreaEnAreaDetalleOrden/{OrdenId}");
+        Navigation.NavigateTo($"/AgregarAreaEnAreaDetalleOrden/{NroOT}");
     }
 
     private IEnumerable<AreaDetalleOrdenListaDTO> FiltrarAreas()

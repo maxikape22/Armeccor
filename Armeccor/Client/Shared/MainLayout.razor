@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@using System.Text.Json.Serialization
+@* @inherits LayoutComponentBase
 @inject NavigationManager NavManager
 
 @{
@@ -169,3 +170,239 @@
         color: #777;
     }
 </style>
+ *@
+
+
+@inherits LayoutComponentBase
+@inject NavigationManager NavManager
+@inject IJSRuntime JS
+@inject HttpClient Http
+
+@{
+    var isHome = NavManager.Uri.EndsWith("/");
+}
+
+<style>
+    .layout-background {
+        background-image: url('https://www.adrianmercado.com.ar/blog/wp-content/uploads/2023/05/crecimiento-de-empleo-en-la-zona-metalurgica.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+        width: 100%;
+    }
+
+    .overlay {
+        background-color: rgba(0, 0, 0, 0.4);
+        min-height: 100vh;
+        width: 100%;
+    }
+
+    .page {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    .sidebar {
+        width: 250px;
+        background-color: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(8px);
+    }
+
+    main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .content {
+        flex: 1;
+    }
+
+    .top-header {
+        display: flex;
+        align-items: center;
+        height: 50px;
+        background-color: #f8f9fa;
+    }
+
+    .login-wrapper {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8f9fa;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 420px;
+        background: #fff;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .brand-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #0d6efd;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+</style>
+
+<div class="@(isHome ? "layout-background" : "")">
+    @if (!isAuthenticated)
+    {
+        <!-- LOGIN -->
+        <div class="login-wrapper">
+            <div class="login-card">
+                <div class="brand-title">Taller Armeccor</div>
+                <h5 class="mb-3 text-center">Ingresar</h5>
+
+                <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="mb-3">
+                        <label class="form-label">Usuario</label>
+                        <InputText class="form-control"
+                                   @bind-Value="loginModel.Username" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Contraseña</label>
+                        <InputText class="form-control"
+                                   type="password"
+                                   @bind-Value="loginModel.Password" />
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-primary w-100"
+                            disabled="@(!IsFormValid || isSubmitting)">
+                        @(isSubmitting ? "Ingresando..." : "Ingresar")
+                    </button>
+
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger mt-3">
+                            @errorMessage
+                        </div>
+                    }
+                </EditForm>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- TU LAYOUT ORIGINAL (SIN CAMBIOS) -->
+        @if (isHome)
+        {
+            <div class="overlay">
+                <div class="page">
+                    <div class="sidebar">
+                        <NavMenu />
+                    </div>
+                    <main>
+                        <div class="top-row px-4 top-header">
+                            <NotificationBell />
+                        </div>
+                    </main>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="page">
+                <div class="sidebar">
+                    <NavMenu />
+                </div>
+                <main>
+                    <div class="top-row px-4 top-header">
+                        <NotificationBell />
+                    </div>
+
+                    <article class="content px-4">
+                        @Body
+                    </article>
+                </main>
+            </div>
+        }
+    }
+</div>
+
+
+
+@code {
+    private bool isAuthenticated;
+    private bool isSubmitting;
+    private string? errorMessage;
+
+    private LoginModel loginModel = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var token = await JS.InvokeAsync<string>("sessionStorage.getItem", "authToken");
+        isAuthenticated = !string.IsNullOrWhiteSpace(token);
+    }
+
+    private bool IsFormValid =>
+        !string.IsNullOrWhiteSpace(loginModel.Username) &&
+        !string.IsNullOrWhiteSpace(loginModel.Password);
+
+    private async Task HandleLogin()
+    {
+        errorMessage = null;
+        isSubmitting = true;
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync(
+                "api/auth/login", loginModel);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content
+                    .ReadFromJsonAsync<LoginResponse>();
+
+                if (!string.IsNullOrWhiteSpace(result?.Token))
+                {
+                    await JS.InvokeVoidAsync(
+                        "sessionStorage.setItem",
+                        "authToken",
+                        result.Token);
+
+                    isAuthenticated = true;
+                }
+                else
+                {
+                    errorMessage = "Respuesta inválida del servidor.";
+                }
+            }
+            else
+            {
+                errorMessage = "Usuario o contraseña incorrectos.";
+            }
+        }
+        catch
+        {
+            errorMessage = "No se pudo conectar con el servidor.";
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private class LoginModel
+    {
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+
+    private class LoginResponse
+    {
+        public string Token { get; set; } = string.Empty;
+    }
+}

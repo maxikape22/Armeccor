@@ -25,5 +25,7 @@ namespace DTO.ObjetosDTO
         public int? PlanoId { get; set; } // puede ser null si no se cargó aún
         public string NombreCliente { get; set; } // Aplanado del Cliente
         public string AreaActual { get; set; } //Aplanado de Area
+        public DateTime? FechaBaja { get; set; }
+        public bool EstaActivo { get; set; }
     }
 }

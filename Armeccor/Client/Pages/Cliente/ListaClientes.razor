@@ -55,6 +55,7 @@ else
 
 @code
 {
+
     private List<Cliente> clientes;
     private Cliente cliente = new Cliente();
     private bool editando = false;
@@ -83,7 +84,9 @@ else
             {
                 clientes.RemoveAll(a => a.Id == id);
                 await JS.InvokeVoidAsync("alert", "Cliente eliminado.");
+                await OnInitializedAsync();
             }
+
             else
             {
                 var body = await resp.Content.ReadAsStringAsync();

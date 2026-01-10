@@ -1,0 +1,95 @@
+﻿@page "/Estantes/Agregar"
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<h3>Registrar Estante</h3>
+
+<div class="card p-3 shadow-sm" style="max-width:500px">
+
+    <div class="mb-3">
+        <label class="form-label">Descripción</label>
+        <input class="form-control"
+               @bind="estante.Descripcion"
+               placeholder="Ej: Repuestos pequeños" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Insumo</label>
+        <select class="form-select" @bind="estante.InsumoId">
+            <option value="">-- Seleccionar insumo --</option>
+            @foreach (var i in insumos)
+            {
+                <option value="@i.Id">
+                    @i.Nombre (@i.CantDisponible)
+                </option>
+            }
+        </select>
+    </div>
+
+
+   @*   <div class="form-check mb-3" >
+        <input class="form-check-input DISABLED"
+               type="checkbox"
+               @bind="estante.Activo == TRUE " />
+        <label class="form-check-label">
+            Estante activo
+        </label>
+    </div>  *@
+
+    <div class="d-flex gap-2">
+        <button class="btn btn-success" @onclick="Guardar">
+            Guardar
+        </button>
+        <button class="btn btn-secondary" @onclick="Cancelar">
+            Cancelar
+        </button>
+    </div>
+
+</div>
+
+@code
+{
+    private EstanteDTO estante = new();
+    private List<CrearInsumoDTO> insumos = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ListarInsumos();
+    }
+    private async Task Guardar()
+    {
+        if (string.IsNullOrWhiteSpace(estante.Descripcion))
+        {
+            await JS.InvokeVoidAsync("alert", "La descripción es obligatoria.");
+            return;
+        }
+
+        var resp = await Http.PostAsJsonAsync("api/Estantes", estante);
+
+        if (resp.IsSuccessStatusCode)
+        {
+            await JS.InvokeVoidAsync("alert", "Estante registrado correctamente.");
+            Navigation.NavigateTo("/Estantes");
+        }
+        else
+        {
+            var error = await resp.Content.ReadAsStringAsync();
+            await JS.InvokeVoidAsync("alert", error);
+        }
+    }
+
+    private async Task ListarInsumos()
+    {
+        var resp = await Http.GetFromJsonAsync<List<CrearInsumoDTO>>("api/Insumos");
+        if (resp != null)
+        {
+            insumos = resp;
+        } 
+    }
+
+    private void Cancelar()
+    {
+        Navigation.NavigateTo("/Estantes");
+    }
+}

@@ -1,15 +1,15 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Berserker\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj": {}
+    "C:\\Users\\Berserker\\source\\repos\\Armeccor\\DTO\\DTO.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Berserker\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj": {
+    "C:\\Users\\Berserker\\source\\repos\\Armeccor\\DTO\\DTO.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Berserker\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj",
+        "projectUniqueName": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\DTO\\DTO.csproj",
         "projectName": "DTO",
-        "projectPath": "C:\\Users\\Berserker\\Source\\Repos\\Armeccor\\DTO\\DTO.csproj",
+        "projectPath": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\DTO\\DTO.csproj",
         "packagesPath": "C:\\Users\\Berserker\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\Berserker\\Source\\Repos\\Armeccor\\DTO\\obj\\",
         "projectStyle": "PackageReference",

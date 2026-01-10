@@ -8,5 +8,7 @@ namespace Armeccor.Datos.Entidades
         [Required, MaxLength(100)]
         public string NombreArea { get; set; }
         public ICollection<AreaDetalleOrden> AreaOrdenes { get; set; }
+        public DateTime? FechaBaja { get; set; }
+        public bool EstaActivo { get; set; }
     }
 }

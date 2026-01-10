@@ -16,5 +16,7 @@
         public bool EntregaParcial { get; set; }
         public bool EntregaTotal { get; set; }
         public string NuevoEstado { get; set; }
+        public DateTime? FechaBaja { get; set; }
+        public bool EstaActivo { get; set; }
     }
 }

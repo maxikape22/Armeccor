@@ -22,8 +22,11 @@ namespace Armeccor.Datos.Entidades
         public int UnidadMedidaId { get; set; }
         public UnidadMedida UnidadBase { get; set; }
         public decimal CantDisponible { get; set; } // 🔥 decimal SIEMPRE
-        public DateTime? FechaBorrado { get; set; }
         public ICollection<InsumoDetalleOrden> InsumoOrdenes { get; set; }
         public ICollection<PedidoDetalleInsumo> DetallePedidos { get; set; }
+        public int? EstanteId { get; set; }
+        public Estante? Estante { get; set; }
+        public DateTime? FechaBorrado { get; set; }
+        public bool EstaActivo { get; set; }
     }
 }

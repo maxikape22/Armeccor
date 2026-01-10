@@ -1,5 +1,6 @@
 ﻿using Armeccor.Datos;
 using Armeccor.Datos.Entidades;
+using Armeccor.Datos.Migrations;
 using AutoMapper;
 using DTO.ObjetosDTO;
 using Microsoft.AspNetCore.Hosting;
@@ -80,6 +81,7 @@ namespace Armeccor.Controllers
         public async Task<ActionResult<List<PlanoFiltroDTO>>> ObtenerPlanosPorNroOT(int nroOT)
         {
             var orden = await context.Ordenes
+                .Where(o => o.EstaActivo)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(o => o.NroOT == nroOT);
 
@@ -96,7 +98,9 @@ namespace Armeccor.Controllers
                     RutaOriginal = p.RutaOriginal,
                     FechaCreacion = p.FechaCreacion,
                     NombreOrden = orden.NombreOrden,
-                    OrdenId = orden.Id
+                    OrdenId = orden.Id,
+                    EstaActivo = p.EstaActivo,
+                    FechaBaja = p.FechaBaja,
                 })
                 .ToListAsync();
 
@@ -188,6 +192,9 @@ namespace Armeccor.Controllers
                 FechaCreacion = DateTime.Now,
                 OrdenId = orden.Id
             };
+
+            plano.EstaActivo = true;
+            plano.FechaBaja = null;
 
             context.Planos.Add(plano);
             await context.SaveChangesAsync();
@@ -333,6 +340,44 @@ namespace Armeccor.Controllers
             return File(memoryStream.ToArray(), "application/zip", nombreZip);
         }
 
+        //[HttpDelete("EliminarPlano")]
+        //public async Task<IActionResult> EliminarPlano(int NroOT, string ruta)
+        //{
+        //    // Buscar la orden con ese NroOT
+        //    var orden = await context.Ordenes
+        //        .Include(o => o.Planos)
+        //        .FirstOrDefaultAsync(o => o.NroOT == NroOT);
+
+        //    if (orden == null)
+        //        return NotFound($"No se encontró la orden con NroOT: {NroOT}");
+
+        //    // Buscar el plano dentro de la orden por la ruta
+        //    var plano = orden.Planos
+        //        .FirstOrDefault(p => p.RutaSVG == ruta);
+
+        //    if (plano == null)
+        //        return NotFound($"No se encontró el plano con ruta {ruta} en la orden {NroOT}");
+
+        //    // Eliminar archivo físico
+        //    var rutaFisica = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", ruta.Replace("/", "\\"));
+        //    if (System.IO.File.Exists(rutaFisica))
+        //    {
+        //        System.IO.File.Delete(rutaFisica);
+        //    }
+
+        //    if (!plano.EstaActivo)
+        //        return BadRequest("El plano ya está dado de baja.");
+
+        //    plano.EstaActivo = false;
+        //    plano.FechaBaja = DateTime.Now;
+
+        //    // Eliminar registro en la base de datos
+        //    context.Planos.Remove(plano);
+        //    await context.SaveChangesAsync();
+
+        //    return Ok($"Plano con ruta {ruta} de la orden {NroOT} eliminado correctamente.");
+        //}
+
         [HttpDelete("EliminarPlano")]
         public async Task<IActionResult> EliminarPlano(int NroOT, string ruta)
         {
@@ -351,19 +396,18 @@ namespace Armeccor.Controllers
             if (plano == null)
                 return NotFound($"No se encontró el plano con ruta {ruta} en la orden {NroOT}");
 
-            // Eliminar archivo físico
-            var rutaFisica = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", ruta.Replace("/", "\\"));
-            if (System.IO.File.Exists(rutaFisica))
-            {
-                System.IO.File.Delete(rutaFisica);
-            }
+            if (!plano.EstaActivo)
+                return BadRequest("El plano ya está dado de baja.");
 
-            // Eliminar registro en la base de datos
-            context.Planos.Remove(plano);
+            // Baja lógica
+            plano.EstaActivo = false;
+            plano.FechaBaja = DateTime.Now;
+
             await context.SaveChangesAsync();
 
-            return Ok($"Plano con ruta {ruta} de la orden {NroOT} eliminado correctamente.");
+            return Ok($"Plano con ruta {ruta} de la orden {NroOT} dado de baja correctamente.");
         }
+
 
         [HttpGet("DescargarPlanoPorRuta")]
         public IActionResult DescargarPlanoPorRuta(string ruta)

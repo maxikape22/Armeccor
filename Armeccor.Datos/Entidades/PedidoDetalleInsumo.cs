@@ -14,5 +14,7 @@
         public string Estado { get; set; } //--> PARA RECIBIR EL ESTADO; EJ:° --> "RECIBIDO"
         public bool EntregaParcial { get; set; }
         public bool EntregaTotal { get; set; }
+        public DateTime? FechaBaja { get; set; }
+        public bool EstaActivo { get; set; }
     }
 }

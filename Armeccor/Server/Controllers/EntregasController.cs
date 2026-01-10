@@ -4,6 +4,7 @@ using AutoMapper;
 using DTO.ObjetosDTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,52 +24,23 @@ namespace Armeccor.Server.Controllers
             this._mapper = mapper;
         }
 
-        #region
 
         [HttpGet]
-        public async Task<IEnumerable<EntregaDetalleDTO>> GetEntregasConOrdenAsync()
+        public async Task<ActionResult<EntregaDetalleDTO>> GetEntregasConOrdenAsync()
         {
-            var entregasConOrden = context.Entregas.Include(e => e.Orden).Include(x=>x.Medio_De_Pago);
-            var entregasList = await entregasConOrden.ToListAsync();
-            var entregasDTO = _mapper.Map<IEnumerable<EntregaDetalleDTO>>(entregasList);
-            return entregasDTO;
+            //var entregasConOrden = context.Entregas.Where(e => e.EstaActivo);//.Include(e => e.Orden).Include(x=>x.Medio_De_Pago);
+            //var entregasList = await entregasConOrden.Include(e => e.Orden).Include(x => x.Medio_De_Pago).ToListAsync();
+            //var entregasDTO = _mapper.Map<List<EntregaDetalleDTO>>(entregasList);
+            //return Ok(entregasDTO);
+            var entregas = await context.Entregas
+              .Where(d => d.EstaActivo)
+              .Include(i => i.Orden)
+              .Include(i => i.Medio_De_Pago)
+              .ToListAsync();
+
+            var dto = _mapper.Map<List<EntregaDetalleDTO>>(entregas);
+            return Ok(dto);
         }
-
-        //[HttpGet("{id:int}")]
-        //public async Task<ActionResult<CrearEntregaDTO>> GetEntrega(int id)
-        //{
-        //    var entrega = await context.Entregas
-        //                               .Include(e => e.Orden) // Incluye la relación
-        //                               .FirstOrDefaultAsync(x => x.Id == id);
-
-        //    if (entrega is null)
-        //    {
-        //        return NotFound($"No se encontraron entregas con el Id {id}");
-        //    }
-
-        //    return Ok(_mapper.Map<CrearEntregaDTO>(entrega));
-        //}
-
-
-        //[HttpPost]
-        //public async Task<ActionResult<CrearEntregaDTO>> PostEntrega(CrearEntregaDTO crearEntregaDTO)
-        //{
-        //    var ordenExiste = await context.Ordenes.AnyAsync(c => c.Id == crearEntregaDTO.IdOrden);
-        //    if (!ordenExiste)
-        //    {
-        //        return BadRequest($"La orden con ID {crearEntregaDTO.IdOrden} no existe.");
-        //    }
-
-        //    var entrega = _mapper.Map<Entrega>(crearEntregaDTO);
-
-        //    context.Entregas.Add(entrega);
-
-        //    await context.SaveChangesAsync();
-
-        //    var entregaDTO = _mapper.Map<CrearEntregaDTO>(entrega);
-        //    return Ok(entregaDTO);
-        //}
-        #endregion
 
 
         [HttpPut("ActualizacionPorEstado")]
@@ -100,13 +72,12 @@ namespace Armeccor.Server.Controllers
                 NombreOrden = entrega.Orden?.NombreOrden ?? entrega.Orden?.Descripcion ?? "Sin nombre",
                 Entregado = entrega.Entregado,
                 MedioDePago = entrega.Medio_De_Pago?.Nombre_Medio ?? "No especificado",
-                FechaEntrega = entrega.Orden!.FechaEntrega
+                FechaEntrega = entrega.Orden!.FechaEntrega,
+                EstaActivo = entrega.EstaActivo
             };
 
             return Ok(dto);
         }
-
-
 
 
         [HttpPost]
@@ -150,7 +121,8 @@ namespace Armeccor.Server.Controllers
             {
                 Entregado = dto.Entregado,
                 OrdenId = dto.IdOrden,
-                MedioDePagoId = medioId
+                MedioDePagoId = medioId,
+                EstaActivo = true
             };
 
             context.Entregas.Add(entidad);
@@ -175,15 +147,20 @@ namespace Armeccor.Server.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteEntrega(int id)
         {
-            var entrega = await context.Entregas.FindAsync(id);
+            var entrega = await context.Entregas.FirstOrDefaultAsync(e => e.Id == id);
+
             if (entrega == null)
-            {
-                return NotFound();
-            }
-            context.Entregas.Remove(entrega);
+                return NotFound("Entrega no encontrada.");
+
+            if (!entrega.EstaActivo)
+                return BadRequest("La entrega ya está dada de baja.");
+
+            entrega.EstaActivo = false;
+            entrega.FechaBaja = DateTime.Now;
+
             await context.SaveChangesAsync();
-            var entregaDTO = _mapper.Map<CrearEntregaDTO>(entrega);
-            return Ok(entregaDTO);
+
+            return NoContent();
         }
 
         [HttpPut("{id:int}")]

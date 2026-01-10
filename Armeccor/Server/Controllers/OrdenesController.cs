@@ -94,6 +94,7 @@ namespace Armeccor.Server.Controllers
             var query = context.Ordenes
                 .Include(o => o.Cliente)
                 .Where(e => e.Estado == "Abierta")
+                .Where(e=>e.EstaActivo)
                 .Include(o => o.Planos)
                 .Include(o => o.Entregas)
                 .Include(o => o.AreaDetalleOrdenes)
@@ -198,21 +199,24 @@ namespace Armeccor.Server.Controllers
                 .ToListAsync();
             return Ok(ordenes);
         }
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<OrdenDetalleDTO>> GetOrden(int id)
+
+
+        [HttpGet("{NroOT:int}")]
+        public async Task<ActionResult<OrdenDetalleDTO>> GetOrden(int NroOT)
         {
             var orden = await context.Ordenes
                 .Include(o => o.Cliente)
                 .Include(o => o.Planos)
                 .Include(o => o.Entregas)
-                .FirstOrDefaultAsync(x => x.Id == id);
+                .FirstOrDefaultAsync(x => x.NroOT == NroOT);
 
             if (orden is null)
             {
-                return NotFound($"No se encontró el registro solicitado de Id: {id}");
+                return NotFound($"No se encontró el registro solicitado de Nro OT: {NroOT}");
             }
             return _mapper.Map<OrdenDetalleDTO>(orden);
         }
+
 
         [HttpPost]
         public async Task<ActionResult<CrearOrdenDTO>> PostOrden(CrearOrdenDTO crearOrdenDTO)
@@ -234,6 +238,8 @@ namespace Armeccor.Server.Controllers
             while (await context.Ordenes.AnyAsync(o => o.NroOT == nrogenerado));
             orden.NroOT = nrogenerado;
 
+            orden.EstaActivo = true;
+            orden.FechaBaja = null;
 
             if (crearOrdenDTO.FechaPactada <= crearOrdenDTO.FechaInicio)
                 return Conflict("La fecha pactada debe ser mayor a la fecha de inicio.");
@@ -268,15 +274,32 @@ namespace Armeccor.Server.Controllers
         [HttpDelete("{NroOT:int}")]
         public async Task<ActionResult> DeleteOrden(int NroOT)
         {
+            //var orden = await context.Ordenes.FirstOrDefaultAsync(e => e.NroOT == NroOT);
+            //if (orden == null)
+            //{
+            //    return NotFound($"No se pudo borrar la orden N°: {NroOT}. No encontrado.");
+            //}
+            //context.Ordenes.Remove(orden);
+            //await context.SaveChangesAsync();
+            //return NoContent();
+
             var orden = await context.Ordenes.FirstOrDefaultAsync(e => e.NroOT == NroOT);
+
             if (orden == null)
-            {
-                return NotFound($"No se pudo borrar la orden N°: {NroOT}. No encontrado.");
-            }
-            context.Ordenes.Remove(orden);
+                return NotFound("Orden no encontrada.");
+
+            if (!orden.EstaActivo)
+                return BadRequest("La orden ya fue dada de baja.");
+
+            orden.EstaActivo = false;
+            orden.FechaBaja = DateTime.Now;
+
             await context.SaveChangesAsync();
+
             return NoContent();
         }
+
+
         [HttpGet("OrdenConAreas")]
         public async Task<ActionResult<Orden>> GetOrdenConAreas(int id)
         {
@@ -312,7 +335,8 @@ namespace Armeccor.Server.Controllers
     [FromQuery] int tamanoPagina = 4)
         {
             // Query base con includes
-            var baseQuery = context.Ordenes
+            var baseQuery = context.Ordenes                          
+                .Where(e => e.EstaActivo)
                 .Include(o => o.Cliente)
                 .Include(o => o.Planos)
                 .Include(o => o.Entregas)

@@ -12,5 +12,7 @@ namespace Armeccor.Datos.Entidades
         // 🔑 Clave foránea hacia Orden
         public int OrdenId { get; set; }
         public Orden Orden { get; set; }
+        public DateTime? FechaBaja { get; set; }
+        public bool EstaActivo { get; set; }
     }
 }

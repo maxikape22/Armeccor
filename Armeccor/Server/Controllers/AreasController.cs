@@ -5,6 +5,7 @@ using DTO.ObjetosDTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,7 +27,7 @@ namespace Armeccor.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AreaListaDTO>>> GetAreas()
         {
-            var areas = await context.Areas.ToListAsync();
+            var areas = await context.Areas.Where(e=>e.EstaActivo).ToListAsync();
             return Ok(areas);
         }
 
@@ -75,15 +76,30 @@ namespace Armeccor.Server.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteArea(int id)
         {
-            var area = await context.Areas.FindAsync(id);
+            //var area = await context.Areas.FindAsync(id);
+            //if (area == null)
+            //{
+            //    return NotFound($"No se encontró el área de Id: {id}");
+            //}
+            //context.Areas.Remove(area);
+            //await context.SaveChangesAsync();
+            //var areaDTO = _mapper.Map<CrearAreaDTO>(area);
+            //return Ok(areaDTO);
+
+            var area = await context.Areas.FirstOrDefaultAsync(e => e.Id == id);
+
             if (area == null)
-            {
-                return NotFound($"No se encontró el área de Id: {id}");
-            }
-            context.Areas.Remove(area);
+                return NotFound("Área no encontrada.");
+
+            if (!area.EstaActivo)
+                return BadRequest("El área ya está dada de baja.");
+
+            area.EstaActivo = false;
+            area.FechaBaja = DateTime.Now;
+
             await context.SaveChangesAsync();
-            var areaDTO = _mapper.Map<CrearAreaDTO>(area);
-            return Ok(areaDTO);
+
+            return NoContent();
         }
 
         [HttpDelete("BorrarPorNombreArea/{nombreArea}")]

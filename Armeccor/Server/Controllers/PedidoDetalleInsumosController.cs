@@ -188,7 +188,8 @@ namespace Armeccor.Server.Controllers
         [HttpGet("ListarDetalleInsumos")]
         public async Task<ActionResult<IEnumerable<PedidoDetalleInsumoDTO>>> GetDetalleInsumos()
         {
-            var detalles = await _context.PedidoDetalleInsumos              
+            var detalles = await _context.PedidoDetalleInsumos
+                .Where(pd => pd.EstaActivo)
                 .Include(p => p.Insumo)
                     .ThenInclude(i => i.InsumoOrdenes)
                     .ThenInclude(io => io.Orden)          
@@ -268,11 +269,58 @@ namespace Armeccor.Server.Controllers
                     Item = i.Nombre,
                     Cantidad = (int)i.CantDisponible,
                     FechaUso = DateTime.Now,
-                    Estado = "Pendiente"
+                    Estado = "Pendiente",
                 })
                 .ToListAsync();
 
             return Ok(lista);
+        }
+
+        [HttpDelete("EliminacionLogicaEnVezDeFisica")]
+        public async Task<IActionResult> EliminacionLogica(int id)
+        {
+            var estante = await _context.PedidoDetalleInsumos.FirstOrDefaultAsync(e => e.Id == id);
+
+            if (estante == null)
+                return NotFound("Estante no encontrado.");
+
+            if (!estante.EstaActivo)
+                return BadRequest("El estante ya está dado de baja.");
+
+            estante.EstaActivo = false;
+            estante.FechaBaja = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPut("EditarItemPedidoDTO/{id:int}")]
+        public async Task<IActionResult> EditarItemPedidoDTO(int id, PedidoDetalleInsumoDTO dto)
+        {
+            var detalle = await _context.PedidoDetalleInsumos.FindAsync(id);
+            if (detalle == null)
+                return NotFound("Detalle de pedido no encontrado.");
+            // Mapeo de los campos editables desde el DTO
+            detalle.Item = dto.Item;
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+
+
+        [HttpGet("EditarItemPedidoDTO")]
+        public async Task<ActionResult<PedidoDetalleInsumoDTO>> ObtenerItemPedidoDTO(int id)
+        {
+            var detalle = await _context.PedidoDetalleInsumos
+                .Where(pd => pd.Id == id && pd.EstaActivo == true)
+                .ProjectTo<PedidoDetalleInsumoDTO>(_mapper.ConfigurationProvider)
+                .SingleOrDefaultAsync();
+
+            if (detalle == null)
+                return NotFound($"No se encontró el detalle con ID {id}");
+
+            return Ok(detalle);
         }
 
     }

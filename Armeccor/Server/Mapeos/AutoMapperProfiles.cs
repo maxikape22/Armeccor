@@ -76,6 +76,9 @@ namespace Armeccor.Server.Mapeos
                 .ForMember(dest => dest.MedioDePago,
                    opt => opt.
                    MapFrom(src => src.Medio_De_Pago != null ? src.Medio_De_Pago.Nombre_Medio : string.Empty))
+                .ForMember(dest => dest.EstaActivo,
+                   opt => opt.
+                   MapFrom(src => src.EstaActivo == true))
                 .ReverseMap();
 
             // Para mostrar Entregas (DTO con Nombre del medio)
@@ -135,6 +138,10 @@ namespace Armeccor.Server.Mapeos
                 .MapFrom(src => src.Insumo.Nombre)); // <-- ¡CLAVE!
 
             CreateMap<InsumoDetalleOrden, InsumoDetalleOrdenDTO>()
+
+           .ForMember(d=>d.NroOT, 
+               o=>o.MapFrom(s=>s.Orden.NroOT))
+
            .ForMember(d => d.Nombre,
                o => o.MapFrom(s => s.Insumo.Nombre))
 
@@ -257,6 +264,22 @@ namespace Armeccor.Server.Mapeos
             CreateMap<ConversionUnidadResultadoDTO, UnidadMedida>()
                 .ForMember(x => x.Id, j => j.MapFrom(v => v.UnidadOrigenId))
                 .ReverseMap();
+
+            // ================== ESTANTE ==================
+
+            CreateMap<Estante, EstanteDTO>().ReverseMap();
+
+            CreateMap<Estante, EstanteDTO>()
+                .ForMember(d => d.CantidadInsumo,
+                     m => m
+                .MapFrom(o => o.Insumos
+                .Count()))
+                .ForMember(d => d.NombreInsumo,
+                     m => m
+                .Ignore());
+
+
+
         }
     } 
 }

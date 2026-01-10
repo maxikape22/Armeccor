@@ -4,7 +4,9 @@ using AutoMapper;
 using DTO.ObjetosDTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Armeccor.Server.Controllers
@@ -34,7 +36,7 @@ namespace Armeccor.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CrearClienteDTO>>> GetClientes()
         {
-            var clientes = await context.Clientes.ToListAsync();
+            var clientes = await context.Clientes.Where(e=>e.EstaActivo).ToListAsync();
             return Ok(clientes);
         }
 
@@ -64,15 +66,20 @@ namespace Armeccor.Server.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteCliente(int id)
         {
-            var cliente = await context.Clientes.FindAsync(id);
+            var cliente = await context.Clientes.FirstOrDefaultAsync(e => e.Id == id);
+
             if (cliente == null)
-            {
-                return NotFound($"No se encontró el cliente: {cliente?.Nombre} para eliminar");
-            }
-            context.Clientes.Remove(cliente);
+                return NotFound("Cliente no encontrado.");
+
+            if (!cliente.EstaActivo)
+                return BadRequest("El cliente fue dado de baja.");
+
+            cliente.EstaActivo = false;
+            cliente.FechaBaja = DateTime.Now;
+
             await context.SaveChangesAsync();
-            var clienteDTO = _mapper.Map<CrearClienteDTO>(cliente);
-            return Ok(clienteDTO);
+
+            return NoContent();
         }
 
     }

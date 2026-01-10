@@ -19,5 +19,7 @@ namespace Armeccor.Datos.Entidades
         = "Formato de teléfono inválido para Argentina. Ingrese todo junto, sin espacios ni guiones.")]
         public string Telefono { get; set; }
         public ICollection<Orden> Ordenes { get; set; }
+        public DateTime? FechaBaja { get; set; }
+        public bool EstaActivo { get; set; }
     }
 }

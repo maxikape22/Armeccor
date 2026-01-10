@@ -115,18 +115,35 @@ else
     </table>
 }
 
-@code {
+<!-- ✅ ACÁ VA EL BOTÓN (SIEMPRE VISIBLE) -->
+<button class="btn btn-secondary mt-3"
+        @onclick="VolverAOrdenes">
+    Volver a ordenes
+</button>
+
+@code 
+{
+    void VolverAOrdenes()
+    {
+        Navigation.NavigateTo("/Ordenes");
+    }
+
+
+
     [Parameter] public int NroOT { get; set; }
 
     private string nombreOrden = "";
+    [Parameter] public string nombreCliente { get; set; } = "";
     private int ordenId = 0;
-    private string nombreCliente = "";
+    //private string nombreCliente = "";
     private string filtroNombre = string.Empty;
 
     // Lista principal de insumos asociados a la orden
     private List<InsumoDetalleOrdenDTO> InsumoDTO = new();
     // Lista que se muestra filtrada según búsqueda
     private List<InsumoDetalleOrdenDTO> InsumoDTOFiltrados = new();
+    private InsumoDetalleOrdenDTO detalleInsumo = new();
+    private OrdenDetalleDTO ordenDetalle = new();
 
     // Método que se ejecuta automáticamente al cargar la página
     protected override async Task OnInitializedAsync()
@@ -140,6 +157,9 @@ else
     {
         try
         {
+            // detalleInsumo.NroOT = NroOT;
+            // ordenDetalle.NroOT = NroOT;
+
             var orden = await Http.GetFromJsonAsync<OrdenDetalleDTO>($"api/Ordenes/{NroOT}");
             if (orden != null)
             {
@@ -161,7 +181,9 @@ else
     {
         try
         {
-            var url = $"api/Insumo_Detalle_Orden/AgrupadosPorOrden/{ordenId}";
+            //detalleInsumo.NroOT = NroOT;
+            //ordenDetalle.NroOT = NroOT;
+            var url = $"api/Insumo_Detalle_Orden/AgrupadosPorOrden/{NroOT}";
             InsumoDTO = await Http.GetFromJsonAsync<List<InsumoDetalleOrdenDTO>>(url) ?? new();
             InsumoDTOFiltrados = InsumoDTO;
         }
@@ -174,7 +196,9 @@ else
     // Redirige a la página para agregar nuevos insumos a la orden
     private void IrANuevoInsumo()
     {
-        Navigation.NavigateTo($"/AgregarInsumosOrden/{ordenId}");
+        //detalleInsumo.NroOT = NroOT;
+        //ordenDetalle.NroOT = NroOT;
+        Navigation.NavigateTo($"/AgregarInsumosOrden/{NroOT}");
     }
 
     // Método principal: libera una cantidad de insumo de la orden

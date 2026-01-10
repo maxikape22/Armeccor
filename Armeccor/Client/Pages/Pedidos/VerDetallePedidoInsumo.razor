@@ -10,12 +10,23 @@
     + Registrar detalle del pedido
 </button> *@
 
+
+
+
 @if (detalles == null)
 {
     <p>No se encontraron detalles del pedido</p>
 }
 else
 {
+    <!-- Etiqueta fija que se ve SIEMPRE al cargar la página -->
+    <div class="d-flex justify-content-end mb-3">
+        <label class="fw-bold text-danger fs-4">
+            Estado: Enviado a proveedor
+        </label>
+    </div>
+
+
     <table class="table table-striped table-bordered mt-3">
         <thead class="table-light">
             <tr>
@@ -29,7 +40,7 @@ else
                 <th>Estado</th>
                 <th>Entrega parcial</th>
                 <th>Entrega total</th>
-                <th>Cambiar estado</th>
+                <th>Acción</th>
             </tr>
         </thead>
         <tbody>
@@ -73,10 +84,6 @@ else
                         </span> *@
                     </td>
 
-
-
-
-
                     <td>
                         <input type="checkbox" checked="@d.EntregaParcial" disabled
                         @onchange="async e => await CambiarEntregaParcial(d.Id, ((ChangeEventArgs)e).Value is bool b && b)" />
@@ -89,7 +96,7 @@ else
                         <span class="ms-2">@((d.EntregaTotal) ? "Sí" : "No")</span>
                     </td>
 
-                    <td style="min-width: 180px">
+                    @* <td style="min-width: 180px">
                         <select class="form-select form-select-sm"
                                 value="@d.Estado"
                                 @onchange="e => CambiarEstado(d.Id, e.Value.ToString())">
@@ -100,8 +107,52 @@ else
                             <option value="Entrega parcial">Entrega parcial</option>
                             <option value="Entrega total">Entrega total</option>
                         </select>
+                    </td> *@
+
+                    <td class="action-cell" style="min-width: 220px">
+                        <div class="dropdown">
+                            <button class="dropdown-toggle btn btn-sm btn-secondary"
+                                    type="button"
+                                    aria-haspopup="true"
+                                    aria-expanded="@(openedDropdownId == d.Id)"
+                                    @onclick="() => ToggleDropdown(d.Id)">
+                                <i class="fas fa-cogs"></i> Opciones
+                            </button>
+
+                            <div class="dropdown-menu @(openedDropdownId == d.Id ? "show" : "")">
+                                <!-- Combo de estados -->
+                                <div class="dropdown-item-text">
+                                    <select class="form-select form-select-sm"
+                                            value="@d.Estado"
+                                            @onchange="e => CambiarEstado(d.Id, e.Value?.ToString())">
+                                        <option value="">Seleccione un estado</option>
+                                        <option value="Recibido">Recibido</option>
+                                        <option value="Solicitado">Solicitado</option>
+                                        <option value="Pendiente">Pendiente</option>
+                                        <option value="Entrega parcial">Entrega parcial</option>
+                                        <option value="Entrega total">Entrega total</option>
+                                    </select>
+                                </div>
+
+                                <div class="dropdown-divider"></div>
+
+                                <!-- Botón Editar -->
+                                <button class="dropdown-item" @onclick="@(() =>                                  
+                                    { IrAEditarPedidoDetallado(d.Id); CloseDropdown(); })">
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+
+
+                                <!-- Botón Eliminar -->
+                                <button class="dropdown-item text-danger" @onclick="@(() => { EliminarPedido(d.Id); CloseDropdown(); })">
+                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                </button>
+                            </div>
+                        </div>
                     </td>
 
+
+                    
                 </tr>
             }
         </tbody>
@@ -112,6 +163,49 @@ else
 
 @code 
 {
+    //Datos del pedido para mostrar en el menú desplegable
+
+    private int? openedDropdownId;
+
+    private void ToggleDropdown(int id)
+    {
+        if (openedDropdownId == id)
+            openedDropdownId = null;
+        else
+            openedDropdownId = id;
+    }
+
+    private void CloseDropdown()
+    {
+        openedDropdownId = null;
+    }
+
+    public void IrAEditarPedidoDetallado(int id)
+    {
+        Navigation.NavigateTo($"/EditarItemPedidoDetalladoDTO/{id}");
+    }
+
+    private async Task EliminarPedido(int id)
+    {
+        var response = await Http.DeleteAsync($"api/PedidoDetalleInsumos/EliminacionLogicaEnVezDeFisica?id={id}");
+
+        if (response.IsSuccessStatusCode)
+        {
+            await JS.InvokeVoidAsync("alert", "Pedido eliminado correctamente.");
+            await OnInitializedAsync(); // Refrescar la lista después de eliminar
+        }
+        else
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            await JS.InvokeVoidAsync("alert", $"Error al eliminar pedido: {error}");
+        }
+    }
+
+    //
+
+
+    PedidoDetalleInsumoDTO Pedido = new PedidoDetalleInsumoDTO();
+
     //Estados
     private readonly List<string> EstadosDisponibles = new()
     {
@@ -157,12 +251,6 @@ else
         detalle.Estado = nuevoEstado;
         await OnInitializedAsync();
     }
-
-
-
-   
-
-
 
     private async Task ActualizarCantidad(int idDetalle, int nuevaCantidad)
     {

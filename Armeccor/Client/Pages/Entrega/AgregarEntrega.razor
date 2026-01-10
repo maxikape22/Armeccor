@@ -149,7 +149,7 @@ else
         if (resp.IsSuccessStatusCode)
         {
             await JS.InvokeVoidAsync("alert", "Entrega guardada.");
-            Nav.NavigateTo("/api/Entregas");
+            Nav.NavigateTo("/Entregas");
         }
         else
         {
@@ -160,6 +160,6 @@ else
 
     private void Cancelar()
     {
-        Nav.NavigateTo("/api/Entregas");
+        Nav.NavigateTo("/Entregas");
     }
 }

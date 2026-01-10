@@ -1,15 +1,15 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Berserker\\Source\\Repos\\Armeccor\\Validaciones\\Validaciones.csproj": {}
+    "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Validaciones\\Validaciones.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Berserker\\Source\\Repos\\Armeccor\\Validaciones\\Validaciones.csproj": {
+    "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Validaciones\\Validaciones.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Berserker\\Source\\Repos\\Armeccor\\Validaciones\\Validaciones.csproj",
+        "projectUniqueName": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Validaciones\\Validaciones.csproj",
         "projectName": "Validaciones",
-        "projectPath": "C:\\Users\\Berserker\\Source\\Repos\\Armeccor\\Validaciones\\Validaciones.csproj",
+        "projectPath": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Validaciones\\Validaciones.csproj",
         "packagesPath": "C:\\Users\\Berserker\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\Berserker\\Source\\Repos\\Armeccor\\Validaciones\\obj\\",
         "projectStyle": "PackageReference",

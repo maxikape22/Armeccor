@@ -147,7 +147,7 @@ else
         return query;
     }
 
-    
+
 
     private async Task Eliminar(int id)
     {
@@ -156,6 +156,7 @@ else
         {
             entregas = entregas?.Where(e => e.Id != id).ToList();
         }
+        await CargarEntregas();
     }
 }
 

@@ -1,12 +1,10 @@
 ﻿using Armeccor.Datos;
 using Armeccor.Datos.Entidades;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using DTO.ObjetosDTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -36,92 +34,6 @@ namespace Armeccor.Server.Controllers
             return Ok(lista);
         }
 
-        //// ✅ Agregar o actualizar insumo en orden (suma cantidades)
-        //[HttpPost]
-        //public async Task<ActionResult<object>> PostCliente(InsumoDetalleOrdenDTO dto)
-        //{
-        //    // Verificar existencia del insumo
-        //    var insumo = await context.Insumos.FirstOrDefaultAsync(x => x.Id == dto.InsumoId);
-        //    if (insumo == null)
-        //        return NotFound($"No se encontró el insumo con Id {dto.InsumoId}");
-
-        //    // Verificar existencia de la orden
-        //    var orden = await context.Ordenes.FirstOrDefaultAsync(x => x.Id == dto.OrdenId);
-        //    if (orden == null)
-        //        return NotFound($"No se encontró la orden con Id {dto.OrdenId}");
-
-        //    // Buscar si ya existe un detalle para ese insumo y orden
-        //    var detalleExistente = await context.InsumoDetalleOrdenes
-        //        .FirstOrDefaultAsync(x => x.OrdenId == dto.OrdenId && x.InsumoId == dto.InsumoId);
-
-        //    if (detalleExistente != null)
-        //    {
-        //        // 🔹 Si ya existe → sumar cantidad
-        //        detalleExistente.Cantidad += dto.Cantidad;
-        //        context.InsumoDetalleOrdenes.Update(detalleExistente);
-        //    }
-        //    else
-        //    {
-        //        // 🔹 Si no existe → crear nuevo detalle
-        //        var nuevoDetalle = new InsumoDetalleOrden
-        //        {
-        //            OrdenId = dto.OrdenId,
-        //            InsumoId = dto.InsumoId,
-        //            Cantidad = dto.Cantidad
-        //        };
-        //        context.InsumoDetalleOrdenes.Add(nuevoDetalle);
-        //    }
-
-        //    // 🔹 Actualizar stock (aunque quede negativo)
-        //    insumo.CantDisponible -= dto.Cantidad;
-
-        //    await context.SaveChangesAsync();
-
-        //    return Ok(new
-        //    {
-        //        Mensaje = $"Se agregó {dto.Cantidad} de {insumo.Nombre} a la orden {dto.OrdenId}.",
-        //        InsumoActualizado = _mapper.Map<CrearInsumoDTO>(insumo)
-        //    });
-        //}
-
-        //[HttpPost]
-        //public async Task<ActionResult<object>> PostCliente(InsumoDetalleOrdenDTO dto)
-        //{
-        //    var insumo = await context.Insumos.FirstOrDefaultAsync(x => x.Id == dto.InsumoId);
-        //    if (insumo == null)
-        //        return NotFound("Insumo no encontrado");
-
-        //    var orden = await context.Ordenes.FirstOrDefaultAsync(x => x.Id == dto.OrdenId);
-        //    if (orden == null)
-        //        return NotFound("Orden no encontrada");
-
-        //    var detalle = await context.InsumoDetalleOrdenes
-        //        .FirstOrDefaultAsync(x => x.OrdenId == dto.OrdenId && x.InsumoId == dto.InsumoId);
-
-        //    if (detalle != null)
-        //        detalle.Cantidad += dto.Cantidad;
-        //    else
-        //        context.InsumoDetalleOrdenes.Add(new InsumoDetalleOrden
-        //        {
-        //            OrdenId = dto.OrdenId,
-        //            InsumoId = dto.InsumoId,
-        //            Cantidad = dto.Cantidad
-        //        });
-
-        //    // ✅ DESCUENTO FÍSICO CORRECTO
-        //    if (insumo.CantDisponible >= dto.Cantidad)
-        //        insumo.CantDisponible -= dto.Cantidad;
-        //    else
-        //        insumo.CantDisponible = 0;
-
-        //    await context.SaveChangesAsync();
-
-        //    return Ok(new
-        //    {
-        //        InsumoActualizado = _mapper.Map<CrearInsumoDTO>(insumo)
-        //    });
-        //}
-
         [HttpPost]
         public async Task<ActionResult<object>> PostCliente(InsumoDetalleOrdenDTO dto)
         {
@@ -129,6 +41,14 @@ namespace Armeccor.Server.Controllers
                 .FirstOrDefaultAsync(x => x.Id == dto.InsumoId);
             if (insumo == null)
                 return NotFound("Insumo no encontrado");
+
+            // ✅ ACÁ
+            if (!insumo.EstaActivo)
+            {
+                insumo.EstaActivo = true;
+                insumo.FechaBorrado = null;
+            }
+            // ✅ FIN ACÁ
 
             var orden = await context.Ordenes
                 .FirstOrDefaultAsync(x => x.Id == dto.OrdenId);
@@ -152,6 +72,10 @@ namespace Armeccor.Server.Controllers
                 detalle.CantidadDescontada += descontadoAhora;
                 detalle.CantidadPendiente += pendienteAhora;
                 detalle.Insuficiente = detalle.CantidadPendiente > 0;
+
+                // 🔴 TAMBIÉN ACÁ
+                detalle.EstaActivo = true;
+                detalle.FechaBaja = null;
             }
             else
             {
@@ -179,122 +103,20 @@ namespace Armeccor.Server.Controllers
             return Ok(new
             {
                 InsumoActualizado = _mapper.Map<CrearInsumoDTO>(insumo)
+
             });
         }
 
-
-
-
-        //[HttpPost]
-        //public async Task<ActionResult<object>> PostCliente(InsumoDetalleOrdenDTO dto)
-        //{
-        //    if (dto.Cantidad <= 0)
-        //        return BadRequest("Cantidad inválida.");
-
-        //    var insumo = await context.Insumos
-        //        .FirstOrDefaultAsync(x => x.Id == dto.InsumoId);
-
-        //    if (insumo == null)
-        //        return NotFound("Insumo no encontrado.");
-
-        //    var detalle = await context.InsumoDetalleOrdenes
-        //        .FirstOrDefaultAsync(x =>
-        //            x.OrdenId == dto.OrdenId &&
-        //            x.InsumoId == dto.InsumoId);
-
-        //    if (detalle == null)
-        //    {
-        //        detalle = new InsumoDetalleOrden
-        //        {
-        //            OrdenId = dto.OrdenId,
-        //            InsumoId = dto.InsumoId,
-        //            Cantidad = 0,
-        //            CantidadDescontada = 0,
-        //            CantidadPendiente = 0,
-        //            Insuficiente = false
-        //        };
-
-        //        context.InsumoDetalleOrdenes.Add(detalle);
-        //    }
-
-        //    // 👉 SOLO se acumula lo pedido
-        //    detalle.Cantidad += dto.Cantidad;
-
-        //    // 👉 descuento real SOLO si hay stock
-        //    int descontar = Math.Min(insumo.CantDisponible, dto.Cantidad);
-        //    insumo.CantDisponible -= descontar;
-
-        //    detalle.CantidadDescontada += descontar;
-
-        //    await context.SaveChangesAsync();
-
-        //    // 🔴 lógica pesada va a otro método
-        //    await RecalcularEstadoInsumo(detalle.Id);
-
-        //    return Ok();
-        //}
-
-        //private async Task RecalcularEstadoInsumo(int detalleId)
-        //{
-        //    var detalle = await context.InsumoDetalleOrdenes
-        //        .FirstAsync(x => x.Id == detalleId);
-
-        //    // 🔹 lo pendiente es TODO lo que no salió del stock
-        //    detalle.CantidadPendiente =
-        //        detalle.Cantidad - detalle.CantidadDescontada;
-
-        //    // 🔹 si hay pendiente → insuficiente
-        //    detalle.Insuficiente = detalle.CantidadPendiente > 0;
-
-        //    await context.SaveChangesAsync();
-        //}
-
-
-
-
-
-
-        //[HttpGet("AgrupadosPorOrden/{ordenId:int}")]
-        //public async Task<ActionResult> GetInsumosAgrupadosPorOrden(int ordenId)
-        //{
-        //    var query = await context.InsumoDetalleOrdenes
-        //        .Include(x => x.Insumo)
-        //        .Where(x => x.OrdenId == ordenId)
-        //        .GroupBy(x => new { x.InsumoId, x.Insumo.Nombre })
-        //        .Select(g => new InsumoDetalleOrdenDTO
-        //        {
-        //            InsumoId = g.Key.InsumoId.Value,
-        //            Nombre = g.Key.Nombre,
-        //            Cantidad = g.Sum(x => x.Cantidad), // 👈 suma positiva o negativa
-        //            OrdenId = ordenId
-        //        })
-        //        .ToListAsync();
-
-        //    return Ok(query);
-        //}
-
-        //[HttpGet("AgrupadosPorOrden/{ordenId:int}")]
-        //public async Task<ActionResult<List<InsumoDetalleOrdenDTO>>>GetInsumosAgrupadosPorOrden(int ordenId)
-        //{
-        //    var lista = await context.InsumoDetalleOrdenes
-        //        .Where(x => x.OrdenId == ordenId)
-        //        .Include(x => x.Insumo)
-
-        //        // 🔹 PROYECCIÓN REAL
-        //        .ProjectTo<InsumoDetalleOrdenDTO>(_mapper.ConfigurationProvider)
-        //        .ToListAsync();
-
-        //    return Ok(lista);
-        //}
-
-        [HttpGet("AgrupadosPorOrden/{ordenId:int}")]
-        public async Task<ActionResult<List<InsumoDetalleOrdenDTO>>>GetInsumosAgrupadosPorOrden(int ordenId)
+        [HttpGet("AgrupadosPorOrden/{NroOT:int}")]
+        public async Task<ActionResult<List<InsumoDetalleOrdenDTO>>>GetInsumosAgrupadosPorOrden(int NroOT)
         {
-            var lista = await context.InsumoDetalleOrdenes
-                .Include(x => x.Insumo)
-                .Where(x => x.OrdenId == ordenId)
+            var lista = await context.InsumoDetalleOrdenes                    
+                .Where(d => d.EstaActivo == true)
+                .Include(x => x.Insumo)                   
+                .Where(x => x.Orden.NroOT == NroOT)
                 .Select(x => new InsumoDetalleOrdenDTO
                 {
+                    Id = x.Id,
                     InsumoId = x.InsumoId.Value,
                     OrdenId = x.OrdenId.Value,
                     Nombre = x.Insumo.Nombre,
@@ -305,42 +127,16 @@ namespace Armeccor.Server.Controllers
                     CantidadPendiente = x.CantidadPendiente,
 
                     // 🔹 estado DERIVADO (fuente de verdad)
-                    Insuficiente = x.CantidadPendiente > 0
+                    Insuficiente = x.CantidadPendiente > 0,
+                    EstaActivo = x.EstaActivo,
+                    FechaBaja = x.FechaBaja
                 })
                 .ToListAsync();
 
             return Ok(lista);
         }
 
-
-
-        //[HttpGet("AgrupadosPorOrden/{ordenId:int}")]
-        //public async Task<ActionResult> GetInsumosAgrupadosPorOrden(int ordenId)
-        //{
-        //    var lista = await context.InsumoDetalleOrdenes
-        //        .Include(x => x.Insumo)
-        //        .Where(x => x.OrdenId == ordenId)
-        //        .Select(x => new InsumoDetalleOrdenDTO
-        //        {
-        //            Id = x.Id,
-        //            InsumoId = x.InsumoId.Value,
-        //            OrdenId = x.OrdenId.Value,
-        //            Nombre = x.Insumo.Nombre,
-
-        //            Cantidad = x.Cantidad,
-        //            CantidadDescontada = x.CantidadDescontada,
-        //            CantidadPendiente = x.CantidadPendiente,
-        //            Insuficiente = x.Insuficiente
-        //        })
-        //        .ToListAsync();
-
-        //    return Ok(lista);
-        //}
-
-
-
-
-        //qmetodo para liberar los insumos que tienen cargados una orden ,
+        //Metodo para liberar los insumos que tienen cargados una orden ,
         [HttpPost("Liberar")]
         public async Task<ActionResult> LiberarInsumo(LiberarInsumoDTO dto)
         {
@@ -423,6 +219,7 @@ namespace Armeccor.Server.Controllers
                 .Include(x => x.Insumo)
                 .Include(x => x.Orden)
                 .Where(x =>
+                    x.EstaActivo == true &&          // 🔴 CLAVE
                     x.Orden.NroOT == nroOt &&
                     x.Insumo.Nombre == nombreInsumo &&
                     x.Insuficiente == true &&
@@ -430,8 +227,14 @@ namespace Armeccor.Server.Controllers
                 )
                 .FirstOrDefaultAsync();
 
+
             if (insumoDetalle == null)
                 return BadRequest("No se encontró un insumo insuficiente válido.");
+
+            // ✅ ACÁ VA — JUSTO ACÁ
+            if (!insumoDetalle.Insumo.EstaActivo)
+                return BadRequest("El insumo está dado de baja.");
+
 
             // 2️⃣ Ejecutar SP usando connection string REAL
             int pedidoId;
@@ -476,7 +279,8 @@ namespace Armeccor.Server.Controllers
                 EsSolicitado = false,
                 Estado = "Pendiente",
                 EntregaParcial = false,
-                EntregaTotal = false
+                EntregaTotal = false,
+                EstaActivo = true
             };
 
             context.PedidoDetalleInsumos.Add(pedidoDetalle);
@@ -496,17 +300,31 @@ namespace Armeccor.Server.Controllers
                 Estado = pedidoDetalle.Estado,
                 NombreInsumoInsuficiente = pedidoDetalle.Item,
                 EntregaParcial = false,
-                EntregaTotal = false
+                EntregaTotal = false,
+                EstaActivo = true
             };
 
             return Ok(response);
         }
 
 
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteLogicoInsumoDetallado(int id)
+        {
+            var insumoDetalle = await context.InsumoDetalleOrdenes.FirstOrDefaultAsync(e => e.Id == id);
 
+            if (insumoDetalle == null)
+                return NotFound("Insumo no encontrado.");
 
+            if (!insumoDetalle.EstaActivo)
+                return BadRequest("El insumo fue dado de baja.");
 
+            insumoDetalle.EstaActivo = false;
+            insumoDetalle.FechaBaja = DateTime.Now;
 
+            await context.SaveChangesAsync();
 
+            return NoContent();
+        }
     }
 }

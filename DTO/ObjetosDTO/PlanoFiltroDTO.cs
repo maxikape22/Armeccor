@@ -9,5 +9,7 @@
         public string NombreOrden { get; set; }
         public int OrdenId { get; set; }
         public int NroOT { get; set; }
+        public DateTime? FechaBaja { get; set; }
+        public bool EstaActivo { get; set; }
     }
 }

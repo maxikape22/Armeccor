@@ -1,43 +1,213 @@
 ﻿@inject INotificationService NotificationService
 @using System.Timers
+@inject NavigationManager Nav
+@inject IJSRuntime JS
 
-<div class="notification-bell-wrapper">
-    <button class="bell-btn" @onclick="ToggleDropdown">
-        <i class="fas fa-bell bell-icon @(UnreadCount > 0 ? "has-notif" : "")"></i>
-        @if (UnreadCount > 0)
-        {
-            <span class="badge">@UnreadCount</span>
-        }
-    </button>
-
-    @if (ShowDropdown)
-    {
-        <div class="notif-panel-right">
-            <div class="notif-header">
-                <span>Notificaciones</span>
-                <button class="mark-read-btn" @onclick="MarkAllAsRead">Marcar todo leído</button>
-                <button class="clear-btn" @onclick="DeleteNotifications">Limpiar</button>
-            </div>
-
-            @if (Notificaciones.Any())
-            {
-                <ul class="notif-list">
-                    @foreach (var notif in Notificaciones.OrderByDescending(n => n.Fecha))
-                    {
-                        <li class="notif-item @(notif.EsLeida ? "" : "unread")">
-                            <strong>@notif.Tipo:</strong> @notif.Mensaje
-                            <br />
-                            <small>@notif.Fecha.ToString("dd/MM/yyyy")</small>
-                        </li>
-                    }
-                </ul>
-            }
-            else
-            {
-                <div class="notif-empty">Sin notificaciones</div>
-            }
-        </div>
+<style>
+    /* ===== CONTENEDOR SUPERIOR ===== */
+    .top-bar-wrapper {
+        position: fixed;
+        top: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        background: #212529; /* barra negra */
+        height: 48px;
+        padding-right: 12px;
+        z-index: 9999;
+        box-shadow: none !important; /* ❌ sin sombra */
     }
+
+    /* ===== ICONOS ===== */
+    .user-icon,
+    .bell-icon {
+        font-size: 28px !important;
+        vertical-align: middle;
+    }
+
+    /* Usuario: blanco */
+    .user-icon,
+    .fa-user-circle {
+        color: #ffffff !important;
+    }
+
+    /* Notificaciones: azul si no hay, verde si hay */
+    .bell-icon {
+        color: #0d6efd !important;
+    }
+
+        .bell-icon.has-notif {
+            color: #28a745 !important;
+        }
+
+    /* Badge de notificaciones */
+    .badge {
+        position: absolute;
+        top: -6px;
+        right: -8px;
+        background: #dc3545;
+        color: white;
+        font-size: 11px;
+        padding: 2px 6px;
+        border-radius: 50%;
+    }
+
+    /* ===== PANEL USUARIO ===== */
+    .user-panel-popup {
+        position: absolute;
+        top: 48px;
+        right: 60px; /* se abre hacia la izquierda de la campana */
+        width: 200px;
+        background: #212529 !important;
+        border-radius: 6px;
+        z-index: 10000;
+        color: white;
+        box-shadow: none !important; /* ❌ sin sombra */
+    }
+
+    /* ===== PANEL NOTIFICACIONES ===== */
+    .notif-panel-popup {
+        position: absolute;
+        top: 48px;
+        right: 12px;
+        width: 320px;
+        background: #ffffff !important;
+        border-radius: 6px;
+        z-index: 10000;
+        color: #0d6efd !important;
+        box-shadow: none !important; /* ❌ sin sombra */
+    }
+
+    /* ===== CONTENIDO PANEL USUARIO ===== */
+    .user-header {
+        padding: 12px;
+        border-bottom: 1px solid #333;
+        color: white;
+    }
+
+    .user-actions {
+        padding: 10px;
+    }
+
+    .logout-btn {
+        width: 100%;
+        background: #dc3323;
+        color: darkblue;
+        border: none;
+        padding: 8px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    /* ===== CONTENIDO PANEL NOTIFICACIONES ===== */
+    .notif-header {
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid #ccc;
+        color: #0d6efd !important;
+    }
+
+    .notif-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        max-height: 260px;
+        overflow-y: auto;
+    }
+
+    .notif-item {
+        padding: 8px 10px;
+        border-bottom: 1px solid #eee;
+        color: #0d6efd !important;
+    }
+
+        .notif-item.unread {
+            background: #f0f8ff;
+        }
+
+    /* ===== BOTONES ===== */
+    .bell-btn,
+    .user-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        margin: 0;
+        position: relative;
+        box-shadow: none !important; /* ❌ sin sombra */
+    }
+
+    .top-bar,
+    .layout-header,
+    .navbar {
+        box-shadow: none !important;
+    }
+
+</style>
+
+<div class="top-bar-wrapper">
+    <!-- Ícono de usuario a la izquierda de notificaciones -->
+    <div class="user-menu-wrapper">
+        <button class="user-btn" @onclick="ToggleUserDropdown">
+            <i class="fas fa-user-circle user-icon"></i>
+        </button>
+
+        @if (ShowUserDropdown)
+        {
+            <div class="user-panel-popup">
+                <div class="user-header">
+                    <strong>Armeccor</strong>
+                </div>
+
+                <div class="user-actions">
+                    <button class="logout-btn" @onclick="Logout">
+                        Cerrar sesión
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Ícono de notificaciones en el extremo derecho -->
+    <div class="notification-bell-wrapper">
+        <button class="bell-btn" @onclick="ToggleDropdown">
+            <i class="fas fa-bell bell-icon @(UnreadCount > 0 ? "has-notif" : "")"></i>
+            @if (UnreadCount > 0)
+            {
+                <span class="badge">@UnreadCount</span>
+            }
+        </button>
+
+        @if (ShowDropdown)
+        {
+            <div class="notif-panel-popup">
+                <div class="notif-header">
+                    <span>Notificaciones</span>
+                    <button class="mark-read-btn" @onclick="MarkAllAsRead">Marcar todo leído</button>
+                    <button class="clear-btn" @onclick="DeleteNotifications">Limpiar</button>
+                </div>
+
+                @if (Notificaciones.Any())
+                {
+                    <ul class="notif-list">
+                        @foreach (var notif in Notificaciones.OrderByDescending(n => n.Fecha))
+                        {
+                            <li class="notif-item @(notif.EsLeida ? "" : "unread")">
+                                <strong>@notif.Tipo:</strong> @notif.Mensaje
+                                <br />
+                                <small>@notif.Fecha.ToString("dd/MM/yyyy")</small>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <div class="notif-empty">Sin notificaciones</div>
+                }
+            </div>
+        }
+    </div>
 </div>
 
 @code {
@@ -53,7 +223,6 @@
     {
         await LoadNotifications();
 
-        // 🔄 Actualización automática cada 30 segundos
         refreshTimer = new Timer(1000);
         refreshTimer.Elapsed += async (_, __) => await InvokeAsync(LoadNotifications);
         refreshTimer.Start();
@@ -68,15 +237,25 @@
     private async Task MarkAllAsRead()
     {
         await NotificationService.MarcarTodasComoLeidas();
-        await LoadNotifications(); // 🔁 Refresca desde la base
+        await LoadNotifications();
         ShowDropdown = false;
     }
-
 
     private async Task DeleteNotifications()
     {
         await NotificationService.LimpiarTodas();
-        Notificaciones.Clear(); // 🧼 Limpia en memoria
+        Notificaciones.Clear();
         ShowDropdown = false;
+    }
+
+    private bool ShowUserDropdown = false;
+
+    private void ToggleUserDropdown() => ShowUserDropdown = !ShowUserDropdown;
+
+    private async Task Logout()
+    {
+        await JS.InvokeVoidAsync("sessionStorage.removeItem", "authToken");
+        ShowUserDropdown = false;
+        Nav.NavigateTo("/", true);
     }
 }

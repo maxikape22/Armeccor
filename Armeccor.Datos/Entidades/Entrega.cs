@@ -12,6 +12,8 @@ namespace Armeccor.Datos.Entidades
         public Orden Orden { get; set; }
         public int MedioDePagoId { get; set; }
         public MedioDePago Medio_De_Pago { get; set; }
+        public DateTime? FechaBaja { get; set; }
+        public bool EstaActivo { get; set; }
     }
 
 }

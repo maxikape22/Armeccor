@@ -1,0 +1,141 @@
+﻿@page "/login"
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<style>
+    .login-wrapper {
+        min-height: 100vh;
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 420px;
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .brand-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #0d6efd;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    .form-label {
+        font-weight: 500;
+    }
+
+    .btn-primary {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+        }
+
+    .alert {
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="brand-title">Taller Armeccor</div>
+
+        <h5 class="mb-3 text-center">Ingresar</h5>
+
+        <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label class="form-label">Usuario</label>
+                <InputText @bind-Value="loginModel.Username" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Contraseña</label>
+                <InputText @bind-Value="loginModel.Password" type="password" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100" disabled="@isSubmitting || !IsFormValid">
+                @(isSubmitting ? "Ingresando..." : "Ingresar")
+            </button>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger mt-3" role="alert">
+                    @errorMessage
+                </div>
+            }
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private LoginModel loginModel = new();
+    private bool isSubmitting = false;
+    private string? errorMessage;
+
+    private bool IsFormValid =>
+        !string.IsNullOrWhiteSpace(loginModel.Username) &&
+        !string.IsNullOrWhiteSpace(loginModel.Password);
+
+    private async Task HandleLogin()
+    {
+        errorMessage = null;
+        isSubmitting = true;
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/auth/login", loginModel);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
+                if (result is not null && !string.IsNullOrWhiteSpace(result.Token))
+                {
+                    await JS.InvokeVoidAsync("localStorage.setItem", "authToken", result.Token);
+                    Navigation.NavigateTo("/", forceLoad: true);
+                }
+                else
+                {
+                    errorMessage = "Respuesta inválida del servidor.";
+                }
+            }
+            else
+            {
+                errorMessage = "Usuario o contraseña incorrectos.";
+            }
+        }
+        catch
+        {
+            errorMessage = "No se pudo conectar con el servidor.";
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    public class LoginModel
+    {
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+
+    public class LoginResponse
+    {
+        public string Token { get; set; } = string.Empty;
+    }
+}
