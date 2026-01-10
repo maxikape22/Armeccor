@@ -1598,16 +1598,6 @@
             "rid": "win"
           }
         }
-      },
-      "Validaciones/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v9.0",
-        "compile": {
-          "bin/placeholder/Validaciones.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/Validaciones.dll": {}
-        }
       }
     }
   },
@@ -4711,11 +4701,6 @@
         "system.windows.extensions.nuspec",
         "useSharedDesignerContext.txt"
       ]
-    },
-    "Validaciones/1.0.0": {
-      "type": "project",
-      "path": "../Validaciones/Validaciones.csproj",
-      "msbuildProject": "../Validaciones/Validaciones.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -4723,8 +4708,7 @@
       "Microsoft.EntityFrameworkCore >= 9.0.8",
       "Microsoft.EntityFrameworkCore.Design >= 9.0.8",
       "Microsoft.EntityFrameworkCore.SqlServer >= 9.0.8",
-      "Microsoft.EntityFrameworkCore.Tools >= 9.0.8",
-      "Validaciones >= 1.0.0"
+      "Microsoft.EntityFrameworkCore.Tools >= 9.0.8"
     ]
   },
   "packageFolders": {
@@ -4759,11 +4743,7 @@
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
-          "projectReferences": {
-            "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Validaciones\\Validaciones.csproj": {
-              "projectPath": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Validaciones\\Validaciones.csproj"
-            }
-          }
+          "projectReferences": {}
         }
       },
       "warningProperties": {

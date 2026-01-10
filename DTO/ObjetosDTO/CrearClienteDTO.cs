@@ -13,5 +13,7 @@ namespace DTO.ObjetosDTO
         public string Direccion { get; set; }
         [Required(ErrorMessage = "El telefono del cliente es obligatorio.")]
         public string Telefono { get; set; }
+        public DateTime? FechaBaja { get; set; }
+        public bool EstaActivo { get; set; }
     }
 }

@@ -2086,8 +2086,7 @@
         "framework": ".NETCoreApp,Version=v9.0",
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "9.0.8",
-          "Microsoft.EntityFrameworkCore.SqlServer": "9.0.8",
-          "Validaciones": "1.0.0"
+          "Microsoft.EntityFrameworkCore.SqlServer": "9.0.8"
         },
         "compile": {
           "bin/placeholder/Armeccor.Datos.dll": {}
@@ -2104,16 +2103,6 @@
         },
         "runtime": {
           "bin/placeholder/DTO.dll": {}
-        }
-      },
-      "Validaciones/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v9.0",
-        "compile": {
-          "bin/placeholder/Validaciones.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/Validaciones.dll": {}
         }
       }
     }
@@ -5935,11 +5924,6 @@
       "type": "project",
       "path": "../../DTO/DTO.csproj",
       "msbuildProject": "../../DTO/DTO.csproj"
-    },
-    "Validaciones/1.0.0": {
-      "type": "project",
-      "path": "../../Validaciones/Validaciones.csproj",
-      "msbuildProject": "../../Validaciones/Validaciones.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -5947,7 +5931,6 @@
       "Armeccor.Client >= 1.0.0",
       "Armeccor.Datos >= 1.0.0",
       "AutoMapper.Extensions.Microsoft.DependencyInjection >= 12.0.0",
-      "DTO >= 1.0.0",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 9.0.1",
       "Microsoft.AspNetCore.Components.WebAssembly.Server >= 9.0.8",
       "Microsoft.EntityFrameworkCore >= 9.0.8",
@@ -5994,9 +5977,6 @@
             },
             "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Armeccor.Client.csproj": {
               "projectPath": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Armeccor.Client.csproj"
-            },
-            "C:\\Users\\Berserker\\source\\repos\\Armeccor\\DTO\\DTO.csproj": {
-              "projectPath": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\DTO\\DTO.csproj"
             }
           }
         }

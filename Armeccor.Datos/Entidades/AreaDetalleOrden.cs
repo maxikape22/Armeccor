@@ -1,6 +1,4 @@
-﻿using Validaciones.CamposAreaDetalleOrden;
-
-namespace Armeccor.Datos.Entidades
+﻿namespace Armeccor.Datos.Entidades
 {
     public class AreaDetalleOrden
     {
@@ -11,7 +9,6 @@ namespace Armeccor.Datos.Entidades
         public Area Area { get; set; }
         public string? Descripcion { get; set; }
         public string Estado { get; set; }
-        [Tiempo]
         public int Tiempo { get; set; }
         public int Prioridad { get; set; }
         public string Comentario { get; set; }

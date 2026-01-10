@@ -1,5 +1,6 @@
 ﻿using Armeccor.Datos;
 using Armeccor.Datos.Entidades;
+using Armeccor.Datos.Migrations;
 using AutoMapper;
 using DTO.ObjetosDTO;
 using Microsoft.AspNetCore.Mvc;
@@ -55,7 +56,10 @@ namespace Armeccor.Server.Controllers
         public async Task<ActionResult<CrearClienteDTO>> PostCliente(CrearClienteDTO crearClienteDTO)
         {
             var cliente = _mapper.Map<Cliente>(crearClienteDTO);
-
+            
+            cliente.EstaActivo = true;   
+            cliente.FechaBaja = null;
+            
             context.Clientes.Add(cliente);
             await context.SaveChangesAsync();
 

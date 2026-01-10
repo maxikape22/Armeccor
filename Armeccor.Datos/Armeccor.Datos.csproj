@@ -19,8 +19,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Validaciones\Validaciones.csproj" />
-  </ItemGroup>
-
 </Project>

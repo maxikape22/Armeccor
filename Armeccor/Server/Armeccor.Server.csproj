@@ -21,7 +21,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Armeccor.Datos\Armeccor.Datos.csproj" />
-		<ProjectReference Include="..\..\DTO\DTO.csproj" />
 		<ProjectReference Include="..\Client\Armeccor.Client.csproj" />
 	</ItemGroup>
 
