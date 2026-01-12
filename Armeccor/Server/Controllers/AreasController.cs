@@ -67,6 +67,10 @@ namespace Armeccor.Server.Controllers
         public async Task<ActionResult<CrearAreaDTO>> PostArea(CrearAreaDTO crearAreaDTO)
         {
             var area = _mapper.Map<Area>(crearAreaDTO);
+
+            crearAreaDTO.EstaActivo = true;
+            crearAreaDTO.FechaBaja = null;
+
             context.Areas.Add(area);
             await context.SaveChangesAsync();
             var areaDTO = _mapper.Map<CrearAreaDTO>(area);
@@ -76,15 +80,6 @@ namespace Armeccor.Server.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteArea(int id)
         {
-            //var area = await context.Areas.FindAsync(id);
-            //if (area == null)
-            //{
-            //    return NotFound($"No se encontró el área de Id: {id}");
-            //}
-            //context.Areas.Remove(area);
-            //await context.SaveChangesAsync();
-            //var areaDTO = _mapper.Map<CrearAreaDTO>(area);
-            //return Ok(areaDTO);
 
             var area = await context.Areas.FirstOrDefaultAsync(e => e.Id == id);
 

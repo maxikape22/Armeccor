@@ -3,6 +3,7 @@
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
 @using Microsoft.AspNetCore.Components.Web;
+@using System.Threading
 
 
 @* <h3>Áreas detalladas de la orden N°: @NroOT - con nombre de orden: @NombreOrden - del cliente:  @NombreCliente</h3> *@
@@ -128,7 +129,44 @@ else
                     <td>@area.NombreArea</td>
                     <td>@area.Descripcion</td>
                     <td>@area.Estado</td>
-                    <td>@area.Tiempo</td>
+
+                    <td>
+                        <div class="d-flex flex-column gap-2 align-items-start">
+                            <!-- Muestra el tiempo actual -->
+                            <span class="fw-bold">@area.Tiempo</span>
+
+                            <!-- Input para ingresar manualmente cuánto tiempo querés descontar -->
+                            <input type="number"
+                                   class="form-control form-control-sm"
+                                   style="width:100px"
+                                   @bind="area.CantidadADescontar"
+                                   min="1"
+                                   placeholder="Cantidad" />
+
+                            @{
+                                var clase = area.EstaCorriendo ? "btn-warning" : "btn-success";
+                                var texto = area.EstaCorriendo ? "Detener" : "Iniciar";
+                                var desactivar = !area.EstaCorriendo && area.Tiempo <= 0;
+                            }
+
+                            <button class="btn btn-sm @clase"
+                                    disabled="@desactivar"
+                                    @onclick="() => ToggleTemporizador(area)">
+                                @texto
+                            </button>
+                        </div>
+                    </td>
+
+
+
+
+
+          
+
+
+
+
+
                     <td>
                         <input type="text" class="form-control"
                                @bind="area.Comentario"
@@ -182,6 +220,152 @@ else
 
 @code 
 {
+
+    //
+    private Dictionary<int, System.Timers.Timer> temporizadores = new();
+    private Dictionary<int, bool> temporizadorActivo = new();
+
+    // private async Task ToggleTemporizador(AreaDetalleOrdenListaDTO area)
+    // {
+    //     // Si ya está corriendo → detener
+    //     if (temporizadorActivo.ContainsKey(area.Id) && temporizadorActivo[area.Id])
+    //     {
+    //         temporizadores[area.Id]?.Stop();
+    //         temporizadores[area.Id]?.Dispose();
+    //         temporizadorActivo[area.Id] = false;
+
+    //         var response = await Http.PutAsJsonAsync(
+    //             $"api/Area_Detalle_Orden/{area.Id}/Temporizador",
+    //             "DETENER"
+    //         );
+
+    //         if (!response.IsSuccessStatusCode)
+    //         {
+    //             var msg = await response.Content.ReadAsStringAsync();
+    //             await JS.InvokeVoidAsync("alert", $"Error al detener temporizador: {msg}");
+    //         }
+    //     }
+    //     else
+    //     {
+    //         // Si el tiempo ya está en 0, no iniciar
+    //         if (area.Tiempo <= 0)
+    //             return;
+
+    //         var response = await Http.PutAsJsonAsync(
+    //             $"api/Area_Detalle_Orden/{area.Id}/Temporizador",
+    //             "INICIAR");
+
+    //         if (!response.IsSuccessStatusCode)
+    //         {
+    //             var msg = await response.Content.ReadAsStringAsync();
+    //             await JS.InvokeVoidAsync("alert", $"Error al iniciar temporizador: {msg}");
+    //             return;
+    //         }
+
+
+    //         var timer = new System.Timers.Timer(1000); // 1 segundo
+    //         timer.Elapsed += async (_, __) =>
+    //         {
+    //             if (area.Tiempo > 0)
+    //             {
+    //                 area.Tiempo--;
+    //                 await InvokeAsync(StateHasChanged);
+    //             }
+
+    //             if (area.Tiempo <= 0)
+    //             {
+    //                 timer.Stop();
+    //                 temporizadorActivo[area.Id] = false;
+
+    //                 // Avisar al backend que se detuvo automáticamente
+    //                 await Http.PutAsJsonAsync(
+    //                     $"api/Area_Detalle_Orden/{area.Id}/Temporizador",
+    //                     "DETENER"
+    //                 );
+
+    //                 await InvokeAsync(StateHasChanged);
+    //             }
+    //         };
+
+    //         timer.Start();
+    //         temporizadores[area.Id] = timer;
+    //         temporizadorActivo[area.Id] = true;
+    //     }
+    
+    //     StateHasChanged();
+    // }
+
+
+    private Dictionary<int, CancellationTokenSource> _ctsPorArea = new();
+    private async Task ToggleTemporizador(AreaDetalleOrdenListaDTO area)
+    {
+        if (_ctsPorArea.TryGetValue(area.Id, out var cts))
+        {
+            cts.Cancel();
+            _ctsPorArea.Remove(area.Id);
+            area.EstaCorriendo = false;
+
+            // DETENER con objeto
+            await Http.PutAsJsonAsync(
+                $"api/Area_Detalle_Orden/{area.Id}/Temporizador",
+                new { Accion = "DETENER" }
+            );
+
+            StateHasChanged();
+            return;
+        }
+
+        if (area.Tiempo <= 0 || area.CantidadADescontar <= 0) return;
+
+        area.EstaCorriendo = true;
+        StateHasChanged();
+
+        var cantidad = area.CantidadADescontar;
+        var ctsNuevo = new CancellationTokenSource();
+        _ctsPorArea[area.Id] = ctsNuevo;
+
+        _ = Task.Run(async () =>
+        {
+            var timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
+            var descontados = 0;
+
+            while (await timer.WaitForNextTickAsync(ctsNuevo.Token))
+            {
+                // INICIAR con objeto y delta = 1
+                await Http.PutAsJsonAsync(
+                    $"api/Area_Detalle_Orden/{area.Id}/Temporizador",
+                    new { Accion = "INICIAR", Delta = 1 }
+                );
+
+                // Actualización local
+                area.Tiempo = Math.Max(0, area.Tiempo - 1);
+                await InvokeAsync(StateHasChanged);
+
+                descontados++;
+
+                if (descontados >= cantidad || area.Tiempo <= 0)
+                {
+                    area.EstaCorriendo = false;
+
+                    await Http.PutAsJsonAsync(
+                        $"api/Area_Detalle_Orden/{area.Id}/Temporizador",
+                        new { Accion = "DETENER" }
+                    );
+
+                    await InvokeAsync(StateHasChanged);
+                    break;
+                }
+            }
+
+            timer.Dispose();
+        }, ctsNuevo.Token);
+    }
+
+
+
+
+    //
+
     private async Task AplicarPrioridad(AreaDetalleOrdenListaDTO area)
     {
         var response = await Http.PutAsJsonAsync(

@@ -6,9 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
+
 
 namespace Armeccor.Server.Controllers
 {
@@ -191,24 +192,30 @@ namespace Armeccor.Server.Controllers
         //    if (dto.Estado == "Iniciado")
         //    {
         //        bool yaExisteIniciado = await context.AreaDetalleOrdenes
-        //            .AnyAsync(a => a.OrdenId == dto.OrdenId && a.AreaId == dto.AreaId && a.Estado == "Iniciado");
+        //            .AnyAsync(a => a.OrdenId == dto.OrdenId && a.AreaId == dto.AreaId && a.Estado == "Iniciado" && a.EstaActivo);
 
         //        if (yaExisteIniciado)
         //            return BadRequest("Ya existe un registro de esta área con estado 'Iniciado' en la misma orden.");
         //    }
 
-        //    // ✅ Calcular prioridad como posición en la orden (excluyendo finalizados)
+        //    // ✅ Calcular prioridad defensiva (excluye finalizados y eliminados)
         //    int prioridad = await context.AreaDetalleOrdenes
-        //        .CountAsync(a => a.OrdenId == dto.OrdenId && a.Estado != "Finalizado") + 1;
+        //        .CountAsync(a => a.OrdenId == dto.OrdenId && a.EstaActivo && a.Estado != "Finalizado") + 1;
 
         //    var entity = _mapper.Map<AreaDetalleOrden>(dto);
         //    entity.Prioridad = dto.Estado == "Finalizado" ? 0 : prioridad;
-
-        //    entity.EstaActivo = true; // Asegurar que esté activo al crear
-        //    entity.FechaBaja = null; // Asegurar que no tenga fecha de baja al crear
+        //    entity.EstaActivo = true;
+        //    entity.FechaBaja = null;
 
         //    context.AreaDetalleOrdenes.Add(entity);
         //    await context.SaveChangesAsync();
+
+        //    // 🧠 Reasignar prioridad disponible
+        //    await context.Database.ExecuteSqlRawAsync(
+        //        "EXEC sp_AsignarPrioridadDisponible @p0, @p1",
+        //        parameters: new[] { dto.OrdenId.ToString(), entity.Id.ToString() }
+        //    );
+
 
         //    var result = await context.AreaDetalleOrdenes
         //        .Include(x => x.Area)
@@ -236,7 +243,7 @@ namespace Armeccor.Server.Controllers
             if (!await context.Areas.AnyAsync(a => a.Id == dto.AreaId))
                 return BadRequest($"El Área con Id {dto.AreaId} no existe.");
 
-            // 🚫 Solo bloquear si el nuevo estado es "Iniciado"
+            // 🚫 Bloqueo defensivo
             if (dto.Estado == "Iniciado")
             {
                 bool yaExisteIniciado = await context.AreaDetalleOrdenes
@@ -246,18 +253,22 @@ namespace Armeccor.Server.Controllers
                     return BadRequest("Ya existe un registro de esta área con estado 'Iniciado' en la misma orden.");
             }
 
-            // ✅ Calcular prioridad defensiva (excluye finalizados y eliminados)
-            int prioridad = await context.AreaDetalleOrdenes
-                .CountAsync(a => a.OrdenId == dto.OrdenId && a.EstaActivo && a.Estado != "Finalizado") + 1;
-
+            // 🔧 Crear entidad con prioridad provisional (0)
             var entity = _mapper.Map<AreaDetalleOrden>(dto);
-            entity.Prioridad = dto.Estado == "Finalizado" ? 0 : prioridad;
+            entity.Prioridad = 0; // se asignará en el SP
             entity.EstaActivo = true;
             entity.FechaBaja = null;
 
             context.AreaDetalleOrdenes.Add(entity);
             await context.SaveChangesAsync();
 
+            // ✅ Llamar al procedimiento almacenado para asignar prioridad disponible
+            await context.Database.ExecuteSqlRawAsync(
+                "EXEC sp_AsignarPrioridadDisponible @p0, @p1",
+                parameters: new object[] { dto.OrdenId, entity.Id }
+            );
+
+            // 🔁 Traer el resultado actualizado
             var result = await context.AreaDetalleOrdenes
                 .Include(x => x.Area)
                 .FirstOrDefaultAsync(x => x.Id == entity.Id);
@@ -323,6 +334,40 @@ namespace Armeccor.Server.Controllers
             return Ok(result);
         }
 
+        //[HttpDelete("{id}")]
+        //public async Task<ActionResult> EliminarArea(int id)
+        //{
+        //    var areadetallada = await context.AreaDetalleOrdenes.FirstOrDefaultAsync(e => e.Id == id);
+
+        //    if (areadetallada == null)
+        //        return NotFound("Área detallada no encontrada.");
+
+        //    if (!areadetallada.EstaActivo)
+        //        return BadRequest("El área detallada ya está dada de baja.");
+
+        //    // 🔴 Baja lógica
+        //    areadetallada.EstaActivo = false;
+        //    areadetallada.FechaBaja = DateTime.Now;
+
+        //    await context.SaveChangesAsync();
+
+        //    // 🔁 Reordenar prioridades de las áreas activas restantes (excluyendo finalizadas)
+        //    var areasActivas = await context.AreaDetalleOrdenes
+        //        .Where(a => a.OrdenId == areadetallada.OrdenId && a.EstaActivo && a.Estado != "Finalizado")
+        //        .OrderBy(a => a.Prioridad)
+        //        .ToListAsync();
+
+        //    int nuevaPrioridad = 1;
+        //    foreach (var area in areasActivas)
+        //    {
+        //        area.Prioridad = nuevaPrioridad++;
+        //    }
+
+        //    await context.SaveChangesAsync();
+
+        //    return NoContent();
+        //}
+
         [HttpDelete("{id}")]
         public async Task<ActionResult> EliminarArea(int id)
         {
@@ -340,22 +385,24 @@ namespace Armeccor.Server.Controllers
 
             await context.SaveChangesAsync();
 
-            // 🔁 Reordenar prioridades de las áreas activas restantes (excluyendo finalizadas)
-            var areasActivas = await context.AreaDetalleOrdenes
-                .Where(a => a.OrdenId == areadetallada.OrdenId && a.EstaActivo && a.Estado != "Finalizado")
-                .OrderBy(a => a.Prioridad)
+            // 🔁 Ajustar prioridades: las posteriores bajan una posición
+            var areasPosteriores = await context.AreaDetalleOrdenes
+                .Where(a => a.OrdenId == areadetallada.OrdenId
+                            && a.EstaActivo
+                            && a.Estado != "Finalizado"
+                            && a.Prioridad > areadetallada.Prioridad)
                 .ToListAsync();
 
-            int nuevaPrioridad = 1;
-            foreach (var area in areasActivas)
+            foreach (var area in areasPosteriores)
             {
-                area.Prioridad = nuevaPrioridad++;
+                area.Prioridad -= 1;
             }
 
             await context.SaveChangesAsync();
 
             return NoContent();
         }
+
 
 
         [HttpGet("EstadoDeUnArea")]
@@ -442,5 +489,87 @@ namespace Armeccor.Server.Controllers
 
             return Ok(dtoList);
         }
+
+
+        //[HttpPut("{id}/Temporizador")]
+        //[Consumes("application/json", "text/plain")]
+        //public async Task<ActionResult> Temporizador(int id, [FromBody] string accion)
+        //{
+        //    if (string.IsNullOrWhiteSpace(accion))
+        //        return BadRequest("Acción requerida.");
+
+        //    accion = accion.ToUpperInvariant();
+        //    if (accion != "INICIAR" && accion != "DETENER")
+        //        return BadRequest("Acción inválida. Use INICIAR o DETENER.");
+
+        //    // 1) Validación defensiva en EF contra AreaDetalleOrdenes
+        //    var existe = await context.AreaDetalleOrdenes
+        //        .AsNoTracking()
+        //        .AnyAsync(a => a.Id == id);
+
+        //    if (!existe)
+        //        return NotFound($"ÁreaDetalleOrden con Id={id} no existe.");
+
+        //    // 2) Ejecutar SP con parámetros interpolados (seguro)
+        //    await context.Database.ExecuteSqlInterpolatedAsync(
+        //        $"EXEC dbo.sp_TemporizadorArea {id}, {accion}"
+        //    );
+
+        //    return NoContent();
+        //}
+        //
+
+        //[HttpPut("{id}/Temporizador")]
+        //public async Task<ActionResult> Temporizador(int id, [FromBody] string accion)
+        //{
+        //    if (string.IsNullOrWhiteSpace(accion))
+        //        return BadRequest("Acción requerida.");
+
+        //    accion = accion.ToUpperInvariant();
+        //    if (accion != "INICIAR" && accion != "DETENER")
+        //        return BadRequest("Acción inválida. Use INICIAR o DETENER.");
+
+        //    var stopwatch = Stopwatch.StartNew();
+
+        //    await context.Database.ExecuteSqlInterpolatedAsync(
+        //        $"EXEC dbo.sp_TemporizadorArea {id}, {accion}"
+        //    );
+
+        //    stopwatch.Stop();
+
+        //    return Ok(new
+        //    {
+        //        Mensaje = "Acción ejecutada correctamente",
+        //        DuracionMs = stopwatch.ElapsedMilliseconds
+        //    });
+        //}
+        //
+
+        public class TemporizadorRequest
+        {
+            public string Accion { get; set; } = "";
+            public int? Delta { get; set; } // opcional
+        }
+
+        [HttpPut("{id}/Temporizador")]
+        public async Task<ActionResult> Temporizador(int id, [FromBody] TemporizadorRequest req)
+        {
+            if (req is null || string.IsNullOrWhiteSpace(req.Accion))
+                return BadRequest("Acción requerida.");
+
+            var accion = req.Accion.ToUpperInvariant();
+            if (accion != "INICIAR" && accion != "DETENER")
+                return BadRequest("Acción inválida.");
+
+            var delta = req.Delta ?? 1;
+            if (delta <= 0) delta = 1;
+
+            await context.Database.ExecuteSqlInterpolatedAsync(
+              $"EXEC dbo.sp_TemporizadorArea {id}, {accion}, {delta}"
+            );
+
+            return NoContent();
+        }
+
     }
 }

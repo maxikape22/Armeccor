@@ -16,5 +16,7 @@
         public string Comentario { get; set; }
         public DateTime? FechaBaja { get; set; }
         public bool EstaActivo { get; set; }
+        public bool EstaCorriendo { get; set; }
+        public int CantidadADescontar { get; set; }
     }
 }
