@@ -10,13 +10,15 @@
         public string NombreCliente { get; set; }
         public string Descripcion { get; set; }
         public string Estado { get; set; }
-        public int Tiempo { get; set; }
+        public TimeSpan Tiempo { get; set; }
+        public string TiempoIngresado { get; set; } = "00:00:00";
+        public int CantidadADescontar { get; set; } = 1;
         public int Prioridad { get; set; }
         public string PrioridadTexto { get; set; }
         public string Comentario { get; set; }
         public DateTime? FechaBaja { get; set; }
         public bool EstaActivo { get; set; }
         public bool EstaCorriendo { get; set; }
-        public int CantidadADescontar { get; set; }
+        public string EstadoOrden { get; set; }
     }
 }

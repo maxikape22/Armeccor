@@ -94,7 +94,7 @@ namespace Armeccor.Server.Controllers
             var query = context.Ordenes
                 .Include(o => o.Cliente)
                 .Where(e => e.Estado == "Abierta")
-                .Where(e=>e.EstaActivo)
+                .Where(e => e.EstaActivo)
                 .Include(o => o.Planos)
                 .Include(o => o.Entregas)
                 .Include(o => o.AreaDetalleOrdenes)
@@ -335,7 +335,7 @@ namespace Armeccor.Server.Controllers
     [FromQuery] int tamanoPagina = 4)
         {
             // Query base con includes
-            var baseQuery = context.Ordenes                          
+            var baseQuery = context.Ordenes
                 .Where(e => e.EstaActivo)
                 .Include(o => o.Cliente)
                 .Include(o => o.Planos)
@@ -723,7 +723,23 @@ namespace Armeccor.Server.Controllers
             }
         }
 
+        [HttpGet("EstadoPorNroOTOrdenDetalleDTO/{nroOT}")]
+        public async Task<ActionResult<OrdenDetalleDTOEstadoNroOT>> GetEstadoPorNroOTOrdenDetalleDTO(int nroOT)
+        {
+            var orden = await context.Ordenes
+                .Where(o => o.NroOT == nroOT)
+                .Select(o => new OrdenDetalleDTOEstadoNroOT
+                {
+                    NroOT = o.NroOT,
+                    Estado = o.Estado
+                })
+                .FirstOrDefaultAsync();
 
+            if (orden == null)
+                return NotFound();
+
+            return Ok(orden);
+        }
 
     }
 }

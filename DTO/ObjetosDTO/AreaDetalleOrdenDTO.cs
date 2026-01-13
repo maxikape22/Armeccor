@@ -12,7 +12,7 @@ namespace DTO.ObjetosDTO
         public string NombreArea { get; set; }
         public string? Descripcion { get; set; }
         public string Estado { get; set; }
-        public int Tiempo { get; set; }
+        public TimeSpan Tiempo { get; set; }
         public string Comentario { get; set; }
     }
 }

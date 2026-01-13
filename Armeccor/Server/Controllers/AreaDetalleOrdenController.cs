@@ -48,6 +48,7 @@ namespace Armeccor.Server.Controllers
                     NombreArea = a.Area.NombreArea,
                     Descripcion = a.Descripcion,
                     Estado = a.Estado,
+                    EstadoOrden = orden.Estado,
                     Tiempo = a.Tiempo,
                     Comentario = a.Comentario,
                     Prioridad = a.Estado == "Finalizado" ? 0 : a.Prioridad,
@@ -227,48 +228,118 @@ namespace Armeccor.Server.Controllers
         //    return Ok(resultDto);
         //}
 
+        //[HttpPost("AreaDetallaEnOrden")]
+        //public async Task<ActionResult<AreaDetalleOrdenDTO>> PostAreaDetalleOrden(AreaDetalleOrdenDTO dto)
+        //{
+        //    if (dto.NroOT.HasValue)
+        //    {
+        //        var orden = await context.Ordenes.FirstOrDefaultAsync(o => o.NroOT == dto.NroOT.Value);
+        //        if (orden == null) return BadRequest($"No existe la orden con NroOT {dto.NroOT}");
+        //        dto.OrdenId = orden.Id;
+        //    }
+
+        //    if (!await context.Ordenes.AnyAsync(o => o.Id == dto.OrdenId))
+        //        return BadRequest($"La Orden con Id {dto.OrdenId} no existe.");
+
+        //    if (!await context.Areas.AnyAsync(a => a.Id == dto.AreaId))
+        //        return BadRequest($"El Área con Id {dto.AreaId} no existe.");
+
+        //    // 🚫 Bloqueo defensivo
+        //    if (dto.Estado == "Iniciado")
+        //    {
+        //        bool yaExisteIniciado = await context.AreaDetalleOrdenes
+        //            .AnyAsync(a => a.OrdenId == dto.OrdenId && a.AreaId == dto.AreaId && a.Estado == "Iniciado" && a.EstaActivo);
+
+        //        if (yaExisteIniciado)
+        //            return BadRequest("Ya existe un registro de esta área con estado 'Iniciado' en la misma orden.");
+        //    }
+
+        //    // 🔧 Crear entidad con prioridad provisional (0)
+        //    var entity = _mapper.Map<AreaDetalleOrden>(dto);
+        //    entity.Prioridad = 0; // se asignará en el SP
+        //    entity.EstaActivo = true;
+        //    entity.FechaBaja = null;
+
+        //    context.AreaDetalleOrdenes.Add(entity);
+        //    await context.SaveChangesAsync();
+
+        //    // ✅ Llamar al procedimiento almacenado para asignar prioridad disponible
+        //    await context.Database.ExecuteSqlRawAsync(
+        //        "EXEC sp_AsignarPrioridadDisponible @p0, @p1",
+        //        parameters: new object[] { dto.OrdenId, entity.Id }
+        //    );
+
+        //    // 🔁 Traer el resultado actualizado
+        //    var result = await context.AreaDetalleOrdenes
+        //        .Include(x => x.Area)
+        //        .FirstOrDefaultAsync(x => x.Id == entity.Id);
+
+        //    var resultDto = _mapper.Map<AreaDetalleOrdenDTO>(result);
+        //    resultDto.NombreArea = result.Area?.NombreArea;
+
+        //    return Ok(resultDto);
+        //}
+
+
         [HttpPost("AreaDetallaEnOrden")]
         public async Task<ActionResult<AreaDetalleOrdenDTO>> PostAreaDetalleOrden(AreaDetalleOrdenDTO dto)
         {
             if (dto.NroOT.HasValue)
             {
-                var orden = await context.Ordenes.FirstOrDefaultAsync(o => o.NroOT == dto.NroOT.Value);
-                if (orden == null) return BadRequest($"No existe la orden con NroOT {dto.NroOT}");
-                dto.OrdenId = orden.Id;
+                var ordenPorNro = await context.Ordenes
+                    .FirstOrDefaultAsync(o => o.NroOT == dto.NroOT.Value && o.EstaActivo);
+
+                if (ordenPorNro == null)
+                    return BadRequest($"No existe la orden con NroOT {dto.NroOT}");
+
+                dto.OrdenId = ordenPorNro.Id;
             }
 
-            if (!await context.Ordenes.AnyAsync(o => o.Id == dto.OrdenId))
-                return BadRequest($"La Orden con Id {dto.OrdenId} no existe.");
+            var orden = await context.Ordenes
+                .FirstOrDefaultAsync(o => o.Id == dto.OrdenId && o.EstaActivo);
+
+            if (orden == null)
+                return BadRequest($"La Orden con Id {dto.OrdenId} no existe o está dada de baja.");
+
+            // 🚫 REGLA DE NEGOCIO NUEVA
+            if (!orden.Estado.Equals("Iniciada", StringComparison.OrdinalIgnoreCase) &&
+                !orden.Estado.Equals("Pendiente", StringComparison.OrdinalIgnoreCase))
+            {
+                return BadRequest(
+                    $"No se pueden agregar áreas a una orden en estado '{orden.Estado}'. " +
+                    "Solo se permite el estado Iniciada o Pendiente para el registro del área en la orden."
+                );
+            }
 
             if (!await context.Areas.AnyAsync(a => a.Id == dto.AreaId))
                 return BadRequest($"El Área con Id {dto.AreaId} no existe.");
 
-            // 🚫 Bloqueo defensivo
+            // 🚫 Bloqueo defensivo existente
             if (dto.Estado == "Iniciado")
             {
                 bool yaExisteIniciado = await context.AreaDetalleOrdenes
-                    .AnyAsync(a => a.OrdenId == dto.OrdenId && a.AreaId == dto.AreaId && a.Estado == "Iniciado" && a.EstaActivo);
+                    .AnyAsync(a => a.OrdenId == dto.OrdenId &&
+                                   a.AreaId == dto.AreaId &&
+                                   a.Estado == "Iniciado" &&
+                                   a.EstaActivo);
 
                 if (yaExisteIniciado)
                     return BadRequest("Ya existe un registro de esta área con estado 'Iniciado' en la misma orden.");
             }
 
-            // 🔧 Crear entidad con prioridad provisional (0)
             var entity = _mapper.Map<AreaDetalleOrden>(dto);
-            entity.Prioridad = 0; // se asignará en el SP
+            entity.Prioridad = 0;
             entity.EstaActivo = true;
             entity.FechaBaja = null;
 
             context.AreaDetalleOrdenes.Add(entity);
             await context.SaveChangesAsync();
 
-            // ✅ Llamar al procedimiento almacenado para asignar prioridad disponible
             await context.Database.ExecuteSqlRawAsync(
                 "EXEC sp_AsignarPrioridadDisponible @p0, @p1",
-                parameters: new object[] { dto.OrdenId, entity.Id }
+                new object[] { dto.OrdenId, entity.Id }
             );
 
-            // 🔁 Traer el resultado actualizado
             var result = await context.AreaDetalleOrdenes
                 .Include(x => x.Area)
                 .FirstOrDefaultAsync(x => x.Id == entity.Id);
@@ -278,7 +349,6 @@ namespace Armeccor.Server.Controllers
 
             return Ok(resultDto);
         }
-
 
         [HttpPut("{id}/Estado")]
         public async Task<ActionResult<AreaDetalleOrdenListaDTO>> CambiarEstado(int id, [FromBody] AreaDetalleOrdenListaDTO dto)
@@ -564,12 +634,14 @@ namespace Armeccor.Server.Controllers
             var delta = req.Delta ?? 1;
             if (delta <= 0) delta = 1;
 
+            // ✅ Llamada al nuevo procedimiento
             await context.Database.ExecuteSqlInterpolatedAsync(
-              $"EXEC dbo.sp_TemporizadorArea {id}, {accion}, {delta}"
+                $"EXEC dbo.sp_TemporizadorRegresivoSegundos {id}, {accion}, {delta}"
             );
 
             return NoContent();
         }
+
 
     }
 }

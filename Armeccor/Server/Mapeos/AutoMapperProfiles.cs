@@ -46,6 +46,12 @@ namespace Armeccor.Server.Mapeos
             //    .Select(ado => ado.Area.NombreArea)
             //    .FirstOrDefault()));
 
+            CreateMap<Orden, OrdenDetalleDTOEstadoNroOT>()
+                .ForMember(dest => dest.NroOT, opt => opt
+                .MapFrom(src => src.NroOT)).ForMember(dest => dest.Estado, opt => opt
+                .MapFrom(src => src.Estado))
+                .ReverseMap();
+
             CreateMap<Orden, OrdenDetalleDTO>()
                 .ForMember(dest => dest.AreaActual, opt => opt.MapFrom(src =>
             src.AreaDetalleOrdenes.FirstOrDefault(ado => ado.Estado == "Iniciado") != null
