@@ -194,6 +194,7 @@
                     <option value="Procesada">Procesada</option>
                     <option value="Iniciada">Iniciada</option>
                     <option value="Finalizada">Finalizada</option>
+                    <option value="Pendiente">Pendiente</option>
                 </select>
 
                 <button class="btn-new-order" @onclick="NavigateToNewOrder"><i class="fas fa-plus-circle"></i> Nueva orden</button>
@@ -265,8 +266,8 @@
                                         <button class="dropdown-item" @onclick="() => MenuViewPlans(orden.NroOT)"><i class="fas fa-file-alt"></i> Ver planos</button>
                                         <button class="dropdown-item" @onclick="() => MenuViewSupplies(orden.NroOT)"><i class="fas fa-boxes"></i> Ver insumos</button>
                                         <button class="dropdown-item" @onclick="() => ImprimirOrden(orden.NroOT)"><i class="fas fa-file-pdf"></i> Imprimir orden</button>
-                                        <button class="dropdown-item danger" disabled="@(isDeletingId == orden.Id)" @onclick="() => MenuDelete(orden.NroOT)">
-                                            @(isDeletingId == orden.Id ? "Eliminando..." : "Eliminar")
+                                        <button class="dropdown-item danger" disabled="@(isDeletingId == orden.Id)" @onclick="() => MenuDelete(orden.NroOT)" >
+                                            @(isDeletingId == orden.Id ? "Eliminando..." :  "Eliminar")
                                         </button>
                                     </div>
                                 </div>
@@ -584,7 +585,7 @@
 
     private void Cancelar()
     {
-        navigationManager.NavigateTo("/api/ListaOrdenes");
+        navigationManager.NavigateTo("/api/Ordenes");
     }
 
     private async Task ConfirmDelete(bool confirmed)

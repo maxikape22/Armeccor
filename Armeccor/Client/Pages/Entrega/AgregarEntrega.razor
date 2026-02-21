@@ -79,7 +79,12 @@ else
     </EditForm>
 }
 
-@code {
+<ConfirmationModal @ref="confirmationModal" />
+
+@code
+{
+    private ConfirmationModal? confirmationModal;
+
     private bool isLoading = true;
     private List<Armeccor.Datos.Entidades.MedioDePago> MediosDePago = new();
     private List<OrdenDetalleDTO> OrdenDetalleDTOs = new();
@@ -98,7 +103,8 @@ else
         }
         catch (Exception ex)
         {
-            await JS.InvokeVoidAsync("alert", $"Error cargando datos: {ex.Message}");
+            //await JS.InvokeVoidAsync("alert", $"Error cargando datos: {ex.Message}");
+            await confirmationModal.ShowInfoAsync("Error al cargar las entregas");
         }
         finally
         {
@@ -131,7 +137,8 @@ else
         {
             if (string.IsNullOrWhiteSpace(nuevoMedioNombre))
             {
-                await JS.InvokeVoidAsync("alert", "Ingrese el nombre del nuevo medio de pago.");
+                //await JS.InvokeVoidAsync("alert", "Ingrese el nombre del nuevo medio de pago.");
+                await confirmationModal.ShowInfoAsync("Ingrese el medio de pago primero");
                 return;
             }
             Entrega.NuevoMedio = nuevoMedioNombre;
@@ -141,20 +148,32 @@ else
         // Validaciones básicas
         if (Entrega.IdOrden <= 0)
         {
-            await JS.InvokeVoidAsync("alert", "Debe seleccionar una orden.");
+            //await JS.InvokeVoidAsync("alert", "Debe seleccionar una orden.");
+            await confirmationModal.ShowInfoAsync("Debe seleccionar una orden");
             return;
         }
 
         var resp = await Http.PostAsJsonAsync("api/Entregas", Entrega);
         if (resp.IsSuccessStatusCode)
         {
-            await JS.InvokeVoidAsync("alert", "Entrega guardada.");
-            Nav.NavigateTo("/Entregas");
+            // await JS.InvokeVoidAsync("alert", "Entrega guardada.");
+            // Nav.NavigateTo("/Entregas");
+            if (confirmationModal != null)
+            {
+                await confirmationModal.ShowInfoAsync(
+                    "✅ Entrega registrada correctamente.",
+                    async () =>
+                    {
+                        Nav.NavigateTo("/Entregas");
+                        await Task.CompletedTask;
+                    });
+            }
         }
         else
         {
             var msg = await resp.Content.ReadAsStringAsync();
-            await JS.InvokeVoidAsync("alert", $"Error al guardar: {msg}");
+            //await JS.InvokeVoidAsync("alert", $"Error al guardar: {msg}");
+            await confirmationModal.ShowInfoAsync("Error al guardar la entrega");
         }
     }
 

@@ -46,8 +46,12 @@
     </div>
 </div>
 
+<ConfirmationModal @ref="confirmationModal" />
+
 @code
 {
+    private ConfirmationModal? confirmationModal;
+
     private string tiempoIngresado = "00:00:00";
 
     [Parameter] public int NroOT { get; set; }
@@ -91,7 +95,8 @@
             // ✅ Convertir el string a TimeSpan
             if (!TimeSpan.TryParse(tiempoIngresado, out var ts))
             {
-                await js.InvokeVoidAsync("alert", "Formato inválido. Usa HH:mm:ss");
+                //await js.InvokeVoidAsync("alert", "Formato inválido. Usa HH:mm:ss");
+                await confirmationModal.ShowInfoAsync("Formato inválido. Usa HH:mm:ss");
                 return;
             }
 
@@ -103,13 +108,23 @@
             if (resp.IsSuccessStatusCode)
             {
                 var result = await resp.Content.ReadFromJsonAsync<AreaDetalleOrdenDTO>();
-                await js.InvokeVoidAsync("alert", "Área detallada agregada correctamente.");
-                Navigation.NavigateTo($"/AreasDetalleOrden/{NroOT}");
+                // await js.InvokeVoidAsync("alert", "Área detallada agregada correctamente.");
+                // Navigation.NavigateTo($"/AreasDetalleOrden/{NroOT}");
+                if (confirmationModal != null)
+                {
+                    await confirmationModal.ShowInfoAsync(
+                        "✅ Área registrada correctamente en la orden.",
+                        async () =>
+                        {
+                            Navigation.NavigateTo($"/AreasDetalleOrden/{NroOT}");
+                            await Task.CompletedTask;
+                        });
+                }
             }
             else
             {
                 var mensajeError = await resp.Content.ReadAsStringAsync();
-                await js.InvokeVoidAsync("alert", mensajeError);
+                await confirmationModal.ShowInfoAsync(mensajeError);
             }
         }
         catch (Exception)

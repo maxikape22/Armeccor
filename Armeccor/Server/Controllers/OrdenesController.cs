@@ -236,6 +236,10 @@ namespace Armeccor.Server.Controllers
                 nrogenerado = numero.Next(100000, 999999);
             }
             while (await context.Ordenes.AnyAsync(o => o.NroOT == nrogenerado));
+
+            if (crearOrdenDTO.FechaPactada <= crearOrdenDTO.FechaInicio)
+                return Conflict("La fecha pactada debe ser mayor a la fecha de inicio.");
+
             orden.NroOT = nrogenerado;
 
             orden.EstaActivo = true;

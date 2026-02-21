@@ -43,9 +43,13 @@ else
                         <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => IrAEditarCliente(c.Id)">
                             Editar
                         </button>
-                        <button class="btn btn-sm btn-danger" @onclick="() => ConfirmarEliminar(c.Id, c.Nombre)">
-                            Eliminar
+                        <button class="btn btn-sm btn-danger"
+                                disabled="@(isDeletingId == c.Id)"
+                                @onclick="() => MenuDelete(c.Id, c.Nombre)">
+                            @(isDeletingId == c.Id ? "Eliminando..." : "Eliminar")
+                            
                         </button>
+
                     </td>
                 </tr>
             }
@@ -53,96 +57,131 @@ else
     </table>
 }
 
-@code
-{
+<ConfirmationModal @ref="confirmationModal" OnConfirm="ConfirmDelete" />
 
-    private List<Cliente> clientes;
-    private Cliente cliente = new Cliente();
-    private bool editando = false;
-    private string filtroNombre = string.Empty;
+
+@code {
+
+
+
+    private List<Cliente> clientes = new();
+    private ConfirmationModal? confirmationModal;
+    private int? isDeletingId = null;
 
     protected override async Task OnInitializedAsync()
     {
-        clientes = await Http.GetFromJsonAsync<List<Cliente>>("api/Clientes");
+        clientes = await Http.GetFromJsonAsync<List<Cliente>>("api/Clientes")
+                   ?? new();
     }
 
-    private async Task ConfirmarEliminar(int id, string nombre)
+    // ===============================
+    // ABRIR MODAL
+    // ===============================
+    private async Task MenuDelete(int id, string nombre)
     {
-        var confirm = await JS.InvokeAsync<bool>("confirm", $"¿Estás seguro de eliminar el cliente {nombre}?");
-        if (confirm)
+        if (confirmationModal != null)
         {
-            await EliminarCliente(id);
+            await confirmationModal.ShowAsync(
+                $"¿Está seguro que desea eliminar el cliente '{nombre}'?",
+                id);
         }
     }
 
-    private async Task EliminarCliente(int id)
+    // ===============================
+    // CONFIRMAR DESDE MODAL
+    // ===============================
+    private async Task ConfirmDelete(bool confirmed)
+    {
+        if (confirmed && confirmationModal != null)
+        {
+            await ExecuteDelete(confirmationModal.CurrentItemId);
+        }
+        else
+        {
+            // Igual que en Órdenes
+            await confirmationModal?.HideAsync();
+        }
+    }
+
+    // ===============================
+    // EJECUTAR DELETE
+    // ===============================
+    private async Task ExecuteDelete(int id)
     {
         try
         {
-            var resp = await Http.DeleteAsync($"/api/Clientes/{id}");
-            if (resp.IsSuccessStatusCode)
-            {
-                clientes.RemoveAll(a => a.Id == id);
-                await JS.InvokeVoidAsync("alert", "Cliente eliminado.");
-                await OnInitializedAsync();
-            }
+            isDeletingId = id;
 
+            if (confirmationModal != null)
+                await confirmationModal.HideAsync();
+
+            var response = await Http.DeleteAsync($"api/Clientes/{id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                // En vez de recargar todo, removemos del listado actual
+                var clienteAEliminar = clientes.FirstOrDefault(c => c.Id == id);
+                if (clienteAEliminar != null)
+                    clientes.Remove(clienteAEliminar);
+
+                await confirmationModal.ShowInfoAsync("El cliente fue eliminado correctamente");
+                StateHasChanged();
+            }
             else
             {
-                var body = await resp.Content.ReadAsStringAsync();
-                Console.WriteLine($"Error al eliminar el cliente: {resp.StatusCode} - {body}");
-                await JS.InvokeVoidAsync("alert", $"Error al eliminar cliente: {resp.StatusCode}");
+                var error = await response.Content.ReadAsStringAsync();
+
+                // await JS.InvokeVoidAsync("alert",
+
+                //     $"Error al eliminar cliente: {error}");
+
+                await confirmationModal.ShowInfoAsync("No se pudo eliminar el cliente");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error al eliminar cliente: {ex.Message}");
-            await JS.InvokeVoidAsync("alert", "Error al eliminar cliente. Ver consola.");
+
+            // await JS.InvokeVoidAsync("alert",
+
+            //     $"Error inesperado: {ex.Message}");
+
+            await confirmationModal.ShowInfoAsync("Ocurrio un error en el servidor");
+        }
+        finally
+        {
+            isDeletingId = null;
         }
     }
 
-    private async Task Guardar()
-    {
-        if (editando)
-        {
-            await Http.PutAsJsonAsync($"api/Clientes/{cliente.Id}", cliente);
-        }
-        else
-        {
-            await Http.PostAsJsonAsync("api/Clientes", cliente);
-        }
 
-        clientes = await Http.GetFromJsonAsync<List<Cliente>>("api/Clientes");
-        cliente = new Cliente();
-        editando = false;
-    }
+    // ===============================
+    // RESTO DE MÉTODOS QUE YA TENÍAS
+    // ===============================
 
     private void IrANuevoCliente()
     {
-        Navigation.NavigateTo("/api/Clientes/AgregarCliente");
+        Navigation.NavigateTo("/Clientes/AgregarCliente");
     }
 
     public void IrAEditarCliente(int id)
     {
-        Navigation.NavigateTo($"/api/Clientes/EditarCliente/{id}");
+        Navigation.NavigateTo($"/Clientes/EditarCliente/{id}");
     }
 
     public async Task BuscarPorNombre()
     {
         if (string.IsNullOrWhiteSpace(filtroNombre))
         {
-            cliente = cliente;
+            await OnInitializedAsync();
         }
         else
         {
             clientes = clientes
-                .Where(a => a.Nombre.Contains(filtroNombre, StringComparison.OrdinalIgnoreCase))
+                .Where(a => a.Nombre.Contains(filtroNombre,
+                    StringComparison.OrdinalIgnoreCase))
                 .ToList();
         }
-
-        if (filtroNombre.Equals(string.Empty))
-        {
-            await OnInitializedAsync();
-        }
     }
+
+    private string filtroNombre = string.Empty;
 }

@@ -8,6 +8,8 @@
 
 @* <h3>Áreas detalladas de la orden N°: @NroOT - con nombre de orden: @NombreOrden - del cliente:  @NombreCliente</h3> *@
 
+<ConfirmationModal @ref="confirmationModal" OnConfirm="ConfirmDelete" />
+
 <style>
     .info-card {
         border-radius: 20px;
@@ -132,7 +134,7 @@ else
 
 
 
-                   @*  <td>
+                    @*  <td>
                         <div class="d-flex flex-column gap-2 align-items-start">
                             <!-- Muestra el tiempo actual en formato HH:mm:ss -->
                             <span class="fw-bold">@area.Tiempo.ToString(@"hh\:mm\:ss")</span>
@@ -195,7 +197,7 @@ else
 
 
 
-          
+
 
 
 
@@ -214,7 +216,7 @@ else
                         {
                             <div class="d-flex flex-column align-items-stretch gap-1">
                                 <select class="form-select form-select-sm"
-                                        @bind="area.Prioridad"  
+                                        @bind="area.Prioridad"
                                         disabled="@(!EsEditable(ordenDetalleDTO))">
                                     @for (int i = 1; i <= areasDetalle.Count; i++)
                                     {
@@ -237,8 +239,8 @@ else
 
                     <td>
                         <select class="form-select"
-                            disabled="@(!EsEditable(ordenDetalleDTO))"
-                            @onchange="async e => await CambiarEstado(area.Id, e)">
+                                disabled="@(!EsEditable(ordenDetalleDTO))"
+                                @onchange="async e => await CambiarEstado(area.Id, e)">
                             <option label="---Cambiar estado del área---"></option>
                             <option value="Iniciado">Iniciado</option>
                             <option value="Pendiente">Pendiente</option>
@@ -246,7 +248,7 @@ else
                             <option value="Detenido">Detenido</option>
                         </select>
                         <button class="btn btn-sm btn-danger mt-1"
-                                @onclick="async () => await EliminarArea(area.Id)">
+                                @onclick="async () => await MenuDelete(area.Id)">
                             Eliminar
                         </button>
                     </td>
@@ -257,8 +259,10 @@ else
     <button class="btn btn-secondary mt-3" @onclick="Volver">Volver</button>
 }
 
-@code 
+@code
 {
+    private ConfirmationModal? confirmationModal;
+
     public bool EsEditable(OrdenDetalleDTO DTO)
     {
         bool Es_Editable = DTO.Estado == "Pendiente" || DTO.Estado == "Iniciada";
@@ -520,7 +524,7 @@ else
         modoOrdenamiento = e.Value?.ToString();
 
         if (modoOrdenamiento == "prioridad")
-        {          
+        {
             areasDetalle = await Http.GetFromJsonAsync<List<AreaDetalleOrdenListaDTO>>(
                 $"api/Area_Detalle_Orden/OrdenadasPorPrioridad/{NroOT}");
         }
@@ -628,7 +632,8 @@ else
         if (!response.IsSuccessStatusCode)
         {
             var msg = await response.Content.ReadAsStringAsync();
-            await JS.InvokeVoidAsync("alert", $"Error al guardar comentario en servidor: {msg}");
+            //await JS.InvokeVoidAsync("alert", $"Error al guardar comentario en servidor: {msg}");
+            await confirmationModal.ShowInfoAsync("Error al guardar comentario en servidor");
         }
     }
 
@@ -646,13 +651,15 @@ else
             var area = areasDetalle.FirstOrDefault(a => a.Id == id);
             if (area != null) area.Estado = nuevoEstado;
 
-            await JS.InvokeVoidAsync("alert", "Estado actualizado en el servidor.");
+            //await JS.InvokeVoidAsync("alert", "Estado actualizado en el servidor.");
+            await confirmationModal.ShowInfoAsync("Estado actualizado en el servidor.");
             InvokeAsync(StateHasChanged);
         }
         else
         {
             var msg = await response.Content.ReadAsStringAsync();
-            await JS.InvokeVoidAsync("alert", $"Error al actualizar en servidor: {msg}");
+            //await JS.InvokeVoidAsync("alert", $"Error al actualizar en servidor: {msg}");
+            await confirmationModal.ShowInfoAsync("Error al actualizar en el servidor");
         }
 
 
@@ -660,11 +667,45 @@ else
                 $"api/Area_Detalle_Orden/{NroOT}");
     }
 
+
+    private int? isDeletingNroOT = null;
+
+
+    //
+    private async Task MenuDelete(int id)
+    {
+        if (confirmationModal != null)
+        {
+            var area = areasDetalle.FirstOrDefault(a => a.Id == id);
+
+            await confirmationModal.ShowAsync(
+                $"¿Está seguro que desea eliminar el área: {area?.NombreArea}?",
+                id);
+        }
+    }
+
+    private async Task ConfirmDelete(bool confirmed)
+    {
+        if (confirmationModal != null)
+        {
+            var id = confirmationModal.CurrentItemId;
+
+            await confirmationModal.HideAsync(); // 🔥 cerrar primero
+
+            if (confirmed)
+            {
+                await EliminarArea(id);
+            }
+        }
+    }
+    //
+
     private async Task EliminarArea(int areaDetalleId)
     {
-        var confirm = await JS.InvokeAsync<bool>("confirm",
-            $"¿Seguro que quieres eliminar esta área asociada al Nro de orden {ordenDetalleDTO.NroOT}?");
-        if (!confirm) return;
+        // var confirm = await JS.InvokeAsync<bool>("confirm",
+        //      $"¿Seguro que quieres eliminar esta área asociada al Nro de orden {ordenDetalleDTO.NroOT}?");
+        // if (!confirm) return;
+
 
         var response = await Http.DeleteAsync($"api/Area_Detalle_Orden/{areaDetalleId}");
         if (response.IsSuccessStatusCode)
@@ -675,13 +716,15 @@ else
             await JS.InvokeVoidAsync("localStorage.removeItem", $"comentario_{areaDetalleId}");
             await JS.InvokeVoidAsync("sessionStorage.removeItem", $"comentario_{areaDetalleId}");
 
-            await JS.InvokeVoidAsync("alert", "Área eliminada correctamente.");
-            Navigation.NavigateTo($"/AreasDetalleOrden/{NroOT}");
+            //await JS.InvokeVoidAsync("alert", "Área eliminada correctamente.");
+            await confirmationModal.ShowInfoAsync("Área eliminada correctamente");
+            //Navigation.NavigateTo($"/AreasDetalleOrden/{NroOT}");
         }
         else
         {
             var msg = await response.Content.ReadAsStringAsync();
-            await JS.InvokeVoidAsync("alert", $"Error al eliminar: {msg}");
+            //await JS.InvokeVoidAsync("alert", $"Error al eliminar: {msg}");
+            await confirmationModal.ShowInfoAsync("Error al eliminar el área");
         }
     }
 }

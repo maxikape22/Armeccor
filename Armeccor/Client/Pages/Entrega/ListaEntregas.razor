@@ -1,6 +1,7 @@
 ﻿@page "/Entregas"
 @inject HttpClient Http
 @inject NavigationManager Nav
+@inject IJSRuntime JSRuntime
 
 <h3>Listado de entregas</h3>
 
@@ -64,9 +65,15 @@ else
                        </td>
                     <td>@e.MedioDePago</td>
                     <td>
-                        <button class="btn btn-sm btn-danger" @onclick="() => Eliminar(e.Id)">
+                      @*   <button class="btn btn-sm btn-danger" @onclick="() => MenuDelete(e.NroOT)">
+                            🗑
+                        </button> *@
+                        <button class="btn btn-sm btn-danger"
+                                disabled="@(isDeletingNroOT == e.NroOT)"
+                                @onclick="() => MenuDelete(e.NroOT)">
                             🗑
                         </button>
+
                     </td>
                 </tr>
             }
@@ -74,8 +81,13 @@ else
     </table>
 }
 
-@code 
+<ConfirmationModal @ref="confirmationModal" OnConfirm="ConfirmDelete" />
+
+@* @code 
 {
+    private ConfirmationModal? confirmationModal;
+    private int? isDeletingId = null;
+    private int NroOT;
     [Parameter] public string? MedioDePago { get; set; }
     private List<EntregaDetalleDTO>? entregas;
     private List<CrearEntregaDTO> EntregaDTOs;
@@ -147,22 +159,267 @@ else
         return query;
     }
 
-
-
-    private async Task Eliminar(int id)
+    private async Task ConfirmDelete(bool confirmed)
     {
-        var resp = await Http.DeleteAsync($"api/Entregas/{id}");
-        if (resp.IsSuccessStatusCode)
+        if (confirmed && confirmationModal != null)
         {
-            entregas = entregas?.Where(e => e.Id != id).ToList();
+            await Eliminar(confirmationModal.CurrentItemId);
         }
-        await CargarEntregas();
+        else
+        {
+            Cancelar();
+        }
     }
+
+    private void Cancelar()
+    {
+        Nav.NavigateTo("/Entregas");
+    }
+
+    // private async Task Eliminar(int id)
+    // {
+    //     var resp = await Http.DeleteAsync($"api/Entregas/{id}");
+    //     if (resp.IsSuccessStatusCode)
+    //     {
+    //         entregas = entregas?.Where(e => e.Id != id).ToList();
+    //     }
+    //     await CargarEntregas();
+    // }
+
+
+    private async Task MenuDelete(int id)
+    {
+        if (confirmationModal != null)
+        {
+            await confirmationModal.ShowAsync(
+                $"¿Está seguro que desea eliminar la entrega {id}?",
+                id);
+        }
+    }
+
+    private async Task Eliminar(int NroOT)
+    {
+        try
+        {
+            isDeletingId = NroOT;
+
+            if (confirmationModal != null)
+                await confirmationModal.HideAsync();
+
+            var resp = await Http.DeleteAsync($"api/Entregas/{NroOT}");
+
+            if (resp.IsSuccessStatusCode)
+            {
+                // Remover visualmente
+                entregas = entregas?.Where(e => e.NroOT != NroOT).ToList();
+
+                // Recargar desde backend
+                await CargarEntregas();
+
+                await JSRuntime.InvokeVoidAsync("alert", "Entrega eliminada con éxito.");
+            }
+            else
+            {
+                var errorContent = await resp.Content.ReadAsStringAsync();
+                await JSRuntime.InvokeVoidAsync("alert",
+                    $"Error al eliminar la entrega: {resp.StatusCode} - {errorContent}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al eliminar entrega: {ex.Message}");
+            await JSRuntime.InvokeVoidAsync("alert",
+                $"Ocurrió un error al intentar eliminar la entrega: {ex.Message}");
+        }
+        finally
+        {
+            isDeletingId = null;
+        }
+    }
+
 }
 
 <style>
     .toolbar 
     {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+    }
+</style>
+ *@
+
+
+
+@code {
+
+    private ConfirmationModal? confirmationModal;
+    private List<EntregaDetalleDTO>? entregas;
+
+    private bool loading = true;
+    private string? error;
+
+    private string search = string.Empty;
+    private bool filtroEntregado = true;
+    private bool filtroNoEntregado = true;
+
+    private int? isDeletingNroOT = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarEntregas();
+    }
+
+    // =============================
+    // CAMBIAR ESTADO ENTREGADO
+    // =============================
+
+    private async Task CambiarEstadoEntrega(int id, bool nuevoEstado)
+    {
+        var response = await Http.PutAsJsonAsync(
+            $"api/Entregas/ActualizacionPorEstado?Id={id}&Entregado={nuevoEstado}",
+            new { });
+
+        if (response.IsSuccessStatusCode)
+        {
+            var entregaActualizada =
+                await response.Content.ReadFromJsonAsync<EntregaDetalleDTO>();
+
+            if (entregaActualizada != null)
+            {
+                var index = entregas?.FindIndex(e => e.Id == id);
+
+                if (index is >= 0)
+                    entregas![index.Value] = entregaActualizada;
+            }
+        }
+        else
+        {
+            //error = $"Error al actualizar entrega #{id}";
+            await confirmationModal.ShowInfoAsync("No se pudo actualizar el estado de la entrega");
+        }
+    }
+
+    // =============================
+    // CARGAR
+    // =============================
+
+    private async Task CargarEntregas()
+    {
+        try
+        {
+            entregas =
+                await Http.GetFromJsonAsync<List<EntregaDetalleDTO>>("api/Entregas");
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+
+        loading = false;
+    }
+
+    // =============================
+    // FILTROS
+    // =============================
+
+    private IEnumerable<EntregaDetalleDTO> Filtrar(
+        IEnumerable<EntregaDetalleDTO> lista)
+    {
+        var query = lista;
+
+        if (!string.IsNullOrWhiteSpace(search))
+            query = query.Where(e =>
+                e.MedioDePago.Contains(search,
+                StringComparison.OrdinalIgnoreCase));
+
+        if (!filtroEntregado)
+            query = query.Where(e => !e.Entregado);
+
+        if (!filtroNoEntregado)
+            query = query.Where(e => e.Entregado);
+
+        return query;
+    }
+
+    // =============================
+    // MODAL ELIMINAR
+    // =============================
+
+    private async Task MenuDelete(int nroOT)
+    {
+        if (confirmationModal != null)
+        {
+            await confirmationModal.ShowAsync(
+                $"¿Está seguro que desea eliminar la entrega N° {nroOT}?",
+                nroOT);
+        }
+    }
+
+    private async Task ConfirmDelete(bool confirmed)
+    {
+        if (confirmed && confirmationModal != null)
+        {
+            await Eliminar(confirmationModal.CurrentItemId);
+        }
+        else
+        {
+            // SOLO cerrar modal (igual que en Ordenes)
+            if (confirmationModal != null)
+                await confirmationModal.HideAsync();
+        }
+    }
+
+    private async Task Eliminar(int nroOT)
+    {
+        try
+        {
+            isDeletingNroOT = nroOT;
+
+            if (confirmationModal != null)
+                await confirmationModal.HideAsync();
+
+            var resp = await Http.DeleteAsync($"api/Entregas/{nroOT}");
+
+            if (resp.IsSuccessStatusCode)
+            {
+                // Quitar de la lista sin recargar todo
+                entregas = entregas?
+                    .Where(e => e.NroOT != nroOT)
+                    .ToList();
+
+                // await JSRuntime.InvokeVoidAsync(
+                //     "alert",
+                //     "Entrega eliminada con éxito.");
+                await confirmationModal.ShowInfoAsync("Entrega eliminada exitosamente");
+
+            }
+            else
+            {
+                var errorContent = await resp.Content.ReadAsStringAsync();
+
+                // await JSRuntime.InvokeVoidAsync(
+                //     "alert",
+                //     $"Error al eliminar: {resp.StatusCode} - {errorContent}");
+                await confirmationModal.ShowInfoAsync("No se pudo eliminar la entrega");
+            }
+        }
+        catch (Exception ex)
+        {
+            // await JSRuntime.InvokeVoidAsync(
+            //     "alert",
+            //     $"Error inesperado: {ex.Message}");
+            await confirmationModal.ShowInfoAsync("Error en el servidor");
+        }
+        finally
+        {
+            isDeletingNroOT = null;
+        }
+    }
+}
+
+<style>
+    .toolbar {
         display: flex;
         align-items: center;
         gap: .5rem;

@@ -6,6 +6,9 @@
 @* <h3>Gestión de Insumos de la Orden: @NroOT, nombre: @nombreOrden, para el cliente: @nombreCliente</h3>
  *@
 
+
+
+
 <style>
     .info-card {
         border-radius: 20px;
@@ -123,6 +126,10 @@ else
 
 @code 
 {
+
+  
+    private ConfirmationModal? confirmationModal;
+
     void VolverAOrdenes()
     {
         Navigation.NavigateTo("/Ordenes");

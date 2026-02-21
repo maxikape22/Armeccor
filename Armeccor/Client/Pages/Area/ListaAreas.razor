@@ -131,6 +131,7 @@
 </script>
 
 
+<ConfirmationModal @ref="confirmationModal" OnConfirm="ConfirmDelete" />
 
 
 <style>
@@ -336,7 +337,7 @@
                         <button class="btn-edit" @onclick="() => Editar(area.Id)">
                             Editar                          
                         </button>
-                        <button class="btn-delete" @onclick="() => ConfirmarEliminar(area.Id,area.NombreArea)">
+                        <button class="btn-delete" @onclick="() => MenuDelete(area.Id)">
                             Eliminar                          
                         </button>
                     </div>
@@ -351,6 +352,8 @@
 
 @code 
 {
+    private ConfirmationModal? confirmationModal;
+
     private List<AreaListaDTO> areas = new();
     private List<AreaListaDTO> areasFiltradas = new();
     private string filtro = "";
@@ -403,6 +406,35 @@
         Navigation.NavigateTo($"/api/Areas/Editar/{id}");
     }
 
+
+    //
+    private async Task MenuDelete(int id)
+    {
+        if (confirmationModal != null)
+        {
+            var area = areasFiltradas.FirstOrDefault(a => a.Id == id);
+
+            await confirmationModal.ShowAsync(
+                $"¿Está seguro que desea eliminar el área: {area.NombreArea}?",
+                id);
+        }
+    }
+
+    private async Task ConfirmDelete(bool confirmed)
+    {
+        if (confirmationModal != null)
+        {
+            var id = confirmationModal.CurrentItemId;
+
+            await confirmationModal.HideAsync(); // 🔥 cerrar primero
+
+            if (confirmed)
+            {
+                await Eliminar(id);
+            }
+        }
+    }
+    //
     private async Task Eliminar(int id)
     {
         try
@@ -411,19 +443,20 @@
             if (resp.IsSuccessStatusCode)
             {
                 areas.RemoveAll(a => a.Id == id);
-                await JS.InvokeVoidAsync("alert", "Área eliminada.");
+                //await JS.InvokeVoidAsync("alert", "Área eliminada.");
+                await confirmationModal.ShowInfoAsync("Área eliminada correctamente");
+                await OnInitializedAsync();
             }
             else
             {
                 var body = await resp.Content.ReadAsStringAsync();
-                Console.WriteLine($"Error al eliminar área: {resp.StatusCode} - {body}");
-                await JS.InvokeVoidAsync("alert", $"Error al eliminar área: {resp.StatusCode}");
+                //await JS.InvokeVoidAsync("alert", $"Error al eliminar área: {resp.StatusCode}");
+                await confirmationModal.ShowInfoAsync("Error al eliminar el área");
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            Console.WriteLine($"Error al eliminar área: {ex.Message}");
-            await JS.InvokeVoidAsync("alert", "Error al eliminar área. Ver consola.");
+            await confirmationModal.ShowInfoAsync("No se pudo eliminar el área por errores en el servidor");
         }
     }
 

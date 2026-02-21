@@ -98,6 +98,8 @@
             <InputSelect @bind-Value="nuevaOrden.Estado">
                 <option value="">-- Seleccionar estado --</option>
                 <option value="Abierta">Abierta</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Iniciada">Iniciada</option>
             </InputSelect>
         </div>
 
@@ -141,7 +143,12 @@
     </EditForm>
 </div>
 
-@code {
+<ConfirmationModal @ref="confirmationModal" />
+
+@code 
+{
+    private ConfirmationModal? confirmationModal;
+
     private CrearOrdenDTO nuevaOrden = new CrearOrdenDTO();
     private List<ClienteDTO>? clientes;
     private List<AreaDTO>? areas;
@@ -159,10 +166,11 @@
         {
             clientes = await http.GetFromJsonAsync<List<ClienteDTO>>("api/Clientes");
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            Console.WriteLine($"Error al cargar clientes: {ex.Message}");
-            await JSRuntime.InvokeVoidAsync("alert", $"Error al cargar clientes: {ex.Message}");
+            //Console.WriteLine($"Error al cargar clientes: {ex.Message}");
+            //await JSRuntime.InvokeVoidAsync("alert", $"Error al cargar clientes: {ex.Message}");
+            await confirmationModal.ShowInfoAsync("Error al cargar los clientes");
             clientes = new List<ClienteDTO>(); // Asegura que la lista no sea null
         }
     }
@@ -175,8 +183,9 @@
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error al cargar áreas: {ex.Message}");
-            await JSRuntime.InvokeVoidAsync("alert", $"Error al cargar áreas: {ex.Message}");
+            //Console.WriteLine($"Error al cargar áreas: {ex.Message}");
+            //await JSRuntime.InvokeVoidAsync("alert", $"Error al cargar áreas: {ex.Message}");
+            await confirmationModal.ShowInfoAsync("Error al cargar las áreas");
             areas = new List<AreaDTO>(); // Asegura que la lista no sea null
         }
     }
@@ -189,26 +198,39 @@
 
             if (response.IsSuccessStatusCode)
             {
-                await JSRuntime.InvokeVoidAsync("alert", "Orden creada con éxito!");
-                navigationManager.NavigateTo("/ordenes");
+                // await JSRuntime.InvokeVoidAsync("alert", "Orden creada con éxito!");
+                // navigationManager.NavigateTo("/ordenes");
+                if (confirmationModal != null)
+                {
+                    await confirmationModal.ShowInfoAsync(
+                        "✅ Orden registrada correctamente en la orden.",
+                        async () =>
+                        {
+                            navigationManager.NavigateTo($"/Ordenes");
+                            await Task.CompletedTask;
+                        });
+                }
             }
             else
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("Error al guardar orden: " + errorContent);
-                await JSRuntime.InvokeVoidAsync("alert", $"Error al guardar orden: {response.StatusCode} - {errorContent}");
+                //Console.WriteLine("Error al guardar orden: " + errorContent);
+                //await JSRuntime.InvokeVoidAsync("alert", $"Error al guardar orden: {response.StatusCode} - {errorContent}");
+                await confirmationModal.ShowInfoAsync("Error al guardar la orden");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error inesperado al enviar la orden: {ex.Message}");
-            await JSRuntime.InvokeVoidAsync("alert", $"Ocurrió un error inesperado: {ex.Message}");
+            //Console.WriteLine($"Error inesperado al enviar la orden: {ex.Message}");
+            //await JSRuntime.InvokeVoidAsync("alert", $"Ocurrió un error inesperado: {ex.Message}");
+            await confirmationModal.ShowInfoAsync("Error inesperado al procesar la solicitud de registro");
         }
     }
 
-    private void HandleInvalidSubmit()
+    private async void HandleInvalidSubmit()
     {
-        JSRuntime.InvokeVoidAsync("alert", "Por favor, corrija los errores del formulario antes de continuar.");
+        //JSRuntime.InvokeVoidAsync("alert", "Por favor, corrija los errores del formulario antes de continuar.");
+        await confirmationModal.ShowInfoAsync("Por favor, corrija los errores del formulario antes de continuar.");
     }
 
     private void Cancelar()

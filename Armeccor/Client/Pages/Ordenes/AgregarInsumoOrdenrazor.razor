@@ -3,6 +3,9 @@
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
 
+
+<ConfirmationModal @ref="confirmationModal" OnConfirm="ConfirmDelete" />
+
 <style>
     .info-card {
         border-radius: 20px;
@@ -176,7 +179,7 @@ else
 
                     <td class="text-center">
                         <button class="btn btn-sm btn-danger"
-                                @onclick="() => Eliminar(item.Id)">
+                                @onclick="() => MenuDelete(item.Id)">
                             Eliminar
                         </button>
                     </td>
@@ -195,6 +198,8 @@ else
 
 @code 
 {
+    private ConfirmationModal? confirmationModal;
+
 
     void VolverAInsumoOrden()
     {
@@ -342,7 +347,7 @@ else
     //     await CargarInsumosDeOrden(); // insumos de la OT
     // }
 
-
+    
     private async Task CargarInsumosDeOrden()
     {
         //DetalleOrden.NroOT = NroOT;
@@ -391,9 +396,41 @@ else
         await CargarInsumosDeOrden();
         await Cargar();
 
-        await JS.InvokeVoidAsync("alert", $"Pedido generado correctamente para la orden N°: {NroOT}.");
+        //await JS.InvokeVoidAsync("alert", $"Pedido generado correctamente para la orden N°: {NroOT}.");
+        await confirmationModal.ShowInfoAsync($"Pedido generado correctamente para la orden N°: {NroOT}.");
         //return response.Content;
     }
+
+
+    //
+    private async Task MenuDelete(int id)
+    {
+        if (confirmationModal != null)
+        {
+            var insumo = InsumosEnOrden.FirstOrDefault(a => a.Id == id);
+
+            await confirmationModal.ShowAsync(
+                $"¿Está seguro que desea eliminar el insumo: {insumo.Nombre}?",
+                id);
+        }
+    }
+
+    private async Task ConfirmDelete(bool confirmed)
+    {
+        if (confirmationModal != null)
+        {
+            var id = confirmationModal.CurrentItemId;
+
+            await confirmationModal.HideAsync(); // 🔥 cerrar primero
+
+            if (confirmed)
+            {
+                await Eliminar(id);
+            }
+        }
+    }
+    //
+
 
     private async Task Eliminar(int id)
     {
@@ -411,21 +448,24 @@ else
         //     await JS.InvokeVoidAsync("alert", $"Error al eliminar insumo: {error}");
         // }
 
-        var ok = await JS.InvokeAsync<bool>(
-           "confirm",
-           "¿Desea eliminar este insumo?"
-       );
+        //  var ok = await JS.InvokeAsync<bool>(
+        //     "confirm",
+        //     "¿Desea eliminar este insumo?"
+        // );
 
-        if (!ok) return;
+        //  if (!ok) return;
 
         var resp = await Http.DeleteAsync($"api/Insumo_Detalle_Orden/{id}");
         if (resp.IsSuccessStatusCode)
         {
-            await JS.InvokeVoidAsync("alert",$"El insumo fue eliminado");
+            //await JS.InvokeVoidAsync("alert",$"El insumo fue eliminado");
+            await confirmationModal.ShowInfoAsync("El insumo fue eliminado correctamente");
         }
         else
         {
-            await JS.InvokeVoidAsync("alert", $"No se pudo eliminar el insumo {insumoDTO.Nombre}.");
+            //await JS.InvokeVoidAsync("alert", $"No se pudo eliminar el insumo {insumoDTO.Nombre}.");
+            var insumo = InsumosEnOrden.FirstOrDefault(a=>a.Id==id);
+            await confirmationModal.ShowInfoAsync($"No se pudo eliminar el insumo: {insumo.Nombre}");
         }
          await CargarInsumosDeOrden();
          StateHasChanged();

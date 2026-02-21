@@ -27,7 +27,7 @@ namespace Armeccor.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AreaListaDTO>>> GetAreas()
         {
-            var areas = await context.Areas.Where(e=>e.EstaActivo).ToListAsync();
+            var areas = await context.Areas.Where(e=>e.EstaActivo == true).ToListAsync();
             return Ok(areas);
         }
 

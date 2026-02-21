@@ -18,6 +18,7 @@
     </button>
 </div>
 
+
 @if (loading)
 {
     <div class="alert alert-info">Cargando insumos...</div>
@@ -168,7 +169,7 @@ else
                         </button>
 
                         <button class="btn btn-sm btn-danger"
-                                @onclick="() => ConfirmarEliminar(i)">
+                                @onclick="() => MenuDelete(i.Id)">
                             🗑
                         </button>
                     </td>
@@ -180,13 +181,17 @@ else
     </table>
 }
 
+<ConfirmationModal @ref="confirmationModal" OnConfirm="ConfirmDelete" />
+
+
 @code 
 {
-   
 
+    private ConfirmationModal? confirmationModal;
+    private int? isDeletingId = null;
 
     private List<string> tipos = new() { "Masa", "Longitud", "Volumen", "Superficie", "Agrupacion" };
-   
+
     //private List<string> tipos = new();
 
     private string tipoSeleccionado = "";
@@ -304,22 +309,22 @@ else
 
 
         //Unidad destino
-      insumo.UnidadesDestino = todasUnidades
-            .Where(u => permitidas.Contains(u.Nombre) || permitidas.Contains(u.Abreviatura))
-            .Select(u => new UnidadDestinoItem
+        insumo.UnidadesDestino = todasUnidades
+              .Where(u => permitidas.Contains(u.Nombre) || permitidas.Contains(u.Abreviatura))
+              .Select(u => new UnidadDestinoItem
             {
                 Id = u.Id,
                 Nombre = u.Nombre,
                 Abreviatura = u.Abreviatura
             })
-            .OrderBy(u => u.Nombre)
-            .ToList();
+              .OrderBy(u => u.Nombre)
+              .ToList();
 
         insumo.UnidadOrigenId = insumo.UnidadesOrigen.FirstOrDefault()?.Id ?? 0;
 
         insumo.UnidadDestinoId = insumo.UnidadesDestino.FirstOrDefault()?.Id ?? 0;
     }
-  
+
     private async Task Convertir(InsumoConConversionesDTO insumo)
     {
         var origenNombre = insumo.UnidadesOrigen
@@ -343,7 +348,7 @@ else
 
 
     private string Formatear(decimal valor) { if (valor == 0) return "0"; if (valor < 1 && valor > 0) return valor.ToString("0.####################"); return valor.ToString("0.##"); }
-   //
+    //
 
     private List<InsumoConConversionesDTO>? insumos;
     private bool loading = true;
@@ -414,11 +419,54 @@ else
         var resp = await Http.DeleteAsync($"api/Insumos/{id}");
         if (resp.IsSuccessStatusCode)
         {
-            insumos = insumos?.Where(i => i.Id != id).ToList();
+            //insumos = insumos?.Where(i => i.Id != id).ToList();
+            if (confirmationModal != null)
+            {
+                await confirmationModal.ShowInfoAsync("✅ Insumo eliminado correctamente.");
+                // "✅ Insumo eliminado correctamente.",
+                // async () =>
+                // {
+                //     //Nav.NavigateTo("/Insumos");
+                //     await OnInitializedAsync();
+                // });
+            }
+            await CargarInsumos();
         }
         else
         {
-            await JS.InvokeVoidAsync("alert", "Error al eliminar el insumo");
+            //await JS.InvokeVoidAsync("alert", "Error al eliminar el insumo");
+            var insumo = insumos.FirstOrDefault(a=>a.Id == id);
+            await confirmationModal.ShowInfoAsync($"Error al eliminar el insumo: {insumo.Nombre}");
         }
     }
+
+
+    //
+    private async Task MenuDelete(int id)
+    {
+        if (confirmationModal != null)
+        {
+            var insumo = insumos.FirstOrDefault(a => a.Id == id);
+
+            await confirmationModal.ShowAsync(
+                $"¿Está seguro que desea eliminar el insumo: {insumo.Nombre}?",
+                id);
+        }
+    }
+
+    private async Task ConfirmDelete(bool confirmed)
+    {
+        if (confirmationModal != null)
+        {
+            var id = confirmationModal.CurrentItemId;
+
+            await confirmationModal.HideAsync(); // 🔥 cerrar primero
+
+            if (confirmed)
+            {
+                await Eliminar(id);
+            }
+        }
+    }
+    //
 }

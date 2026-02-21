@@ -144,7 +144,7 @@ else
 
 
                                 <!-- Botón Eliminar -->
-                                <button class="dropdown-item text-danger" @onclick="@(() => { EliminarPedido(d.Id); CloseDropdown(); })">
+                                <button class="dropdown-item text-danger" @onclick="@(() => { MenuDelete(d.Id); CloseDropdown(); })">
                                     <i class="fas fa-trash-alt"></i> Eliminar
                                 </button>
                             </div>
@@ -161,8 +161,12 @@ else
  *@
 }
 
+<ConfirmationModal @ref="confirmationModal" OnConfirm="ConfirmDelete" />
+
 @code 
 {
+    private ConfirmationModal? confirmationModal;
+
     //Datos del pedido para mostrar en el menú desplegable
 
     private int? openedDropdownId;
@@ -185,19 +189,50 @@ else
         Navigation.NavigateTo($"/EditarItemPedidoDetalladoDTO/{id}");
     }
 
+    //
+    private async Task MenuDelete(int id)
+    {
+        if (confirmationModal != null)
+        {
+            var pedido = detalles.FirstOrDefault(a => a.Id == id);
+
+            await confirmationModal.ShowAsync(
+                $"¿Está seguro que desea eliminar el pedido: {pedido.NombreInsumoInsuficiente}?",
+                id);
+        }
+    }
+
+    private async Task ConfirmDelete(bool confirmed)
+    {
+        if (confirmationModal != null)
+        {
+            var id = confirmationModal.CurrentItemId;
+
+            await confirmationModal.HideAsync(); // 🔥 cerrar primero
+
+            if (confirmed)
+            {
+                await EliminarPedido(id);
+            }
+        }
+    }
+    //
     private async Task EliminarPedido(int id)
     {
         var response = await Http.DeleteAsync($"api/PedidoDetalleInsumos/EliminacionLogicaEnVezDeFisica?id={id}");
 
         if (response.IsSuccessStatusCode)
         {
-            await JS.InvokeVoidAsync("alert", "Pedido eliminado correctamente.");
+            //await JS.InvokeVoidAsync("alert", "Pedido eliminado correctamente.");
+            await confirmationModal.ShowInfoAsync("El pedido fue eliminado correctamente");
             await OnInitializedAsync(); // Refrescar la lista después de eliminar
         }
         else
         {
             var error = await response.Content.ReadAsStringAsync();
-            await JS.InvokeVoidAsync("alert", $"Error al eliminar pedido: {error}");
+            //await JS.InvokeVoidAsync("alert", $"Error al eliminar pedido: {error}");
+            var pedido = detalles.FirstOrDefault(i=>i.Id == id);
+            await confirmationModal.ShowInfoAsync($"Error al eliminar el pedido: {pedido.NombreInsumoInsuficiente}");
         }
     }
 
@@ -226,7 +261,8 @@ else
         }
         catch
         {
-            await JS.InvokeVoidAsync("alert", "Error al cargar los detalles del pedido.");
+            //await JS.InvokeVoidAsync("alert", "Error al cargar los detalles del pedido.");
+            await confirmationModal.ShowInfoAsync("Error al cargar los detalles del pedido");
         }
 
         EstadosDisponibles.ToList();
@@ -242,7 +278,8 @@ else
 
         if (!response.IsSuccessStatusCode)
         {
-            await JS.InvokeVoidAsync("alert", "No se pudo actualizar el estado");
+            //await JS.InvokeVoidAsync("alert", "No se pudo actualizar el estado");
+            await confirmationModal.ShowInfoAsync("No se pudo actualizar el estado del pedido");
             return;
         }
 

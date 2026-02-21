@@ -19,13 +19,11 @@
             box-shadow: 0 10px 22px rgba(0,0,0,0.28);
         }
 
-    /* 🔴 SIN STOCK */
     .sin-stock {
         background: linear-gradient(135deg, #ffebee, #ffcdd2);
         border-left-color: #dc3545;
     }
 
-    /* 🟢 CON STOCK */
     .con-stock {
         background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
         border-left-color: #198754;
@@ -92,7 +90,8 @@ else
 
                         <div class="mt-auto text-end">
                             <button class="btn btn-sm btn-danger"
-                                    @onclick="() => Eliminar(e.Id)">
+                                    disabled="@(isDeletingId == e.Id)"
+                                    @onclick="() => MenuDelete(e.Id)">
                                 Eliminar
                             </button>
                         </div>
@@ -108,9 +107,14 @@ else
     ➕ Nuevo Estante
 </button>
 
+<ConfirmationModal @ref="confirmationModal"
+                   OnConfirm="ConfirmDelete" />
+
 @code
 {
     private List<EstanteDTO> estantes = new();
+    private ConfirmationModal? confirmationModal;
+    private int? isDeletingId = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -122,23 +126,103 @@ else
         estantes = await Http.GetFromJsonAsync<List<EstanteDTO>>("api/Estantes") ?? new();
     }
 
-    private async Task Eliminar(int id)
+    // ==============================
+    // MODAL
+    // ==============================
+
+    private async Task MenuDelete(int id)
     {
-        var ok = await JS.InvokeAsync<bool>(
-            "confirm",
-            "¿Desea desactivar este estante?"
-        );
-
-        if (!ok) return;
-
-        var resp = await Http.DeleteAsync($"api/Estantes/{id}");
-        if (resp.IsSuccessStatusCode)
+        if (confirmationModal != null)
         {
-            await CargarEstantes();
+            var estante = estantes.FirstOrDefault(e=>e.Id == id);
+            await confirmationModal.ShowAsync(
+                $"¿Está seguro que desea eliminar el estante: {estante.Codigo}?",
+                id);
+        }
+    }
+
+    private async Task ConfirmDelete(bool confirmed)
+    {
+        if (confirmed && confirmationModal != null)
+        {
+            await Eliminar(confirmationModal.CurrentItemId);
         }
         else
         {
-            await JS.InvokeVoidAsync("alert", "No se pudo eliminar el estante.");
+            if (confirmationModal != null)
+                await confirmationModal.HideAsync();
+        }
+    }
+
+    // ==============================
+    // ELIMINAR
+    // ==============================
+
+    // private async Task Eliminar(int id)
+    // {
+    //     try
+    //     {
+    //         isDeletingId = id;
+
+    //         if (confirmationModal != null)
+    //             await confirmationModal.HideAsync();
+
+    //         var resp = await Http.DeleteAsync($"api/Estantes/{id}");
+
+    //         if (resp.IsSuccessStatusCode)
+    //         {
+    //             // Eliminar visualmente sin recargar todo
+    //             estantes = estantes.Where(e => e.Id != id).ToList();
+
+    //             //await JS.InvokeVoidAsync("alert", "Estante eliminado correctamente.");
+    //             await confirmationModal.ShowInfoAsync("✅Estante eliminado correctamente.");
+    //         }
+    //         else
+    //         {
+    //            // await JS.InvokeVoidAsync("alert", "No se pudo eliminar el estante.");
+    //             await confirmationModal.ShowInfoAsync("❌No se pudo eliminar el estante.");
+    //         }
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         await JS.InvokeVoidAsync("alert", $"Error inesperado: {ex.Message}");
+    //     }
+    //     finally
+    //     {
+    //         isDeletingId = null;
+    //     }
+    // }
+
+    private async Task Eliminar(int id)
+    {
+        try
+        {
+            isDeletingId = id;
+
+            var resp = await Http.DeleteAsync($"api/Estantes/{id}");
+
+            if (resp.IsSuccessStatusCode)
+            {
+                estantes = estantes.Where(e => e.Id != id).ToList();
+
+                if (confirmationModal != null)
+                    await confirmationModal.ShowInfoAsync("✅ Estante eliminado correctamente.");
+            }
+            else
+            {
+                if (confirmationModal != null)
+                    await confirmationModal.ShowInfoAsync("❌ No se pudo eliminar el estante.");
+            }
+        }
+        catch (Exception ex)
+        {
+            if (confirmationModal != null)
+                await confirmationModal.ShowInfoAsync($"Error inesperado: {ex.Message}");
+        }
+        finally
+        {
+            isDeletingId = null;
+            StateHasChanged();
         }
     }
 

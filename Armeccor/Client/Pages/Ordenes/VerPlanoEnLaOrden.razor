@@ -8,6 +8,8 @@
 <h3>📁 Planos de la orden NroOT: @NroOT (@nombreOrden)</h3>
 <h5>📂 Carpeta: @CarpetaCompleta</h5>
 
+<ConfirmationModal @ref="confirmationModal" />
+
 <style>
     /* La celda debe ser el contexto de posicionamiento */
     td.action-cell {
@@ -105,7 +107,7 @@
 
 @if (planos.Count > 0)
 {
-   @*  <div style="display: flex; justify-content: flex-end; margin-bottom: 8px;">
+    @*  <div style="display: flex; justify-content: flex-end; margin-bottom: 8px;">
         <button class="btn btn-outline-success"
                 title="Descargar planos"
                 @onclick="() => DescargarPlanos(NroOT)">
@@ -135,7 +137,7 @@
             </tr>
         </thead>
 
-       @*  <thead class="table-dark">
+        @*  <thead class="table-dark">
             <tr>
                 <th>📄 Archivo</th>
                 <th style="white-space: nowrap;">
@@ -149,7 +151,7 @@
             </tr>
         </thead> *@
 
-     
+
 
         <tbody>
             @foreach (var plano in ObtenerPlanosOrdenados()@*planos.OrderByDescending(p => p.FechaCreacion) *@)
@@ -158,7 +160,7 @@
                     <td>@plano.RutaOriginal</td>
                     <td>@plano.FechaCreacion.ToString("dd/MM/yyyy")</td>
                     <td>@plano.RutaSVG</td>
-                  @*   <td>
+                    @*   <td>
                         <button class="btn btn-sm btn-outline-primary" @onclick="@(() => AbrirRutaLocal(plano.RutaSVG))">
                             Abrir
                         </button>
@@ -183,7 +185,7 @@
                                 <button class="dropdown-item primary" @onclick="@(() => { AbrirRutaLocal(plano.RutaSVG); CloseDropdown(); })">
                                     <i class="fas fa-folder-open"></i> Abrir
                                 </button>
-                                <button class="dropdown-item danger" @onclick="@(() => { EliminarPlano(NroOT, plano.RutaSVG); CloseDropdown(); })">
+                                <button class="dropdown-item danger" @onclick="@(() => { ConfirmarEliminacion(NroOT, plano.RutaSVG); CloseDropdown(); })">
                                     <i class="fas fa-trash-alt"></i> Eliminar
                                 </button>
                                 <button class="dropdown-item success" @onclick="@(() => { DescargarPlanoPorRuta(plano.RutaSVG); CloseDropdown(); })">
@@ -233,8 +235,10 @@ else
 <button class="btn btn-subir px-4" @onclick="SubirPlano" disabled="@(!hayArchivo)">Subir plano</button>
 <button class="btn btn-volver px-4" @onclick="Volver">Volver</button>
 
-@code 
+@code
 {
+    private ConfirmationModal? confirmationModal;
+
     private IEnumerable<PlanoFiltroDTO> ObtenerPlanosOrdenados()
     {
         return ordenarAscendente
@@ -296,7 +300,8 @@ else
         else
         {
             var error = await response.Content.ReadAsStringAsync();
-            await JS.InvokeVoidAsync("alert", $"Error al obtener planos: {error}");
+            //await JS.InvokeVoidAsync("alert", $"Error al obtener planos: {error}");
+            await confirmationModal.ShowInfoAsync($"No se pudo cargar los planos");
         }
     }
 
@@ -310,7 +315,7 @@ else
     {
         if (archivoSeleccionado == null)
         {
-            await JS.InvokeVoidAsync("alert", "No se seleccionó ningún archivo.");
+            await confirmationModal.ShowInfoAsync("No se seleccionó ningún archivo.");
             return;
         }
 
@@ -322,14 +327,14 @@ else
         var response = await Http.PostAsync($"api/Planos/SubirPlano?NroOT={NroOT}", content);
         if (response.IsSuccessStatusCode)
         {
-            await JS.InvokeVoidAsync("alert", "Plano añadido correctamente.");
+            await confirmationModal.ShowInfoAsync("Plano añadido correctamente.");
             await OnInitializedAsync();
             hayArchivo = false;
         }
         else
         {
             var error = await response.Content.ReadAsStringAsync();
-            await JS.InvokeVoidAsync("alert", $"Error al subir plano: {error}");
+            await confirmationModal.ShowInfoAsync($"No se pudo cargar el plano");
         }
     }
 
@@ -348,8 +353,20 @@ else
         else
         {
             var error = await response.Content.ReadAsStringAsync();
-            await JS.InvokeVoidAsync("alert", $"No se pudo abrir la ruta: {error}");
+            //await JS.InvokeVoidAsync("alert", $"No se pudo abrir la ruta: {error}");
+            await confirmationModal.ShowInfoAsync("No se pudo abrir el plano");
         }
+    }
+
+    private async Task ConfirmarEliminacion(int nroOT, string ruta)
+    {
+        await confirmationModal.ShowAsync(
+            $"¿Está seguro que desea eliminar el plano?\n{Path.GetFileName(ruta)}",
+            nroOT,
+            async (id) =>
+            {
+                await EliminarPlano(id, ruta);
+            });
     }
 
     private async Task EliminarPlano(int nroOT, string ruta)
@@ -357,56 +374,52 @@ else
         var url = $"api/Planos/EliminarPlano?NroOT={nroOT}&ruta={Uri.EscapeDataString(ruta)}";
         var response = await Http.DeleteAsync(url);
 
+        // if (response.IsSuccessStatusCode)
+        // {
+        //     await JS.InvokeVoidAsync("alert", $"Plano eliminado correctamente: {ruta}");
+        //     // Reconsulta al backend para evitar desincronización
+        //     await OnInitializedAsync();
+        //     StateHasChanged();
+        // }
+        // else
+        // {
+        //     var error = await response.Content.ReadAsStringAsync();
+        //     await JS.InvokeVoidAsync("alert", $"Error al eliminar plano: {error}");
+        // }
+
         if (response.IsSuccessStatusCode)
         {
-            await JS.InvokeVoidAsync("alert", $"Plano eliminado correctamente: {ruta}");
-            // Reconsulta al backend para evitar desincronización
+            await confirmationModal.ShowInfoAsync($"Plano eliminado correctamente: {ruta}");
             await OnInitializedAsync();
             StateHasChanged();
         }
         else
         {
             var error = await response.Content.ReadAsStringAsync();
-            await JS.InvokeVoidAsync("alert", $"Error al eliminar plano: {error}");
+            await confirmationModal.ShowInfoAsync($"Error al eliminar plano");
         }
     }
 
 
-    private void DescargarPlanos(int nroOT)
-    {   
+    private async void DescargarPlanos(int nroOT)
+    {
+        await confirmationModal.ShowInfoAsync("Descargando carpeta con los planos...");
         var ZipURL = $"/api/Planos/DescargarZip/{NroOT}";
         NavigationManager.NavigateTo(ZipURL, forceLoad: true);
         CloseDropdown();
     }
 
-    private void  DescargarPlanoPorRuta(string nombreArchivo)
+    private async void DescargarPlanoPorRuta(string nombreArchivo)
     {
+        await confirmationModal.ShowInfoAsync("Descargando plano...");
         var url = $"api/Planos/DescargarPlanoPorRuta?ruta={Uri.EscapeDataString(nombreArchivo)}";
         NavigationManager.NavigateTo(url, forceLoad: true);
         CloseDropdown();
-        // //Console.WriteLine($"DescargarPorNombre URL: {url}");
-
-        // var response = await Http.GetAsync(url);
-
-        // if (response.IsSuccessStatusCode)
-        // {
-        //     var bytes = await response.Content.ReadAsByteArrayAsync();
-
-        //     var contentType = response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream";
-        //     var nombreFinal = response.Content.Headers.ContentDisposition?.FileName?.Trim('"') ?? nombreArchivo;
-
-        //     await JS.InvokeVoidAsync("BlazorDownloadFile", nombreFinal, contentType, Convert.ToBase64String(bytes));
-        // }
-        // else
-        // {
-        //     var error = await response.Content.ReadAsStringAsync();
-        //     await JS.InvokeVoidAsync("alert", $"Error al descargar: {error}");
-        // }
     }
 
 
     public void Volver()
     {
-         NavigationManager.NavigateTo("/Ordenes");    
+        NavigationManager.NavigateTo("/Ordenes");
     }
 }

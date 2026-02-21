@@ -81,7 +81,7 @@ namespace Armeccor.Controllers
         public async Task<ActionResult<List<PlanoFiltroDTO>>> ObtenerPlanosPorNroOT(int nroOT)
         {
             var orden = await context.Ordenes
-                .Where(o => o.EstaActivo)
+                .Where(o => o.EstaActivo == true)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(o => o.NroOT == nroOT);
 
@@ -90,6 +90,7 @@ namespace Armeccor.Controllers
 
             var planos = await context.Planos
                 .Where(p => p.OrdenId == orden.Id)
+                .Where(e=>e.EstaActivo == true)
                 .OrderByDescending(p => p.FechaCreacion)
                 .Select(p => new PlanoFiltroDTO
                 {

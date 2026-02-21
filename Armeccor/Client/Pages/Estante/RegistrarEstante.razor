@@ -48,20 +48,26 @@
 
 </div>
 
+<ConfirmationModal @ref="confirmationModal" />
+
 @code
 {
     private EstanteDTO estante = new();
     private List<CrearInsumoDTO> insumos = new();
+    private ConfirmationModal? confirmationModal;
 
     protected override async Task OnInitializedAsync()
     {
         await ListarInsumos();
     }
+
+
     private async Task Guardar()
     {
         if (string.IsNullOrWhiteSpace(estante.Descripcion))
         {
-            await JS.InvokeVoidAsync("alert", "La descripción es obligatoria.");
+            if (confirmationModal != null)
+                await confirmationModal.ShowInfoAsync("La descripción es obligatoria.");
             return;
         }
 
@@ -69,15 +75,25 @@
 
         if (resp.IsSuccessStatusCode)
         {
-            await JS.InvokeVoidAsync("alert", "Estante registrado correctamente.");
-            Navigation.NavigateTo("/Estantes");
+            if (confirmationModal != null)
+            {
+                await confirmationModal.ShowInfoAsync(
+                    "✅ Estante registrado correctamente.",
+                    async () =>
+                    {
+                        Navigation.NavigateTo("/Estantes");
+                        await Task.CompletedTask;
+                    });
+            }
         }
         else
         {
             var error = await resp.Content.ReadAsStringAsync();
-            await JS.InvokeVoidAsync("alert", error);
+            if (confirmationModal != null)
+                await confirmationModal.ShowInfoAsync($"❌ {error}");
         }
     }
+
 
     private async Task ListarInsumos()
     {

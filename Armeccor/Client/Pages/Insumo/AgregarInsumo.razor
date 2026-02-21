@@ -36,10 +36,14 @@
     <button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
 </div>
 
-@code {
+<ConfirmationModal @ref="confirmationModal" />
+
+
+@code 
+{
     private CrearInsumoDTO insumo = new CrearInsumoDTO();
     private List<UnidadMedidaDTO> unidades = new();
-
+    private ConfirmationModal? confirmationModal;
     protected override async Task OnInitializedAsync()
     {
         unidades = await Http.GetFromJsonAsync<List<UnidadMedidaDTO>>("api/Insumos/Unidades");
@@ -49,7 +53,8 @@
     {
         if (string.IsNullOrWhiteSpace(insumo.Nombre))
         {
-            await JS.InvokeVoidAsync("alert", "El nombre del insumo es obligatorio.");
+            //await JS.InvokeVoidAsync("alert", "El nombre del insumo es obligatorio.");
+            await confirmationModal.ShowInfoAsync("El nombre del insumo es obligatorio");
             return;
         }
 
@@ -58,19 +63,29 @@
             var resp = await Http.PostAsJsonAsync("api/Insumos", insumo);
             if (resp.IsSuccessStatusCode)
             {
-                await JS.InvokeVoidAsync("alert", "Insumo agregado correctamente.");
-                Navigation.NavigateTo("/Insumos");
+                // await JS.InvokeVoidAsync("alert", "Insumo agregado correctamente.");
+                // Navigation.NavigateTo("/Insumos");
+                if (confirmationModal != null)
+                {
+                    await confirmationModal.ShowInfoAsync(
+                        "✅ Insumo registrado correctamente.",
+                        async () =>
+                        {
+                            Navigation.NavigateTo("/Insumos/AgregarInsumo");
+                            await Task.CompletedTask;
+                        });
+                }
             }
             else
             {
                 var body = await resp.Content.ReadAsStringAsync();
-                await JS.InvokeVoidAsync("alert", $"Error al agregar insumo: {resp.StatusCode} - {body}");
+                //await JS.InvokeVoidAsync("alert", $"Error al agregar insumo: {resp.StatusCode} - {body}");
+                await confirmationModal.ShowInfoAsync("Error al registrar el insumo");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error al agregar insumo: {ex.Message}");
-            await JS.InvokeVoidAsync("alert", "Error al agregar insumo. Revisar consola.");
+            await confirmationModal.ShowInfoAsync("Error en el servidor al registrar insumo");
         }
     }
 

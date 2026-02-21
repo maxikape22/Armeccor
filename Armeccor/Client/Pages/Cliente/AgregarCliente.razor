@@ -1,4 +1,4 @@
-﻿@page "/api/Clientes/AgregarCliente"
+﻿@page "/Clientes/AgregarCliente"
 @inject HttpClient http
 @inject NavigationManager navigationManager
 
@@ -36,21 +36,38 @@
     <button class="btn btn-secondary" type="button" @onclick="Cancelar">Cancelar</button>
 </EditForm>
 
+<ConfirmationModal @ref="confirmationModal" />
+
 @code
 {
+    private ConfirmationModal? confirmationModal;
+
     private CrearClienteDTO cliente = new CrearClienteDTO();
 
     private async Task Grabar()
     {
         var response = await http.PostAsJsonAsync("api/Clientes", cliente);
+
         if (response.IsSuccessStatusCode)
         {
-            navigationManager.NavigateTo("/Clientes");
+            // await confirmationModal.ShowInfoAsync("Se registro el cliente correctamente");
+            // navigationManager.NavigateTo("/Clientes");
+            if (confirmationModal != null)
+            {
+                await confirmationModal.ShowInfoAsync(
+                    "✅ Cliente registrado correctamente.",
+                    async () =>
+                    {
+                        navigationManager.NavigateTo("/Clientes");
+                        await Task.CompletedTask;
+                    });
+            }
         }
         else
         {
             var errorMsg = await response.Content.ReadAsStringAsync();
-            Console.WriteLine("Error al guardar cliente: " + errorMsg);
+            //Console.WriteLine("Error al guardar cliente: " + errorMsg);
+            await confirmationModal.ShowInfoAsync("No se pudo registrar el cliente");
         }
     }
 

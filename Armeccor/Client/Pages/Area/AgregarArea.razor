@@ -17,20 +17,35 @@
     <button class="btn btn-secondary" type="button" @onclick="Cancelar">Cancelar</button>
 </EditForm>
 
+<ConfirmationModal @ref="confirmationModal" />
+
 @code
 {
+    private ConfirmationModal? confirmationModal;
+
     private CrearAreaDTO area = new CrearAreaDTO();
     private async Task Grabar()
     {
         var response = await http.PostAsJsonAsync("/api/Areas", area);
         if (response.IsSuccessStatusCode)
         {
-            navigationManager.NavigateTo("/Areas");
+            //navigationManager.NavigateTo("/Areas");
+            if (confirmationModal != null)
+            {
+                await confirmationModal.ShowInfoAsync(
+                    "✅ Área registrada correctamente.",
+                    async () =>
+                    {
+                        navigationManager.NavigateTo("/Areas");
+                        await Task.CompletedTask;
+                    });
+            }
         }
         else
         {
             var errorMsg = await response.Content.ReadAsStringAsync();
-            Console.WriteLine("Error al guardar área: " + errorMsg);
+            //Console.WriteLine("Error al guardar área: " + errorMsg);
+            await confirmationModal.ShowInfoAsync("No se pudo guardar el área");
         }
     }
 

@@ -144,24 +144,48 @@ namespace Armeccor.Server.Controllers
             return Ok(e);
         }
 
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteEntrega(int id)
+        //[HttpDelete("{id:int}")]
+        //public async Task<IActionResult> DeleteEntrega(int id)
+        //{
+        //    var entrega = await context.Entregas.FirstOrDefaultAsync(e => e.Id == id);
+
+        //    if (entrega == null)
+        //        return NotFound("Entrega no encontrada.");
+
+        //    if (!entrega.EstaActivo)
+        //        return BadRequest("La entrega ya está dada de baja.");
+
+        //    entrega.EstaActivo = false;
+        //    entrega.FechaBaja = DateTime.Now;
+
+        //    await context.SaveChangesAsync();
+
+        //    return NoContent();
+        //}
+
+
+        [HttpDelete("{nroOT:int}")]
+        public async Task<IActionResult> DeleteEntrega(int nroOT)
         {
-            var entrega = await context.Entregas.FirstOrDefaultAsync(e => e.Id == id);
+            var entregas = await context.Entregas
+                .Include(e => e.Orden)
+                .Where(e => e.Orden.NroOT == nroOT && e.EstaActivo)
+                .ToListAsync();
 
-            if (entrega == null)
-                return NotFound("Entrega no encontrada.");
+            if (!entregas.Any())
+                return NotFound("No se encontraron entregas activas para ese NroOT.");
 
-            if (!entrega.EstaActivo)
-                return BadRequest("La entrega ya está dada de baja.");
-
-            entrega.EstaActivo = false;
-            entrega.FechaBaja = DateTime.Now;
+            foreach (var entrega in entregas)
+            {
+                entrega.EstaActivo = false;
+                entrega.FechaBaja = DateTime.Now;
+            }
 
             await context.SaveChangesAsync();
 
             return NoContent();
         }
+
 
         [HttpPut("{id:int}")]
         public async Task<IActionResult> PutArea(int id, CrearEntregaDTO dto)

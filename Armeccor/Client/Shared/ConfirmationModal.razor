@@ -1,71 +1,153 @@
-﻿@* Shared/ConfirmationModal.razor *@
+﻿@inject NavigationManager Navigation
+
+
 <style>
-    .modal-backdrop {
+    /* Fondo oscuro que bloquea la pantalla */
+    .modal-overlay {
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        inset: 0; /* top, right, bottom, left = 0 */
         background-color: rgba(0, 0, 0, 0.5);
         display: flex;
-        justify-content: center;
         align-items: center;
-        z-index: 1000;
+        justify-content: center;
+        z-index: 9999;
     }
 
+    /* Caja del modal */
     .modal-content {
-        background-color: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
-        width: 300px;
-        text-align: center;
+        background: #ffffff;
+        border-radius: 10px;
+        min-width: 320px;
+        max-width: 420px;
+        padding: 25px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        animation: modalFadeIn 0.2s ease-out;
     }
 
-        .modal-content button {
-            margin: 10px;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+    /* Texto */
+    .modal-body {
+        font-size: 1rem;
+        text-align: center;
+        margin-bottom: 20px;
+    }
 
-        .modal-content .btn-confirm {
-            background-color: #dc3545;
-            color: white;
-        }
+    /* Botones */
+    .modal-footer {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
 
-        .modal-content .btn-cancel {
-            background-color: #6c757d;
-            color: white;
-        }
+    /* Animación suave */
+    @@keyframes modalFadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    }
 </style>
+
 
 @if (ShowModal)
 {
-    <div class="modal-backdrop">
+
+    <div class="modal-overlay">
         <div class="modal-content">
-            <p>@Message</p>
-            <div>
-                <button class="btn-confirm" @onclick="() => OnConfirm.InvokeAsync(true)">Confirmar</button>
-                <button class="btn-cancel" @onclick="() => OnConfirm.InvokeAsync(false)">Cancelar</button>
+            <div class="modal-body">
+                <p>@Message</p>
+            </div>
+
+            <div class="modal-footer">
+                @if (IsConfirmation)
+                {
+                    <button class="btn btn-danger" @onclick="Confirm">
+                        Confirmar
+                    </button>
+                    <button class="btn btn-secondary" @onclick="Close">
+                        Cancelar
+                    </button>
+                }
+                else
+                {
+                    <button class="btn btn-success" @onclick="Accept">
+                        Aceptar
+                    </button>
+                }
             </div>
         </div>
     </div>
 }
 
 @code {
+
+    private bool ShowModal = false;
+    private bool IsConfirmation = false;
+    private string Message = string.Empty;
+    public int CurrentItemId;
     [Parameter]
-    public EventCallback<bool> OnConfirm { get; set; }
+    public  EventCallback<bool> OnConfirm { get; set; }
+    private Func<int, Task>? OnConfirmCallback;
+    private Func<Task>? OnAcceptCallback;
 
-    public string Message { get; set; } = "¿Está seguro?";
-    public bool ShowModal { get; set; } = false;
-    public int CurrentItemId { get; set; } // Para guardar el ID del elemento que se está confirmando
+    // 🔹 Para confirmar eliminación
+    public Task ShowAsync(string message, int itemId, Func<int, Task> onConfirm)
+    {
+        Message = message;
+        CurrentItemId = itemId;
+        IsConfirmation = true;
+        OnConfirmCallback = onConfirm;
+        ShowModal = true;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
 
+    // 🔹 Para mostrar mensaje informativo
+    public Task ShowInfoAsync(string message, Func<Task>? onAccept = null)
+    {
+        Message = message;
+        IsConfirmation = false;
+        OnAcceptCallback = onAccept;
+        ShowModal = true;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    private async Task Confirm()
+    {
+        ShowModal = false;
+
+        if (OnConfirmCallback != null)
+            await OnConfirmCallback(CurrentItemId);
+
+        if (OnConfirm.HasDelegate)
+            await OnConfirm.InvokeAsync(Convert.ToBoolean(CurrentItemId));
+    }
+
+    private async Task Accept()
+    {
+        ShowModal = false;
+
+        if (OnAcceptCallback != null)
+            await OnAcceptCallback();
+    }
+
+    private void Close()
+    {
+        ShowModal = false;
+    }
     public Task ShowAsync(string message, int itemId = 0)
     {
         Message = message;
         CurrentItemId = itemId;
+        IsConfirmation = true;
         ShowModal = true;
         StateHasChanged();
         return Task.CompletedTask;

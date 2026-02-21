@@ -7,6 +7,6 @@ namespace DTO.ObjetosDTO
         [MaxLength(100)]
         public string NombreArea { get; set; }
         public DateTime? FechaBaja { get; set; }
-        public bool EstaActivo { get; set; }
+        public bool EstaActivo { get; set; } = true;
     }
 }
