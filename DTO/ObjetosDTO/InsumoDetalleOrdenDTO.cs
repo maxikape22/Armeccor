@@ -15,8 +15,8 @@
         public int CantidadDescontada { get; set; }
         public int CantidadPendiente { get; set; }
         public bool Insuficiente { get; set; }
-        public DateTime? FechaBaja { get; set; }
-        public bool EstaActivo { get; set; }
+        public DateTime? FechaBaja { get; set; } = null;
+        public bool EstaActivo { get; set; } = true;
 
     }
 }

@@ -43,11 +43,11 @@ namespace Armeccor.Server.Controllers
                 return NotFound("Insumo no encontrado");
 
             // ✅ ACÁ
-            if (!insumo.EstaActivo)
-            {
+            //if (!insumo.EstaActivo)
+            //{
                 insumo.EstaActivo = true;
                 insumo.FechaBorrado = null;
-            }
+            //}
             // ✅ FIN ACÁ
 
             var orden = await context.Ordenes
@@ -88,7 +88,9 @@ namespace Armeccor.Server.Controllers
                     // ✅ NUEVO
                     CantidadDescontada = descontadoAhora,
                     CantidadPendiente = pendienteAhora,
-                    Insuficiente = pendienteAhora > 0
+                    Insuficiente = pendienteAhora > 0,
+                    EstaActivo = true,
+                    FechaBaja = null
                 });
             }
 

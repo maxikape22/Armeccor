@@ -301,7 +301,7 @@ else
                 insumo.CantidadARetirar = null;
 
                 // 🔹 Recargar lista de insumos de la orden
-                await CargarInsumosDeOrden();
+                //await CargarInsumosDeOrden();
 
                 // await JS.InvokeVoidAsync("alert",
                 //     $"Se agregó {resultado.DetalleOrden.Cantidad} de {insumo.Nombre} a la orden {ordenId}. Stock restante: {insumo.CantDisponible}");
@@ -310,8 +310,10 @@ else
         else
         {
             var error = await resp.Content.ReadAsStringAsync();
-            await JS.InvokeVoidAsync("alert", $"Error: {error}");
+            //await JS.InvokeVoidAsync("alert", $"Error: {error}");
+            await confirmationModal.ShowInfoAsync("Error al agregar insumos a la orden");
         }
+        await CargarInsumosDeOrden();
     }
 
     // private async Task AgregarInsumoAOrden(CrearInsumoDTO insumo)
