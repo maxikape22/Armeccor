@@ -260,16 +260,19 @@
                                             <option value="Procesada">Procesada</option>
                                             <option value="Iniciada">Iniciada</option>
                                             <option value="Finalizada">Finalizada</option>
+                                            <option value="Pendiente">Pendiente</option>
                                         </select>
 
                                         <button class="dropdown-item" @onclick="() => MenuViewAreaDetails(orden.NroOT)"><i class="fas fa-cogs"></i> Ver áreas</button>
                                         <button class="dropdown-item" @onclick="() => MenuViewPlans(orden.NroOT)"><i class="fas fa-file-alt"></i> Ver planos</button>
                                         <button class="dropdown-item" @onclick="() => MenuViewSupplies(orden.NroOT)"><i class="fas fa-boxes"></i> Ver insumos</button>
                                         <button class="dropdown-item" @onclick="() => ImprimirOrden(orden.NroOT)"><i class="fas fa-file-pdf"></i> Imprimir orden</button>
-                                        <button class="dropdown-item danger" disabled="@(isDeletingId == orden.Id)" @onclick="() => MenuDelete(orden.NroOT)" >
-                                            @(isDeletingId == orden.Id ? "Eliminando..." :  "Eliminar")
-                                        </button>
-                                    </div>
+                                        <button class="dropdown-item danger" disabled="@(isDeletingId == orden.Id)" @onclick="() => MenuDelete(orden.NroOT)">
+                                            <i class="fas fa-trash"></i>
+                                            @(isDeletingId == orden.Id ? "Eliminando..." :  "Eliminar") 
+                                        </button>   
+                                        
+                                   </div>
                                 </div>
                             </td>
                         </tr>
@@ -566,12 +569,14 @@
             var o = orders?.FirstOrDefault(x => x.Id == id);
             if (o is not null) o.Estado = newStatus;
             ApplyEstadoFilter();
-            await JSRuntime.InvokeVoidAsync("alert", "Estado de la orden actualizado con éxito.");
+            //await JSRuntime.InvokeVoidAsync("alert", "Estado de la orden actualizado con éxito.");
+            await confirmationModal.ShowInfoAsync("Estado de la orden actualizado con éxito.");
         }
         else
         {
             var errorContent = await response.Content.ReadAsStringAsync();
-            await JSRuntime.InvokeVoidAsync("alert", $"Error al actualizar el estado: {response.StatusCode} - {errorContent}");
+            //await JSRuntime.InvokeVoidAsync("alert", $"Error al actualizar el estado: {response.StatusCode} - {errorContent}");
+            await confirmationModal.ShowInfoAsync(errorContent);
         }
     }
 
@@ -610,19 +615,22 @@
             var response = await Http.DeleteAsync($"api/Ordenes/{NroOT}");
             if (response.IsSuccessStatusCode)
             {
-                await JSRuntime.InvokeVoidAsync("alert", "Orden eliminada con éxito.");
+                //await JSRuntime.InvokeVoidAsync("alert", "Orden eliminada con éxito.");
+                await confirmationModal.ShowInfoAsync($"Orden N°: {NroOT} eliminada exitosamente");
                 await CargarOrdenes();
             }
             else
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
-                await JSRuntime.InvokeVoidAsync("alert", $"Error al eliminar la orden: {response.StatusCode} - {errorContent}");
+                //await JSRuntime.InvokeVoidAsync("alert", $"Error al eliminar la orden: {response.StatusCode} - {errorContent}");
+                await confirmationModal.ShowInfoAsync(errorContent);
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error al eliminar: {ex.Message}");
-            await JSRuntime.InvokeVoidAsync("alert", $"Ocurrió un error al intentar eliminar la orden: {ex.Message}");
+            //Console.WriteLine($"Error al eliminar: {ex.Message}");
+            //await JSRuntime.InvokeVoidAsync("alert", $"Ocurrió un error al intentar eliminar la orden: {ex.Message}");
+            await confirmationModal.ShowInfoAsync(ex.Message);
         }
         finally
         {

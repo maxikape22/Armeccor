@@ -165,6 +165,18 @@ namespace Armeccor.Controllers
             if (orden == null)
                 return NotFound($"No se encontró la orden N°: {NroOT} para asociar al plano.");
 
+
+            // 🚫 REGLA DE NEGOCIO NUEVA
+            if (!orden.Estado.Equals("Iniciada", StringComparison.OrdinalIgnoreCase) &&
+                !orden.Estado.Equals("Pendiente", StringComparison.OrdinalIgnoreCase))
+            {
+                return BadRequest(
+                    $"No se pueden registar planos a una orden en estado '{orden.Estado}'. " +
+                    "Solo se permite el estado Iniciada o Pendiente para el registro del plano en la orden."
+                );
+            }
+
+
             // Carpeta dentro de wwwroot/Planos/NombreOrden
             var nombreCarpeta = orden.NombreOrden.Replace(" ", "_");
 

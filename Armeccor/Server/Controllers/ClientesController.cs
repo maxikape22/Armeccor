@@ -55,15 +55,25 @@ namespace Armeccor.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<CrearClienteDTO>> PostCliente(CrearClienteDTO crearClienteDTO)
         {
+            // 🔎 Verificar si ya existe un cliente con ese DNI
+            var existeCliente = await context.Clientes
+                .AnyAsync(c => c.DNI == crearClienteDTO.DNI && c.EstaActivo);
+
+            if (existeCliente)
+            {
+                return BadRequest($"No se puede registrar el cliente. Ya existe un cliente con DNI: {crearClienteDTO.DNI}");
+            }
+
             var cliente = _mapper.Map<Cliente>(crearClienteDTO);
-            
-            cliente.EstaActivo = true;   
+
+            cliente.EstaActivo = true;
             cliente.FechaBaja = null;
-            
+
             context.Clientes.Add(cliente);
             await context.SaveChangesAsync();
 
             var clienteDTO = _mapper.Map<CrearClienteDTO>(cliente);
+
             return Ok(clienteDTO);
         }
 

@@ -55,6 +55,17 @@ namespace Armeccor.Server.Controllers
             if (orden == null)
                 return NotFound("Orden no encontrada");
 
+
+            // 🚫 REGLA DE NEGOCIO NUEVA
+            if (!orden.Estado.Equals("Iniciada", StringComparison.OrdinalIgnoreCase) &&
+                !orden.Estado.Equals("Pendiente", StringComparison.OrdinalIgnoreCase))
+            {
+                return BadRequest(
+                    $"No se pueden registar insumos a una orden en estado '{orden.Estado}'. " +
+                    "Solo se permite el estado Iniciada o Pendiente para el registro del insumo en la orden."
+                );
+            }
+
             var detalle = await context.InsumoDetalleOrdenes
                 .FirstOrDefaultAsync(x =>
                     x.OrdenId == dto.OrdenId &&

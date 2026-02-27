@@ -216,7 +216,7 @@
                 var errorContent = await response.Content.ReadAsStringAsync();
                 //Console.WriteLine("Error al guardar orden: " + errorContent);
                 //await JSRuntime.InvokeVoidAsync("alert", $"Error al guardar orden: {response.StatusCode} - {errorContent}");
-                await confirmationModal.ShowInfoAsync("Error al guardar la orden");
+                await confirmationModal.ShowInfoAsync(errorContent);
             }
         }
         catch (Exception ex)

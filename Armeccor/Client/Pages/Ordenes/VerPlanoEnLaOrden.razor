@@ -334,9 +334,11 @@ else
         else
         {
             var error = await response.Content.ReadAsStringAsync();
-            await confirmationModal.ShowInfoAsync($"No se pudo cargar el plano");
+            await confirmationModal.ShowInfoAsync(error);
         }
     }
+
+   
 
     private async Task AbrirRutaLocal(string ruta)
     {

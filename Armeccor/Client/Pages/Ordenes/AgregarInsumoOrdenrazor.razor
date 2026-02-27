@@ -278,7 +278,8 @@ else
     {
         if (insumo.CantidadARetirar == null || insumo.CantidadARetirar <= 0)
         {
-            await JS.InvokeVoidAsync("alert", $"Debe ingresar una cantidad válida para {insumo.Nombre}");
+            //await JS.InvokeVoidAsync("alert", $"Debe ingresar una cantidad válida para {insumo.Nombre}");
+            await confirmationModal.ShowInfoAsync($"Debe ingresar una cantidad válida para: {insumo.Nombre}");
             return;
         }
 
@@ -311,7 +312,7 @@ else
         {
             var error = await resp.Content.ReadAsStringAsync();
             //await JS.InvokeVoidAsync("alert", $"Error: {error}");
-            await confirmationModal.ShowInfoAsync("Error al agregar insumos a la orden");
+            await confirmationModal.ShowInfoAsync(error);
         }
         await CargarInsumosDeOrden();
     }

@@ -3,79 +3,52 @@
   "WorkspaceRootPath": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6D5CC793-8377-42E0-BE84-97DC9ADE0363}|Armeccor\\Server\\Armeccor.Server.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\server\\controllers\\insumodetalleordencontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6D5CC793-8377-42E0-BE84-97DC9ADE0363}|Armeccor\\Server\\Armeccor.Server.csproj|solutionrelative:armeccor\\server\\controllers\\insumodetalleordencontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{61BA2F47-D4D2-434A-B13A-64E370447B26}|DTO\\DTO.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\dto\\objetosdto\\insumodetalleordendto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{61BA2F47-D4D2-434A-B13A-64E370447B26}|DTO\\DTO.csproj|solutionrelative:dto\\objetosdto\\insumodetalleordendto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\client\\pages\\ordenes\\agregarinsumoordenrazor.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|solutionrelative:armeccor\\client\\pages\\ordenes\\agregarinsumoordenrazor.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\client\\pages\\ordenes\\agregarorden.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|solutionrelative:armeccor\\client\\pages\\ordenes\\agregarorden.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\client\\pages\\listaordenes.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|solutionrelative:armeccor\\client\\pages\\listaordenes.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\client\\pages\\ordenes\\areaagregarareadetalleorden.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|solutionrelative:armeccor\\client\\pages\\ordenes\\areaagregarareadetalleorden.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{6D5CC793-8377-42E0-BE84-97DC9ADE0363}|Armeccor\\Server\\Armeccor.Server.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\server\\controllers\\ordenescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D5CC793-8377-42E0-BE84-97DC9ADE0363}|Armeccor\\Server\\Armeccor.Server.csproj|solutionrelative:armeccor\\server\\controllers\\ordenescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\client\\pages\\ordenes\\agregarinsumoordenrazor.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|solutionrelative:armeccor\\client\\pages\\ordenes\\agregarinsumoordenrazor.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\client\\pages\\estante\\listaestantes.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|solutionrelative:armeccor\\client\\pages\\estante\\listaestantes.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\client\\pages\\insumo\\listainsumos.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|solutionrelative:armeccor\\client\\pages\\insumo\\listainsumos.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\client\\pages\\entrega\\listaentregas.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|solutionrelative:armeccor\\client\\pages\\entrega\\listaentregas.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\client\\pages\\cliente\\listaclientes.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|solutionrelative:armeccor\\client\\pages\\cliente\\listaclientes.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\client\\pages\\area\\listaareas.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|solutionrelative:armeccor\\client\\pages\\area\\listaareas.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\client\\pages\\ordenes\\agregarorden.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|solutionrelative:armeccor\\client\\pages\\ordenes\\agregarorden.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\client\\pages\\ordenes\\verplanoenlaorden.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|solutionrelative:armeccor\\client\\pages\\ordenes\\verplanoenlaorden.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\client\\pages\\insumo\\agregarinsumo.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|solutionrelative:armeccor\\client\\pages\\insumo\\agregarinsumo.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{6D5CC793-8377-42E0-BE84-97DC9ADE0363}|Armeccor\\Server\\Armeccor.Server.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\server\\controllers\\planoscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D5CC793-8377-42E0-BE84-97DC9ADE0363}|Armeccor\\Server\\Armeccor.Server.csproj|solutionrelative:armeccor\\server\\controllers\\planoscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{61BA2F47-D4D2-434A-B13A-64E370447B26}|DTO\\DTO.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\dto\\objetosdto\\crearareadto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{61BA2F47-D4D2-434A-B13A-64E370447B26}|DTO\\DTO.csproj|solutionrelative:dto\\objetosdto\\crearareadto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6D5CC793-8377-42E0-BE84-97DC9ADE0363}|Armeccor\\Server\\Armeccor.Server.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\server\\controllers\\insumodetalleordencontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D5CC793-8377-42E0-BE84-97DC9ADE0363}|Armeccor\\Server\\Armeccor.Server.csproj|solutionrelative:armeccor\\server\\controllers\\insumodetalleordencontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D5CC793-8377-42E0-BE84-97DC9ADE0363}|Armeccor\\Server\\Armeccor.Server.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\server\\controllers\\clientescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6D5CC793-8377-42E0-BE84-97DC9ADE0363}|Armeccor\\Server\\Armeccor.Server.csproj|solutionrelative:armeccor\\server\\controllers\\clientescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\client\\pages\\estante\\registrarestante.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|solutionrelative:armeccor\\client\\pages\\estante\\registrarestante.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\client\\pages\\entrega\\agregarentrega.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|solutionrelative:armeccor\\client\\pages\\entrega\\agregarentrega.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\client\\pages\\entrega\\listaentregas.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|solutionrelative:armeccor\\client\\pages\\entrega\\listaentregas.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\client\\pages\\ordenes\\verareaenlaorden.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|solutionrelative:armeccor\\client\\pages\\ordenes\\verareaenlaorden.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6D5CC793-8377-42E0-BE84-97DC9ADE0363}|Armeccor\\Server\\Armeccor.Server.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\server\\controllers\\ordenescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6D5CC793-8377-42E0-BE84-97DC9ADE0363}|Armeccor\\Server\\Armeccor.Server.csproj|solutionrelative:armeccor\\server\\controllers\\ordenescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\client\\shared\\confirmationmodal.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0CF7E8C3-8D88-4C7B-9B27-C551AF974C7B}|Armeccor\\Client\\Armeccor.Client.csproj|solutionrelative:armeccor\\client\\shared\\confirmationmodal.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Berserker\\AppData\\Local\\Temp\\.vsdbgsrc\\d3ee5c067e5b9e79efbae42c7023d80b5ca16b9eb7d5fa5beb0f65c0c114a0a2\\TdsParserStateObject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6D5CC793-8377-42E0-BE84-97DC9ADE0363}|Armeccor\\Server\\Armeccor.Server.csproj|c:\\users\\berserker\\source\\repos\\armeccor\\armeccor\\server\\controllers\\areadetalleordencontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D5CC793-8377-42E0-BE84-97DC9ADE0363}|Armeccor\\Server\\Armeccor.Server.csproj|solutionrelative:armeccor\\server\\controllers\\areadetalleordencontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -85,45 +58,32 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "TdsParserStateObject.cs",
-              "DocumentMoniker": "C:\\Users\\Berserker\\AppData\\Local\\Temp\\.vsdbgsrc\\d3ee5c067e5b9e79efbae42c7023d80b5ca16b9eb7d5fa5beb0f65c0c114a0a2\\TdsParserStateObject.cs",
-              "RelativeDocumentMoniker": "..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\d3ee5c067e5b9e79efbae42c7023d80b5ca16b9eb7d5fa5beb0f65c0c114a0a2\\TdsParserStateObject.cs",
-              "ToolTip": "C:\\Users\\Berserker\\AppData\\Local\\Temp\\.vsdbgsrc\\d3ee5c067e5b9e79efbae42c7023d80b5ca16b9eb7d5fa5beb0f65c0c114a0a2\\TdsParserStateObject.cs [Solo lectura]",
-              "RelativeToolTip": "..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\d3ee5c067e5b9e79efbae42c7023d80b5ca16b9eb7d5fa5beb0f65c0c114a0a2\\TdsParserStateObject.cs [Solo lectura]",
-              "ViewState": "AgIAAJ0IAAAAAAAAAEBVwKEIAAAEAAAAAQAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-23T18:11:24.019Z",
-              "EditorCaption": " [Solo lectura]"
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "InsumoDetalleOrdenController.cs",
-              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Server\\Controllers\\InsumoDetalleOrdenController.cs",
-              "RelativeDocumentMoniker": "Armeccor\\Server\\Controllers\\InsumoDetalleOrdenController.cs",
-              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Server\\Controllers\\InsumoDetalleOrdenController.cs*",
-              "RelativeToolTip": "Armeccor\\Server\\Controllers\\InsumoDetalleOrdenController.cs*",
-              "ViewState": "AgIAACYAAAAAAAAAAAAAwDAAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-23T17:46:11.891Z",
+              "Title": "AgregarOrden.razor",
+              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Ordenes\\AgregarOrden.razor",
+              "RelativeDocumentMoniker": "Armeccor\\Client\\Pages\\Ordenes\\AgregarOrden.razor",
+              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Ordenes\\AgregarOrden.razor*",
+              "RelativeToolTip": "Armeccor\\Client\\Pages\\Ordenes\\AgregarOrden.razor*",
+              "ViewState": "AgIAAMYAAAAAAAAAAAAAANQAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-27T18:45:09.867Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "InsumoDetalleOrdenDTO.cs",
-              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\DTO\\ObjetosDTO\\InsumoDetalleOrdenDTO.cs",
-              "RelativeDocumentMoniker": "DTO\\ObjetosDTO\\InsumoDetalleOrdenDTO.cs",
-              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\DTO\\ObjetosDTO\\InsumoDetalleOrdenDTO.cs",
-              "RelativeToolTip": "DTO\\ObjetosDTO\\InsumoDetalleOrdenDTO.cs",
-              "ViewState": "AgIAAAUAAAAAAAAAAAAAwBEAAAA4AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-23T17:45:42.075Z",
+              "DocumentIndex": 6,
+              "Title": "ListaClientes.razor",
+              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Cliente\\ListaClientes.razor",
+              "RelativeDocumentMoniker": "Armeccor\\Client\\Pages\\Cliente\\ListaClientes.razor",
+              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Cliente\\ListaClientes.razor",
+              "RelativeToolTip": "Armeccor\\Client\\Pages\\Cliente\\ListaClientes.razor",
+              "ViewState": "AgIAAIIAAAAAAAAAAAApwGwAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-27T18:23:28.06Z",
               "EditorCaption": ""
             },
             {
@@ -134,204 +94,126 @@
               "RelativeDocumentMoniker": "Armeccor\\Client\\Pages\\Area\\ListaAreas.razor",
               "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Area\\ListaAreas.razor",
               "RelativeToolTip": "Armeccor\\Client\\Pages\\Area\\ListaAreas.razor",
-              "ViewState": "AgIAAKcBAAAAAAAAAAApwLwBAAAxAAAAAAAAAA==",
+              "ViewState": "AgIAALMBAAAAAAAAAAApwLUBAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-21T19:51:54.556Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "ListaInsumos.razor",
-              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Insumo\\ListaInsumos.razor",
-              "RelativeDocumentMoniker": "Armeccor\\Client\\Pages\\Insumo\\ListaInsumos.razor",
-              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Insumo\\ListaInsumos.razor",
-              "RelativeToolTip": "Armeccor\\Client\\Pages\\Insumo\\ListaInsumos.razor",
-              "ViewState": "AgIAAJsBAAAAAAAAAAApwLABAAAiAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-21T18:22:36.249Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "ListaEstantes.razor",
-              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Estante\\ListaEstantes.razor",
-              "RelativeDocumentMoniker": "Armeccor\\Client\\Pages\\Estante\\ListaEstantes.razor",
-              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Estante\\ListaEstantes.razor",
-              "RelativeToolTip": "Armeccor\\Client\\Pages\\Estante\\ListaEstantes.razor",
-              "ViewState": "AgIAAMgAAAAAAAAAAAAWwIQAAAAhAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-21T20:27:17.756Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "AgregarInsumoOrdenrazor.razor",
-              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Ordenes\\AgregarInsumoOrdenrazor.razor",
-              "RelativeDocumentMoniker": "Armeccor\\Client\\Pages\\Ordenes\\AgregarInsumoOrdenrazor.razor",
-              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Ordenes\\AgregarInsumoOrdenrazor.razor",
-              "RelativeToolTip": "Armeccor\\Client\\Pages\\Ordenes\\AgregarInsumoOrdenrazor.razor",
-              "ViewState": "AgIAABABAAAAAAAAAAApwGABAAArAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-21T19:23:48.841Z",
+              "WhenOpened": "2026-02-27T18:22:55.957Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "AgregarInsumoOrdenrazor.razor",
+              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Ordenes\\AgregarInsumoOrdenrazor.razor",
+              "RelativeDocumentMoniker": "Armeccor\\Client\\Pages\\Ordenes\\AgregarInsumoOrdenrazor.razor",
+              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Ordenes\\AgregarInsumoOrdenrazor.razor",
+              "RelativeToolTip": "Armeccor\\Client\\Pages\\Ordenes\\AgregarInsumoOrdenrazor.razor",
+              "ViewState": "AgIAAMIBAAAAAAAAAAApwLUBAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-27T16:10:27.303Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "ListaOrdenes.razor",
               "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\ListaOrdenes.razor",
               "RelativeDocumentMoniker": "Armeccor\\Client\\Pages\\ListaOrdenes.razor",
               "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\ListaOrdenes.razor",
               "RelativeToolTip": "Armeccor\\Client\\Pages\\ListaOrdenes.razor",
-              "ViewState": "AgIAAPMBAAAAAAAAAAApwP0BAAA4AAAAAAAAAA==",
+              "ViewState": "AgIAAA8CAAAAAAAAAAApwF8CAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-21T20:50:21.133Z",
+              "WhenOpened": "2026-02-27T17:21:59.257Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "AreaAgregarAreaDetalleOrden.razor",
-              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Ordenes\\AreaAgregarAreaDetalleOrden.razor",
-              "RelativeDocumentMoniker": "Armeccor\\Client\\Pages\\Ordenes\\AreaAgregarAreaDetalleOrden.razor",
-              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Ordenes\\AreaAgregarAreaDetalleOrden.razor",
-              "RelativeToolTip": "Armeccor\\Client\\Pages\\Ordenes\\AreaAgregarAreaDetalleOrden.razor",
-              "ViewState": "AgIAAHUAAAAAAAAAAAAAAH0AAAArAAAAAAAAAA==",
+              "Title": "ListaEstantes.razor",
+              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Estante\\ListaEstantes.razor",
+              "RelativeDocumentMoniker": "Armeccor\\Client\\Pages\\Estante\\ListaEstantes.razor",
+              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Estante\\ListaEstantes.razor",
+              "RelativeToolTip": "Armeccor\\Client\\Pages\\Estante\\ListaEstantes.razor",
+              "ViewState": "AgIAANAAAAAAAAAAAAApwM8AAAAsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-21T20:05:56.023Z",
+              "WhenOpened": "2026-02-27T18:24:12.822Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "ClientesController.cs",
-              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Server\\Controllers\\ClientesController.cs",
-              "RelativeDocumentMoniker": "Armeccor\\Server\\Controllers\\ClientesController.cs",
-              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Server\\Controllers\\ClientesController.cs",
-              "RelativeToolTip": "Armeccor\\Server\\Controllers\\ClientesController.cs",
-              "ViewState": "AgIAAC4AAAAAAAAAAAAkwDsAAAApAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-21T19:44:38.941Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "AgregarOrden.razor",
-              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Ordenes\\AgregarOrden.razor",
-              "RelativeDocumentMoniker": "Armeccor\\Client\\Pages\\Ordenes\\AgregarOrden.razor",
-              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Ordenes\\AgregarOrden.razor",
-              "RelativeToolTip": "Armeccor\\Client\\Pages\\Ordenes\\AgregarOrden.razor",
-              "ViewState": "AgIAAD8AAAAAAAAAAAAAAKcAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-21T20:11:33.722Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "AgregarInsumo.razor",
-              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Insumo\\AgregarInsumo.razor",
-              "RelativeDocumentMoniker": "Armeccor\\Client\\Pages\\Insumo\\AgregarInsumo.razor",
-              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Insumo\\AgregarInsumo.razor",
-              "RelativeToolTip": "Armeccor\\Client\\Pages\\Insumo\\AgregarInsumo.razor",
-              "ViewState": "AgIAADYAAAAAAAAAAAAAAEMAAAANAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-21T18:19:14.728Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "CrearAreaDTO.cs",
-              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\DTO\\ObjetosDTO\\CrearAreaDTO.cs",
-              "RelativeDocumentMoniker": "DTO\\ObjetosDTO\\CrearAreaDTO.cs",
-              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\DTO\\ObjetosDTO\\CrearAreaDTO.cs",
-              "RelativeToolTip": "DTO\\ObjetosDTO\\CrearAreaDTO.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAzAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-21T19:50:12.421Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "AgregarEntrega.razor",
-              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Entrega\\AgregarEntrega.razor",
-              "RelativeDocumentMoniker": "Armeccor\\Client\\Pages\\Entrega\\AgregarEntrega.razor",
-              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Entrega\\AgregarEntrega.razor",
-              "RelativeToolTip": "Armeccor\\Client\\Pages\\Entrega\\AgregarEntrega.razor",
-              "ViewState": "AgIAAHsAAAAAAAAAAAAAAFUAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-21T17:53:06.288Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "RegistrarEstante.razor",
-              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Estante\\RegistrarEstante.razor",
-              "RelativeDocumentMoniker": "Armeccor\\Client\\Pages\\Estante\\RegistrarEstante.razor",
-              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Estante\\RegistrarEstante.razor",
-              "RelativeToolTip": "Armeccor\\Client\\Pages\\Estante\\RegistrarEstante.razor",
-              "ViewState": "AgIAAC0AAAAAAAAAAAAAADIAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-20T17:30:16.349Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "ListaEntregas.razor",
-              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Entrega\\ListaEntregas.razor",
-              "RelativeDocumentMoniker": "Armeccor\\Client\\Pages\\Entrega\\ListaEntregas.razor",
-              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Entrega\\ListaEntregas.razor",
-              "RelativeToolTip": "Armeccor\\Client\\Pages\\Entrega\\ListaEntregas.razor",
-              "ViewState": "AgIAAEcAAAAAAAAAAAApwFMAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-21T17:16:46.159Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "VerAreaEnLaOrden.razor",
-              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Ordenes\\VerAreaEnLaOrden.razor",
-              "RelativeDocumentMoniker": "Armeccor\\Client\\Pages\\Ordenes\\VerAreaEnLaOrden.razor",
-              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Ordenes\\VerAreaEnLaOrden.razor",
-              "RelativeToolTip": "Armeccor\\Client\\Pages\\Ordenes\\VerAreaEnLaOrden.razor",
-              "ViewState": "AgIAAKICAAAAAAAAAAApwLwCAAAGAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-01-12T21:13:31.362Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "ConfirmationModal.razor",
-              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Shared\\ConfirmationModal.razor",
-              "RelativeDocumentMoniker": "Armeccor\\Client\\Shared\\ConfirmationModal.razor",
-              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Shared\\ConfirmationModal.razor",
-              "RelativeToolTip": "Armeccor\\Client\\Shared\\ConfirmationModal.razor",
-              "ViewState": "AgIAAFYAAAAAAAAAAAAgwJIAAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-20T16:09:39.545Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 2,
               "Title": "OrdenesController.cs",
               "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Server\\Controllers\\OrdenesController.cs",
               "RelativeDocumentMoniker": "Armeccor\\Server\\Controllers\\OrdenesController.cs",
               "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Server\\Controllers\\OrdenesController.cs",
               "RelativeToolTip": "Armeccor\\Server\\Controllers\\OrdenesController.cs",
-              "ViewState": "AgIAAN4AAAAAAAAAAAAcwOUAAAAqAAAAAAAAAA==",
+              "ViewState": "AgIAAMwCAAAAAAAAAAAUwPsBAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-12T21:02:58.022Z",
+              "WhenOpened": "2026-02-27T15:52:58.726Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ListaEntregas.razor",
+              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Entrega\\ListaEntregas.razor",
+              "RelativeDocumentMoniker": "Armeccor\\Client\\Pages\\Entrega\\ListaEntregas.razor",
+              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Entrega\\ListaEntregas.razor",
+              "RelativeToolTip": "Armeccor\\Client\\Pages\\Entrega\\ListaEntregas.razor",
+              "ViewState": "AgIAAGkBAAAAAAAAAAApwHQBAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-27T18:23:53.917Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "VerPlanoEnLaOrden.razor",
+              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Ordenes\\VerPlanoEnLaOrden.razor",
+              "RelativeDocumentMoniker": "Armeccor\\Client\\Pages\\Ordenes\\VerPlanoEnLaOrden.razor",
+              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Client\\Pages\\Ordenes\\VerPlanoEnLaOrden.razor",
+              "RelativeToolTip": "Armeccor\\Client\\Pages\\Ordenes\\VerPlanoEnLaOrden.razor",
+              "ViewState": "AgIAAHYBAAAAAAAAAAApwHUBAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-27T15:59:41.028Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "PlanosController.cs",
+              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Server\\Controllers\\PlanosController.cs",
+              "RelativeDocumentMoniker": "Armeccor\\Server\\Controllers\\PlanosController.cs",
+              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Server\\Controllers\\PlanosController.cs",
+              "RelativeToolTip": "Armeccor\\Server\\Controllers\\PlanosController.cs",
+              "ViewState": "AgIAANYAAAAAAAAAAAAYwN8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-27T15:26:59.735Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "InsumoDetalleOrdenController.cs",
+              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Server\\Controllers\\InsumoDetalleOrdenController.cs",
+              "RelativeDocumentMoniker": "Armeccor\\Server\\Controllers\\InsumoDetalleOrdenController.cs",
+              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Server\\Controllers\\InsumoDetalleOrdenController.cs",
+              "RelativeToolTip": "Armeccor\\Server\\Controllers\\InsumoDetalleOrdenController.cs",
+              "ViewState": "AgIAACIAAAAAAAAAAAAYwDwAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-27T16:12:07.131Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "AreaDetalleOrdenController.cs",
+              "DocumentMoniker": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Server\\Controllers\\AreaDetalleOrdenController.cs",
+              "RelativeDocumentMoniker": "Armeccor\\Server\\Controllers\\AreaDetalleOrdenController.cs",
+              "ToolTip": "C:\\Users\\Berserker\\source\\repos\\Armeccor\\Armeccor\\Server\\Controllers\\AreaDetalleOrdenController.cs",
+              "RelativeToolTip": "Armeccor\\Server\\Controllers\\AreaDetalleOrdenController.cs",
+              "ViewState": "AgIAABgBAAAAAAAAAADwvy8BAAALAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-27T15:25:36.725Z",
               "EditorCaption": ""
             }
           ]

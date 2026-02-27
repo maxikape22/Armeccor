@@ -67,7 +67,7 @@
         {
             var errorMsg = await response.Content.ReadAsStringAsync();
             //Console.WriteLine("Error al guardar cliente: " + errorMsg);
-            await confirmationModal.ShowInfoAsync("No se pudo registrar el cliente");
+            await confirmationModal.ShowInfoAsync(errorMsg);
         }
     }
 

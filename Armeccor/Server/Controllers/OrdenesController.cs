@@ -94,7 +94,7 @@ namespace Armeccor.Server.Controllers
             var query = context.Ordenes
                 .Include(o => o.Cliente)
                 .Where(e => e.Estado == "Abierta")
-                .Where(e => e.EstaActivo)
+                .Where(e => e.EstaActivo == true)
                 .Include(o => o.Planos)
                 .Include(o => o.Entregas)
                 .Include(o => o.AreaDetalleOrdenes)
@@ -156,6 +156,7 @@ namespace Armeccor.Server.Controllers
         public async Task<ActionResult<IEnumerable<OrdenDetalleDTO>>> GetOrdenes()
         {
             var ordenes = await context.Ordenes
+                .Where(e=>e.EstaActivo == true)
                 .Include(o => o.Cliente)
                 .Include(o => o.Planos)
                 .Include(o => o.Entregas)
@@ -205,6 +206,7 @@ namespace Armeccor.Server.Controllers
         public async Task<ActionResult<OrdenDetalleDTO>> GetOrden(int NroOT)
         {
             var orden = await context.Ordenes
+                .Where(e => e.EstaActivo == true)
                 .Include(o => o.Cliente)
                 .Include(o => o.Planos)
                 .Include(o => o.Entregas)
@@ -308,6 +310,7 @@ namespace Armeccor.Server.Controllers
         public async Task<ActionResult<Orden>> GetOrdenConAreas(int id)
         {
             var orden = await context.Ordenes
+                .Where(e => e.EstaActivo == true)
                 .Include(o => o.AreaDetalleOrdenes)
                     .ThenInclude(ad => ad.Area) // 🔹 Para que traiga el NombreArea
                 .FirstOrDefaultAsync(o => o.Id == id);
@@ -340,7 +343,7 @@ namespace Armeccor.Server.Controllers
         {
             // Query base con includes
             var baseQuery = context.Ordenes
-                .Where(e => e.EstaActivo)
+                .Where(e => e.EstaActivo == true)
                 .Include(o => o.Cliente)
                 .Include(o => o.Planos)
                 .Include(o => o.Entregas)
@@ -451,6 +454,7 @@ namespace Armeccor.Server.Controllers
         {
             // Query base para empezar a construir
             var baseQuery = context.Ordenes.Include(o => o.Cliente)
+                .Where(e => e.EstaActivo == true)
                 .Include(o => o.Planos)
                 .Include(o => o.Entregas)
                 .Include(o => o.AreaDetalleOrdenes)
@@ -501,6 +505,7 @@ namespace Armeccor.Server.Controllers
      [FromQuery] int tamanoPagina = 4)
         {
             var baseQuery = context.Ordenes
+                .Where(e => e.EstaActivo == true)
                 .Include(o => o.Cliente)
                 .Include(o => o.Planos)
                 .Include(o => o.Entregas)
