@@ -18,5 +18,10 @@
         public string NuevoEstado { get; set; }
         public DateTime? FechaBaja { get; set; }
         public bool EstaActivo { get; set; }
+        public int? IdProveedor { get; set; }
+        public string? NombreProveedor { get; set; }
+
+        public bool MostrarInputProveedor { get; set; }  // solo UI
+        public string? NuevoProveedor { get; set; }      // solo UI
     }
 }

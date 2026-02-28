@@ -71,7 +71,7 @@
                         "✅ Insumo registrado correctamente.",
                         async () =>
                         {
-                            Navigation.NavigateTo("/Insumos/AgregarInsumo");
+                            Navigation.NavigateTo("/Insumos");
                             await Task.CompletedTask;
                         });
                 }
@@ -80,7 +80,7 @@
             {
                 var body = await resp.Content.ReadAsStringAsync();
                 //await JS.InvokeVoidAsync("alert", $"Error al agregar insumo: {resp.StatusCode} - {body}");
-                await confirmationModal.ShowInfoAsync("Error al registrar el insumo");
+                await confirmationModal.ShowInfoAsync(body);
             }
         }
         catch (Exception ex)

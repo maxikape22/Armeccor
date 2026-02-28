@@ -37,6 +37,7 @@ else
                 <th>Fecha de uso</th>
                 <th>Nro de orden</th>
                 <th>Recibido (Sí/No)</th>
+                <th>Nombre del proveedor</th>
                 <th>Estado</th>
                 <th>Entrega parcial</th>
                 <th>Entrega total</th>
@@ -68,6 +69,7 @@ else
                         <span class="ms-2">@((d.EsSolicitado) ? "Sí" : "No")</span>
                     </td>
 
+                    <td>@d.NombreProveedor</td>
                     @*<td>@d.Estado</td>*@
                    @*  <select class="form-select form-select-sm"
                             value="@d.Estado"
@@ -136,6 +138,71 @@ else
 
                                 <div class="dropdown-divider"></div>
 
+@* 
+                                <div class="dropdown-divider"></div>
+
+                                <div class="dropdown-item-text" @onclick:stopPropagation="true">
+
+                                    <select class="form-select form-select-sm mb-2"
+                                            @onchange="e => SeleccionarProveedor(d.Id, e.Value?.ToString())">
+
+                                        <option value="">Seleccione proveedor</option>
+
+                                        @foreach (var p in proveedores)
+                                        {
+                                            <option value="@p.Id">@p.Nombre</option>
+                                        }
+
+                                        <option value="0">Otro</option>
+                                    </select>
+
+                                    @if (d.MostrarInputProveedor)
+                                    {
+                                        <input class="form-control form-control-sm mb-2"
+                                               placeholder="Ingrese proveedor"
+                                               @bind="d.NuevoProveedor" />   
+                                    }
+
+                                    <button class="btn btn-sm btn-primary w-100"
+                                            @onclick="() => GuardarProveedor(d.Id)">
+                                        Guardar proveedor
+                                    </button>
+
+                                </div> *@
+
+                                <div class="dropdown-divider"></div>
+
+                                <div class="dropdown-item-text" @onclick:stopPropagation="true">
+                                    <select class="form-select form-select-sm"
+                                            @onchange="e => SeleccionarProveedor(d.Id, e.Value?.ToString())">
+
+                                        <option value="">Seleccione proveedor</option>
+
+                                        @foreach (var p in proveedores)
+                                        {
+                                            <option value="@p.Id">@p.Nombre</option>
+                                        }
+
+                                        <option value="0">Otro</option>
+                                    </select>
+
+                                    @if (mostrarInputProveedor)
+                                    {
+                                        <input class="form-control form-control-sm mt-2"
+                                               placeholder="Ingrese proveedor"
+                                               @bind="nuevoProveedorNombre" />
+
+                                        <button class="btn btn-sm btn-primary mt-2"
+                                                @onclick="() => GuardarProveedor(d.Id)">
+                                            Guardar
+                                        </button>
+                                    }
+
+                                </div>
+                                
+                               
+
+
                                 <!-- Botón Editar -->
                                 <button class="dropdown-item" @onclick="@(() =>                                  
                                     { IrAEditarPedidoDetallado(d.Id); CloseDropdown(); })">
@@ -147,6 +214,8 @@ else
                                 <button class="dropdown-item text-danger" @onclick="@(() => { MenuDelete(d.Id); CloseDropdown(); })">
                                     <i class="fas fa-trash-alt"></i> Eliminar
                                 </button>
+
+
                             </div>
                         </div>
                     </td>
@@ -253,8 +322,98 @@ else
     [Parameter] public int idPedido { get; set; }
     List<PedidoDetalleInsumoDTO> detalles;
 
+    //
+
+    List<ProveedorDTO> proveedores = new();
+
+    bool mostrarInputProveedor = false;
+    string? nuevoProveedorNombre;
+
+    private async Task SeleccionarProveedor(int idPedidoDetalleInsumo, string? value)
+    {
+        if (!int.TryParse(value, out int idProveedor))
+            return;
+
+        // Si eligió "Otro"
+        if (idProveedor == 0)
+        {
+            mostrarInputProveedor = true;
+            return;
+        }
+
+        if (idPedidoDetalleInsumo <= 0)
+        {
+            await confirmationModal.ShowInfoAsync("Detalle inválido.");
+            return;
+        }
+
+        var resp = await Http.PostAsync(
+            $"api/PedidoDetalleInsumos/AsignarProveedorDesdeDetalle?idPedidoDetalleInsumo={idPedidoDetalleInsumo}&idProveedor={idProveedor}",
+            null);
+
+        if (resp.IsSuccessStatusCode)
+        {
+            var msg = await resp.Content.ReadAsStringAsync();
+
+            await confirmationModal.ShowInfoAsync(
+                $"✅ {msg}",
+                async () =>
+                {
+                    await OnInitializedAsync();
+                });
+        }
+        else
+        {
+            var error = await resp.Content.ReadAsStringAsync();
+            await confirmationModal.ShowInfoAsync($"❌ {error}");
+        }
+    }
+
+    private async Task GuardarProveedor(int idPedidoDetalleInsumo)
+    {
+        // if (string.IsNullOrWhiteSpace(nuevoProveedorNombre))
+        // {
+        //     await confirmationModal.ShowInfoAsync("Ingrese el nombre del proveedor.");
+        //     return;
+        // }
+
+        // if (idPedidoDetalleInsumo <= 0)
+        // {
+        //     await confirmationModal.ShowInfoAsync("Detalle inválido.");
+        //     return;
+        // }
+
+        var resp = await Http.PostAsync(
+            $"api/PedidoDetalleInsumos/AsignarProveedorDesdeDetalle?idPedidoDetalleInsumo={idPedidoDetalleInsumo}&nuevoProveedor={nuevoProveedorNombre}",
+            null);
+
+        if (resp.IsSuccessStatusCode)
+        {
+            var msg = await resp.Content.ReadAsStringAsync();
+
+            await confirmationModal.ShowInfoAsync(
+                $"✅ {msg}",
+                async () =>
+                {
+                    nuevoProveedorNombre = null;
+                    mostrarInputProveedor = false;
+                    await OnInitializedAsync();
+                });
+        }
+        else
+        {
+            var error = await resp.Content.ReadAsStringAsync();
+            await confirmationModal.ShowInfoAsync($"❌ {error}");
+        }
+    }
+    //
+
+
+
     protected override async Task OnInitializedAsync()
     {
+        proveedores = await Http.GetFromJsonAsync<List<ProveedorDTO>>("api/Proveedores");
+
         try
         {
             detalles = await Http.GetFromJsonAsync<List<PedidoDetalleInsumoDTO>>("api/PedidoDetalleInsumos/ListarDetalleInsumos");

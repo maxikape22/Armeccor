@@ -81,6 +81,11 @@ namespace Armeccor.Server.Controllers
             var insumo = mapper.Map<Insumo>(crearInsumoDTO);
             insumo.UnidadBase = unidad;
 
+            // 🔐 Borrado lógico
+            insumo.EstaActivo = true;
+            insumo.FechaBorrado = null;
+
+
             context.Insumos.Add(insumo);
             await context.SaveChangesAsync();
 

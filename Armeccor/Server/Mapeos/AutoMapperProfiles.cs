@@ -232,8 +232,19 @@ namespace Armeccor.Server.Mapeos
                 .MapFrom(d=>d.Insumo.Nombre))
                 .ForMember(x => x.NroPedido, y => y
                 .MapFrom(z => z.Pedido.NroPedido))
+
+
+                 .ForMember(dest => dest.NombreProveedor,
+        opt => opt.MapFrom(src =>
+            src.Pedido != null && src.Pedido.Proveedor != null
+                ? src.Pedido.Proveedor.Nombre
+                : null
+        ))
+
+
                 .ReverseMap();
 
+       
             //CreateMap<PedidoDetalleInsumo , PedidoDetalleInsumoDTO>()
             //    .ForMember(x=>x.NroPedido, y=>y
             //    .MapFrom(z=>z.Pedido.NroPedido))

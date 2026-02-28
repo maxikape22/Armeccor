@@ -26,7 +26,12 @@ else
     </EditForm>
 }
 
-@code {
+<ConfirmationModal @ref="confirmationModal"/>
+
+@code 
+{
+    private ConfirmationModal? confirmationModal;
+
     [Parameter] public int id { get; set; }
     private PedidoDetalleInsumoDTO pedido;
 
@@ -71,13 +76,15 @@ else
 
         if (response.IsSuccessStatusCode)
         {
-            await JS.InvokeVoidAsync("alert", "Pedido editado correctamente.");
+            //await JS.InvokeVoidAsync("alert", "Pedido editado correctamente.");
+            await confirmationModal.ShowInfoAsync("Pedido editado correctamente");
             Navigation.NavigateTo("/VerDetallePedidoInsumo", forceLoad: true); // fuerza recarga
         }
         else
         {
             var error = await response.Content.ReadAsStringAsync();
-            await JS.InvokeVoidAsync("alert", $"Error al editar pedido: {error}");
+            //await JS.InvokeVoidAsync("alert", $"Error al editar pedido: {error}");
+            await confirmationModal.ShowInfoAsync(error);
         }
     }
 

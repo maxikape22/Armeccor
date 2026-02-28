@@ -114,6 +114,22 @@ namespace Armeccor.Server.Controllers
             return CreatedAtAction(nameof(GetAll), new { id = pedido.Id }, resultDto);
         }
 
+        [HttpPatch("{id}/AsignarProveedor")]
+        public async Task<IActionResult> AsignarProveedor(int id, [FromBody] int idProveedor)
+        {
+            var pedido = await _context.Pedidos.FindAsync(id);
+            if (pedido == null)
+                return NotFound("Pedido no encontrado");
 
+            var proveedor = await _context.Proveedores.FindAsync(idProveedor);
+            if (proveedor == null)
+                return BadRequest("Proveedor no válido");
+
+            pedido.IdProveedor = proveedor.Id;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

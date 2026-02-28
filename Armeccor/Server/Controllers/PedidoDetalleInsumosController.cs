@@ -323,5 +323,75 @@ namespace Armeccor.Server.Controllers
             return Ok(detalle);
         }
 
+        [HttpPost("AsignarProveedorDesdeDetalle")]
+        public async Task<IActionResult> AsignarProveedorDesdeDetalle(
+     int idPedidoDetalleInsumo,
+     int? idProveedor,
+     string? nuevoProveedor)
+        {
+            if (idPedidoDetalleInsumo <= 0)
+                return BadRequest("IdPedidoDetalleInsumo inválido.");
+
+            // 1️⃣ Buscar el detalle
+            var detalle = await _context.PedidoDetalleInsumos
+                .FirstOrDefaultAsync(d => d.Id == idPedidoDetalleInsumo);
+
+            if (detalle == null)
+                return BadRequest("Detalle no encontrado.");
+
+            if (!detalle.IdPedido.HasValue)
+                return BadRequest("El detalle no tiene Pedido asociado.");
+
+            int proveedorFinalId = 0;
+
+            // 2️⃣ Si viene nombre nuevo, crear o reutilizar
+            if (!string.IsNullOrWhiteSpace(nuevoProveedor))
+            {
+                var existente = await _context.Proveedores
+                    .FirstOrDefaultAsync(p => p.Nombre == nuevoProveedor);
+
+                if (existente != null)
+                {
+                    proveedorFinalId = existente.Id;
+                }
+                else
+                {
+                    var nuevo = new Proveedor
+                    {
+                        Nombre = nuevoProveedor,
+                        Correo = "",
+                        Telefono = ""
+                    };
+
+                    _context.Proveedores.Add(nuevo);
+                    await _context.SaveChangesAsync();
+
+                    proveedorFinalId = nuevo.Id;
+                }
+            }
+            else
+            {
+                if (!idProveedor.HasValue || idProveedor <= 0)
+                    return BadRequest("Proveedor inválido.");
+
+                proveedorFinalId = idProveedor.Value;
+            }
+
+            // 3️⃣ Buscar el Pedido real
+            var pedido = await _context.Pedidos
+                .FirstOrDefaultAsync(p => p.Id == detalle.IdPedido.Value);
+
+            if (pedido == null)
+                return BadRequest("Pedido no encontrado.");
+
+            // 4️⃣ Asociar proveedor
+            pedido.IdProveedor = proveedorFinalId;
+
+            await _context.SaveChangesAsync();
+
+            return Ok("Proveedor asociado correctamente al pedido.");
+        }
+
+
     }
 }
