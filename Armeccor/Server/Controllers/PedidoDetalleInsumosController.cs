@@ -24,6 +24,27 @@ namespace Armeccor.Server.Controllers
             this._mapper = mapper;
         }
 
+
+
+
+        [HttpPatch("{id}/FechaUso")]
+        public async Task<IActionResult> CambiarFechaUso(
+    int id,
+    [FromBody] PedidoDetalleInsumo dto)
+        {
+            var detalle = await _context.PedidoDetalleInsumos
+                .FirstOrDefaultAsync(x => x.Id == id && x.EstaActivo);
+
+            if (detalle == null)
+                return NotFound();
+
+            detalle.FechaUso = dto.FechaUso;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         [HttpPatch("Detalle/{id:int}/Estado")]
         //    public async Task<ActionResult> PatchEstadoPedidoDetalleInsumo(
         //int id,
@@ -189,7 +210,7 @@ namespace Armeccor.Server.Controllers
         public async Task<ActionResult<IEnumerable<PedidoDetalleInsumoDTO>>> GetDetalleInsumos()
         {
             var detalles = await _context.PedidoDetalleInsumos
-                .Where(pd => pd.EstaActivo)
+                .Where(pd => pd.EstaActivo == true)
                 .Include(p => p.Insumo)
                     .ThenInclude(i => i.InsumoOrdenes)
                     .ThenInclude(io => io.Orden)          

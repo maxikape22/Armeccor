@@ -279,7 +279,7 @@ namespace Armeccor.Server.Controllers
                 return BadRequest("El detalle del pedido ya existe.");
 
             // 4️⃣ Fecha futura automática
-            var fechaUso = DateTime.Now.AddDays(Random.Shared.Next(1, 15));
+            var fechaUso = DateTime.Now.AddDays(Random.Shared.Next(4, 30));
 
             // 5️⃣ Crear PedidoDetalleInsumo
             var pedidoDetalle = new PedidoDetalleInsumo

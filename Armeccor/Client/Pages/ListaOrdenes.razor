@@ -234,8 +234,34 @@
                             <td>@orden.NombreOrden</td>
                             <td>@orden.Descripcion</td>
                             <td>@orden.Estado</td>
-                            <td>@orden.FechaInicio.ToShortDateString()</td>
-                            <td>@orden.FechaPactada.ToShortDateString()</td>
+                            
+
+
+                            @*<td>@orden.FechaInicio.ToShortDateString()</td>*@
+
+                            <td>
+                                <input type="date"
+                                       class="form-control form-control-sm"
+                                       value="@orden.FechaInicio.ToString("yyyy-MM-dd")"
+                                       min="@DateTime.Today.AddYears(-5).ToString("yyyy-MM-dd")"
+                                       max="@DateTime.Today.AddYears(5).ToString("yyyy-MM-dd")"
+                                       @onchange="async e => await CambiarFechaInicio(orden.Id, e.Value?.ToString())" />
+                            </td>
+                            
+                            
+                            
+                            @*<td>@orden.FechaPactada.ToShortDateString()</td>*@
+
+
+                            <td>
+                                <input type="date"
+                                       class="form-control form-control-sm"
+                                       value="@orden.FechaPactada.ToString("yyyy-MM-dd")"
+                                       min="@DateTime.Today.AddYears(-5).ToString("yyyy-MM-dd")"
+                                       max="@DateTime.Today.AddYears(5).ToString("yyyy-MM-dd")"
+                                       @onchange="async e => await CambiarFechaPactada(orden.Id, e.Value?.ToString())" />
+                            </td>
+
                             <td>@(orden.FechaEntrega.HasValue? orden.FechaEntrega.Value.ToString("dd/MM/yyyy") : "Sin fecha de entrega")</td>
                             <td>@orden.NombreCliente</td>
                             <td>@orden.AreaActual</td>
@@ -488,6 +514,46 @@
             await CargarOrdenes();
         }
         CloseDropdown();
+    }
+
+
+    private async Task CambiarFechaInicio(int id, string nuevaFechaString)
+    {
+        if (DateTime.TryParse(nuevaFechaString, out var nuevaFecha))
+        {
+            var response = await Http.PatchAsJsonAsync(
+                $"api/Ordenes/{id}/FechaInicio",
+                new { Fecha = nuevaFecha });
+
+            if (response.IsSuccessStatusCode)
+            {
+                var orden = filteredOrders.FirstOrDefault(x => x.Id == id);
+                if (orden != null)
+                    orden.FechaInicio = nuevaFecha;
+            }
+        }
+    }
+
+    private async Task CambiarFechaPactada(int id, string nuevaFechaString)
+    {
+        if (DateTime.TryParse(nuevaFechaString, out var nuevaFecha))
+        {
+            var response = await Http.PatchAsJsonAsync(
+                $"api/Ordenes/{id}/FechaPactada",
+                new { Fecha = nuevaFecha });
+
+            if (response.IsSuccessStatusCode)
+            {
+                var orden = filteredOrders.FirstOrDefault(x => x.Id == id);
+                if (orden != null)
+                    orden.FechaPactada = nuevaFecha;
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                await confirmationModal.ShowInfoAsync(errorContent);
+            }
+        }
     }
 
     private void MenuViewAreaDetails(int nroOT)

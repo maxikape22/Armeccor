@@ -58,8 +58,20 @@ else
                                value="@d.Cantidad"
                                @onchange="async e => await ActualizarCantidad(d.Id, Convert.ToInt32(e.Value))" />
                     </td>
+                    
+                    
+                    @*<td>@d.FechaUso.ToShortDateString()</td>*@
 
-                    <td>@d.FechaUso.ToShortDateString()</td>
+                    <td>
+                        <input type="date"
+                               class="form-control form-control-sm"
+                               value="@d.FechaUso.ToString("yyyy-MM-dd")"
+                               max="@DateTime.Today.AddYears(2).ToString("yyyy-MM-dd")"
+                               @onchange="async e => await CambiarFechaUso(d.Id, e.Value?.ToString())" />
+                    </td>
+
+
+
                     <td>@d.NroOT</td>
 
                     <td>
@@ -446,6 +458,28 @@ else
         var detalle = detalles.First(d => d.Id == detalleId);
         detalle.Estado = nuevoEstado;
         await OnInitializedAsync();
+    }
+
+    private string HoyMin => DateTime.Today.AddMonths(-1).ToString("yyyy-MM-dd");
+    private string HoyMax => DateTime.Today.AddMonths(3).ToString("yyyy-MM-dd");
+
+    private async Task CambiarFechaUso(int id, string nuevaFechaString)
+    {
+        if (DateTime.TryParse(nuevaFechaString, out var nuevaFecha))
+        {
+            var response = await Http.PatchAsJsonAsync(
+                $"api/PedidoDetalleInsumos/{id}/FechaUso",
+                new { FechaUso = nuevaFecha });
+
+            if (response.IsSuccessStatusCode)
+            {
+                var detalle = detalles.FirstOrDefault(x => x.Id == id);
+                if (detalle != null)
+                {
+                    detalle.FechaUso = nuevaFecha;
+                }
+            }
+        }
     }
 
     private async Task ActualizarCantidad(int idDetalle, int nuevaCantidad)

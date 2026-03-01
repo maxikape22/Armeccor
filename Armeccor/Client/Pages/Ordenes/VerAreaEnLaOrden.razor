@@ -163,27 +163,26 @@ else
 
                     <td>
                         <div class="d-flex flex-column gap-2 align-items-start">
-                            <!-- Muestra el tiempo actual en formato HH:mm:ss -->
                             <span class="fw-bold">@area.Tiempo.ToString(@"hh\:mm\:ss")</span>
 
                             @if (area.Tiempo.TotalSeconds > 0)
                             {
-                                <!-- Input para ingresar cuánto tiempo querés descontar -->
                                 <input type="number"
                                        class="form-control form-control-sm"
                                        style="width:100px"
                                        @bind="area.CantidadADescontar"
                                        min="1"
-                                       disabled="@(!EsEditable(ordenDetalleDTO))"
+                                       disabled="@(!AreaPuedeOperar(area))"
                                        placeholder="Cantidad" />
                             }
 
                             @{
                                 var clase = area.EstaCorriendo ? "btn-warning" : "btn-success";
                                 var texto = area.EstaCorriendo ? "Detener" : "Iniciar";
-                                //var desactivar = !area.EstaCorriendo && area.Tiempo.TotalSeconds <= 0;
-                                var desactivar = !EsEditable(ordenDetalleDTO) ||
-                                (!area.EstaCorriendo && area.Tiempo.TotalSeconds <= 0);
+
+                                var desactivar =
+                                !AreaPuedeOperar(area)
+                                || (!area.EstaCorriendo && area.Tiempo.TotalSeconds <= 0);
                             }
 
                             <button class="btn btn-sm @clase"
@@ -267,6 +266,19 @@ else
     {
         bool Es_Editable = DTO.Estado == "Pendiente" || DTO.Estado == "Iniciada";
         return Es_Editable;
+    }
+
+    private bool AreaPuedeOperar(AreaDetalleOrdenListaDTO area)
+    {
+        return EsEditable(ordenDetalleDTO)
+               && area.Estado == "Iniciado";
+    }
+
+
+    public bool RecorridoTiempoEstadoInicialArea(AreaDetalleOrdenListaDTO listaDTO)
+    {
+        bool DTO = listaDTO.Estado == "Iniciado";
+        return DTO;
     }
 
     //
@@ -638,6 +650,35 @@ else
     }
 
     // Cambiar estado
+    // private async Task CambiarEstado(int id, ChangeEventArgs e)
+    // {
+    //     var nuevoEstado = e?.Value?.ToString();
+    //     if (string.IsNullOrWhiteSpace(nuevoEstado)) return;
+
+    //     var payload = new { Estado = nuevoEstado };
+    //     var response = await Http.PutAsJsonAsync($"api/Area_Detalle_Orden/{id}/Estado", payload);
+
+    //     if (response.IsSuccessStatusCode)
+    //     {
+    //         var area = areasDetalle.FirstOrDefault(a => a.Id == id);
+    //         if (area != null) area.Estado = nuevoEstado;
+
+    //         //await JS.InvokeVoidAsync("alert", "Estado actualizado en el servidor.");
+    //         await confirmationModal.ShowInfoAsync("Estado actualizado en el servidor.");
+    //         InvokeAsync(StateHasChanged);
+    //     }
+    //     else
+    //     {
+    //         var msg = await response.Content.ReadAsStringAsync();
+    //         //await JS.InvokeVoidAsync("alert", $"Error al actualizar en servidor: {msg}");
+    //         await confirmationModal.ShowInfoAsync("Error al actualizar en el servidor");
+    //     }
+
+
+    //     areasDetalle = await Http.GetFromJsonAsync<List<AreaDetalleOrdenListaDTO>>(
+    //             $"api/Area_Detalle_Orden/{NroOT}");
+    // }
+
     private async Task CambiarEstado(int id, ChangeEventArgs e)
     {
         var nuevoEstado = e?.Value?.ToString();
@@ -649,22 +690,26 @@ else
         if (response.IsSuccessStatusCode)
         {
             var area = areasDetalle.FirstOrDefault(a => a.Id == id);
-            if (area != null) area.Estado = nuevoEstado;
+            if (area != null)
+            {
+                area.Estado = nuevoEstado;
+            }
 
-            //await JS.InvokeVoidAsync("alert", "Estado actualizado en el servidor.");
-            await confirmationModal.ShowInfoAsync("Estado actualizado en el servidor.");
-            InvokeAsync(StateHasChanged);
+            var mensaje = await response.Content.ReadAsStringAsync();
+            await confirmationModal.ShowInfoAsync(mensaje);
         }
         else
         {
-            var msg = await response.Content.ReadAsStringAsync();
-            //await JS.InvokeVoidAsync("alert", $"Error al actualizar en servidor: {msg}");
-            await confirmationModal.ShowInfoAsync("Error al actualizar en el servidor");
+            var error = await response.Content.ReadAsStringAsync();
+            await confirmationModal.ShowInfoAsync(error);
+            return;
         }
 
-
+        // 🔥 RECARGA COMPLETA (garantiza coherencia)
         areasDetalle = await Http.GetFromJsonAsync<List<AreaDetalleOrdenListaDTO>>(
-                $"api/Area_Detalle_Orden/{NroOT}");
+            $"api/Area_Detalle_Orden/{NroOT}");
+
+        await InvokeAsync(StateHasChanged);
     }
 
 

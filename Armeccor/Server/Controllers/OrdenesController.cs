@@ -35,6 +35,52 @@ namespace Armeccor.Server.Controllers
             this._env = env;
         }
 
+        public class ActualizarFechaDTO
+        {
+            public DateTime Fecha { get; set; }
+        }
+
+        [HttpPatch("{id}/FechaInicio")]
+        public async Task<IActionResult> CambiarFechaInicio(
+       int id,
+       [FromBody] ActualizarFechaDTO dto)
+        {
+            var orden = await context.Ordenes
+                .FirstOrDefaultAsync(x => x.Id == id && x.EstaActivo);
+
+            if (orden == null)
+                return NotFound();
+
+            orden.FechaInicio = dto.Fecha;
+
+            await context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+
+        [HttpPatch("{id}/FechaPactada")]
+        public async Task<IActionResult> CambiarFechaPactada(
+            int id,
+            [FromBody] ActualizarFechaDTO dto)
+        {
+            var orden = await context.Ordenes
+                .FirstOrDefaultAsync(x => x.Id == id && x.EstaActivo);
+
+            if (orden == null)
+                return NotFound();
+
+            if (dto.Fecha <= orden.FechaInicio)
+                return Conflict("La fecha pactada debe ser mayor a la fecha de inicio.");
+
+            orden.FechaPactada = dto.Fecha;
+
+            await context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+
         [HttpGet("SoloOrdenIdPorNroOT/{nroOT:int}")]
         public async Task<ActionResult<int>> GetOrdenIdPorNroOT(int nroOT)
         {
@@ -156,6 +202,7 @@ namespace Armeccor.Server.Controllers
         public async Task<ActionResult<IEnumerable<OrdenDetalleDTO>>> GetOrdenes()
         {
             var ordenes = await context.Ordenes
+                .Where(e=>e.Estado == "Finalizada")
                 .Where(e=>e.EstaActivo == true)
                 .Include(o => o.Cliente)
                 .Include(o => o.Planos)

@@ -112,6 +112,9 @@
                 // Navigation.NavigateTo($"/AreasDetalleOrden/{NroOT}");
                 if (confirmationModal != null)
                 {
+                    //"✅ Área registrada correctamente en la orden."
+
+                    //var mensaje = await resp.Content.ReadAsStringAsync();
                     await confirmationModal.ShowInfoAsync(
                         "✅ Área registrada correctamente en la orden.",
                         async () =>
@@ -129,7 +132,8 @@
         }
         catch (Exception)
         {
-            await js.InvokeVoidAsync("alert", "No se pudó registrar el área detallada");
+            //await js.InvokeVoidAsync("alert", "No se pudó registrar el área detallada");
+            await confirmationModal.ShowInfoAsync("No se pudó registrar el área detallada");
         }
     }
 

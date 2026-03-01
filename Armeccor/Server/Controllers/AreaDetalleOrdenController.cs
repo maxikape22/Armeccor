@@ -281,6 +281,77 @@ namespace Armeccor.Server.Controllers
         //}
 
 
+        //[HttpPost("AreaDetallaEnOrden")]
+        //public async Task<ActionResult<AreaDetalleOrdenDTO>> PostAreaDetalleOrden(AreaDetalleOrdenDTO dto)
+        //{
+        //    if (dto.NroOT.HasValue)
+        //    {
+        //        var ordenPorNro = await context.Ordenes
+        //            .FirstOrDefaultAsync(o => o.NroOT == dto.NroOT.Value && o.EstaActivo);
+
+        //        if (ordenPorNro == null)
+        //            return BadRequest($"No existe la orden con NroOT {dto.NroOT}");
+
+        //        dto.OrdenId = ordenPorNro.Id;
+        //    }
+
+        //    var orden = await context.Ordenes
+        //        .FirstOrDefaultAsync(o => o.Id == dto.OrdenId && o.EstaActivo);
+
+        //    if (orden == null)
+        //        return BadRequest($"La Orden con Id {dto.OrdenId} no existe o está dada de baja.");
+
+        //    // 🚫 REGLA DE NEGOCIO NUEVA
+        //    if (!orden.Estado.Equals("Iniciada", StringComparison.OrdinalIgnoreCase) &&
+        //        !orden.Estado.Equals("Pendiente", StringComparison.OrdinalIgnoreCase))
+        //    {
+        //        return BadRequest(
+        //            $"No se pueden agregar áreas a una orden en estado '{orden.Estado}'. " +
+        //            "Solo se permite el estado Iniciada o Pendiente para el registro del área en la orden."
+        //        );
+        //    }
+
+        //    if (!await context.Areas.AnyAsync(a => a.Id == dto.AreaId))
+        //        return BadRequest($"El Área con Id {dto.AreaId} no existe.");
+
+        //    // 🚫 Bloqueo defensivo existente
+        //    if (dto.Estado == "Iniciado")
+        //    {
+        //        bool yaExisteIniciado = await context.AreaDetalleOrdenes
+        //            .AnyAsync(a => a.OrdenId == dto.OrdenId &&
+        //                           a.AreaId == dto.AreaId &&
+        //                           a.Estado == "Iniciado" &&
+        //                           a.EstaActivo);
+
+        //        if (yaExisteIniciado)
+        //            return BadRequest("Ya existe un registro de esta área con estado 'Iniciado' en la misma orden.");
+        //    }
+
+        //    var entity = _mapper.Map<AreaDetalleOrden>(dto);
+        //    entity.Prioridad = 0;
+        //    entity.EstaActivo = true;
+        //    entity.FechaBaja = null;
+
+        //    context.AreaDetalleOrdenes.Add(entity);
+        //    await context.SaveChangesAsync();
+
+        //    await context.Database.ExecuteSqlRawAsync(
+        //        "EXEC sp_AsignarPrioridadDisponible @p0, @p1",
+        //        new object[] { dto.OrdenId, entity.Id }
+        //    );
+
+        //    var result = await context.AreaDetalleOrdenes
+        //        .Include(x => x.Area)
+        //        .FirstOrDefaultAsync(x => x.Id == entity.Id);
+
+        //    var resultDto = _mapper.Map<AreaDetalleOrdenDTO>(result);
+        //    resultDto.NombreArea = result.Area?.NombreArea;
+
+        //    return Ok(resultDto);
+        //}
+
+        //ADAPTACION DEL POST ANTERIOR PARA VALIDAR EL ESTADO DE LA ORDEN ANTES DE PERMITIR AGREGAR ÁREAS, Y MANTENER LA REGLA DE NEGOCIO DE NO PERMITIR MÁS DE UN "INICIADO" POR ÁREA EN LA MISMA ORDEN. SE ASUME QUE SOLO SE PUEDEN AGREGAR ÁREAS A ÓRDENES EN ESTADO "Iniciada" O "Pendiente".
+
         [HttpPost("AreaDetallaEnOrden")]
         public async Task<ActionResult<AreaDetalleOrdenDTO>> PostAreaDetalleOrden(AreaDetalleOrdenDTO dto)
         {
@@ -301,30 +372,32 @@ namespace Armeccor.Server.Controllers
             if (orden == null)
                 return BadRequest($"La Orden con Id {dto.OrdenId} no existe o está dada de baja.");
 
-            // 🚫 REGLA DE NEGOCIO NUEVA
             if (!orden.Estado.Equals("Iniciada", StringComparison.OrdinalIgnoreCase) &&
                 !orden.Estado.Equals("Pendiente", StringComparison.OrdinalIgnoreCase))
             {
                 return BadRequest(
                     $"No se pueden agregar áreas a una orden en estado '{orden.Estado}'. " +
-                    "Solo se permite el estado Iniciada o Pendiente para el registro del área en la orden."
+                    "Solo se permite el estado Iniciada o Pendiente."
                 );
             }
 
             if (!await context.Areas.AnyAsync(a => a.Id == dto.AreaId))
                 return BadRequest($"El Área con Id {dto.AreaId} no existe.");
 
-            // 🚫 Bloqueo defensivo existente
+            // 🔴 REGLA FUERTE: SOLO UN INICIADO POR ORDEN
             if (dto.Estado == "Iniciado")
             {
                 bool yaExisteIniciado = await context.AreaDetalleOrdenes
-                    .AnyAsync(a => a.OrdenId == dto.OrdenId &&
-                                   a.AreaId == dto.AreaId &&
-                                   a.Estado == "Iniciado" &&
-                                   a.EstaActivo);
+                    .AnyAsync(a =>
+                        a.OrdenId == dto.OrdenId &&
+                        a.EstaActivo &&
+                        a.Estado == "Iniciado");
 
                 if (yaExisteIniciado)
-                    return BadRequest("Ya existe un registro de esta área con estado 'Iniciado' en la misma orden.");
+                    return BadRequest(
+                        "Ya existe un área con estado 'Iniciado' en esta orden. " +
+                        "Solo puede haber una área iniciada a la vez."
+                    );
             }
 
             var entity = _mapper.Map<AreaDetalleOrden>(dto);
@@ -350,8 +423,71 @@ namespace Armeccor.Server.Controllers
             return Ok(resultDto);
         }
 
+
+        //
+
+
+        //[HttpPut("{id}/Estado")]
+        //public async Task<ActionResult<AreaDetalleOrdenListaDTO>> CambiarEstado(int id, [FromBody] AreaDetalleOrdenListaDTO dto)
+        //{
+        //    var areaDetalle = await context.AreaDetalleOrdenes
+        //        .Include(a => a.Area)
+        //        .FirstOrDefaultAsync(x => x.Id == id);
+
+        //    if (areaDetalle == null)
+        //        return NotFound();
+
+        //    if (!string.IsNullOrEmpty(dto.Estado))
+        //    {
+        //        areaDetalle.Estado = dto.Estado;
+
+        //        // ✅ Si se marca como Finalizado, se asigna prioridad 0
+        //        if (dto.Estado == "Finalizado")
+        //        {
+        //            areaDetalle.Prioridad = 0;
+
+        //            // 🔁 Reordenar prioridades de áreas activas y no finalizadas
+        //            var otrasAreas = await context.AreaDetalleOrdenes
+        //                .Where(a => a.OrdenId == areaDetalle.OrdenId &&
+        //                            a.Id != areaDetalle.Id &&
+        //                            a.EstaActivo && // 🔒 excluye eliminadas
+        //                            a.Estado != "Finalizado")
+        //                .OrderBy(a => a.Prioridad)
+        //                .ToListAsync();
+
+        //            int nuevaPrioridad = 1;
+        //            foreach (var area in otrasAreas)
+        //            {
+        //                area.Prioridad = nuevaPrioridad++;
+        //            }
+        //        }
+        //    }
+
+        //    await context.SaveChangesAsync();
+
+        //    var result = new AreaDetalleOrdenListaDTO
+        //    {
+        //        Id = areaDetalle.Id,
+        //        OrdenId = areaDetalle.OrdenId,
+        //        AreaId = areaDetalle.AreaId,
+        //        Descripcion = areaDetalle.Descripcion,
+        //        Estado = areaDetalle.Estado,
+        //        Tiempo = areaDetalle.Tiempo,
+        //        Comentario = areaDetalle.Comentario,
+        //        Prioridad = areaDetalle.Prioridad,
+        //        NombreArea = areaDetalle.Area?.NombreArea
+        //    };
+
+        //    return Ok(result);
+        //}
+
+        //ADAPTACION DEL PUT ANTERIOR PARA QUE AL CAMBIAR EL ESTADO A "Finalizado" SE ASIGNE PRIORIDAD 0, PERMITIENDO MANTENER EL ORDEN DE PRIORIDAD DE LAS ÁREAS ACTIVAS Y NO FINALIZADAS, SIN INCLUIR LAS ÁREAS ELIMINADAS (BAJA LÓGICA) EN LA REORDENACIÓN. SE ASUME QUE SOLO LAS ÁREAS ACTIVAS Y NO FINALIZADAS PARTICIPAN EN LA LÓGICA DE PRIORIDAD, MIENTRAS QUE LAS ÁREAS FINALIZADAS O ELIMINADAS QUEDAN FUERA DE ELLA.
+
+
         [HttpPut("{id}/Estado")]
-        public async Task<ActionResult<AreaDetalleOrdenListaDTO>> CambiarEstado(int id, [FromBody] AreaDetalleOrdenListaDTO dto)
+        public async Task<ActionResult<AreaDetalleOrdenListaDTO>> CambiarEstado(
+    int id,
+    [FromBody] AreaDetalleOrdenListaDTO dto)
         {
             var areaDetalle = await context.AreaDetalleOrdenes
                 .Include(a => a.Area)
@@ -362,19 +498,35 @@ namespace Armeccor.Server.Controllers
 
             if (!string.IsNullOrEmpty(dto.Estado))
             {
+                // 🔴 BLOQUEO: Solo un iniciado por orden
+                if (dto.Estado == "Iniciado")
+                {
+                    bool yaExisteIniciado = await context.AreaDetalleOrdenes
+                        .AnyAsync(a =>
+                            a.OrdenId == areaDetalle.OrdenId &&
+                            a.Id != areaDetalle.Id &&
+                            a.EstaActivo &&
+                            a.Estado == "Iniciado");
+
+                    if (yaExisteIniciado)
+                        return BadRequest(
+                            "Ya existe un área con estado 'Iniciado' en esta orden. " +
+                            "Solo puede haber una área iniciada a la vez."
+                        );
+                }
+
                 areaDetalle.Estado = dto.Estado;
 
-                // ✅ Si se marca como Finalizado, se asigna prioridad 0
                 if (dto.Estado == "Finalizado")
                 {
                     areaDetalle.Prioridad = 0;
 
-                    // 🔁 Reordenar prioridades de áreas activas y no finalizadas
                     var otrasAreas = await context.AreaDetalleOrdenes
-                        .Where(a => a.OrdenId == areaDetalle.OrdenId &&
-                                    a.Id != areaDetalle.Id &&
-                                    a.EstaActivo && // 🔒 excluye eliminadas
-                                    a.Estado != "Finalizado")
+                        .Where(a =>
+                            a.OrdenId == areaDetalle.OrdenId &&
+                            a.Id != areaDetalle.Id &&
+                            a.EstaActivo &&
+                            a.Estado != "Finalizado")
                         .OrderBy(a => a.Prioridad)
                         .ToListAsync();
 
@@ -401,8 +553,10 @@ namespace Armeccor.Server.Controllers
                 NombreArea = areaDetalle.Area?.NombreArea
             };
 
-            return Ok(result);
+            return Ok("Estado actualizado correctamente");
         }
+
+        //
 
         //[HttpDelete("{id}")]
         //public async Task<ActionResult> EliminarArea(int id)

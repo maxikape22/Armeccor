@@ -392,7 +392,8 @@ else
         if (!response.IsSuccessStatusCode)
         {
             var error = await response.Content.ReadAsStringAsync();
-            await JS.InvokeVoidAsync("alert", error);
+            //await JS.InvokeVoidAsync("alert", error);
+            await confirmationModal.ShowInfoAsync(error);
             return;
         }
 
