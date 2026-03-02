@@ -127,7 +127,7 @@ else
 @code 
 {
 
-  
+
     private ConfirmationModal? confirmationModal;
 
     void VolverAOrdenes()
@@ -196,7 +196,8 @@ else
         }
         catch (Exception ex)
         {
-            await JS.InvokeVoidAsync("alert", $"Error al cargar insumos: {ex.Message}");
+            //await JS.InvokeVoidAsync("alert", $"Error al cargar insumos: {ex.Message}");
+            await confirmationModal.ShowInfoAsync("Error al cargar insumos");
         }
     }
 

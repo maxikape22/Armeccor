@@ -516,8 +516,8 @@ else
 
 
     [Parameter] public int NroOT { get; set; }
-    public string NombreOrden;
-    public string NombreCliente;
+    public string NombreOrden = "";
+    public string NombreCliente = "";
     private List<AreaDetalleOrdenListaDTO> areasDetalle = new();
     private string filtroEstado = "";
     private bool soloFinalizados = false;
@@ -550,6 +550,26 @@ else
     }
 
 
+    private async Task CargarDatosOrden()
+    {
+        try
+        {
+            var orden = await Http.GetFromJsonAsync<OrdenDetalleDTO>($"api/Ordenes/{NroOT}");
+
+            if (orden != null)
+            {
+                NombreOrden = orden.NombreOrden ?? "(sin nombre)";
+                NombreCliente = orden.NombreCliente ?? "(sin cliente)";
+                ordenDetalleDTO = orden;
+            }
+        }
+        catch
+        {
+            NombreOrden = "(error)";
+            NombreCliente = "(error)";
+        }
+    }
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -558,18 +578,30 @@ else
 
         try
         {
-            areasDetalle = await Http.GetFromJsonAsync<List<AreaDetalleOrdenListaDTO>>(
-                $"api/Area_Detalle_Orden/{NroOT}");
+            // 🔵 1️⃣ PRIMERO: Cargar datos de la orden SIEMPRE (independiente de áreas)
+            var orden = await Http.GetFromJsonAsync<OrdenDetalleDTO>($"api/Ordenes/{NroOT}");
 
-            if (areasDetalle != null && areasDetalle.Any())
+            if (orden != null)
             {
-                ordenDetalleDTO.Estado = areasDetalle.First().EstadoOrden;
+                NombreOrden = orden.NombreOrden ?? "(sin nombre)";
+                NombreCliente = orden.NombreCliente ?? "(sin cliente)";
+                ordenDetalleDTO = orden;
+            }
+            else
+            {
+                NombreOrden = "(sin nombre)";
+                NombreCliente = "(sin cliente)";
             }
 
-            if (areasDetalle != null && areasDetalle.Any())
+            // 🔵 2️⃣ DESPUÉS: cargar áreas
+            areasDetalle = await Http.GetFromJsonAsync<List<AreaDetalleOrdenListaDTO>>(
+                $"api/Area_Detalle_Orden/{NroOT}") ?? new List<AreaDetalleOrdenListaDTO>();
+
+
+            // 🔵 3️⃣ Si hay áreas, mantener tu lógica actual
+            if (areasDetalle.Any())
             {
-                NombreOrden = areasDetalle.First().NombreOrden;
-                NombreCliente = areasDetalle.First().NombreCliente;
+                ordenDetalleDTO.Estado = areasDetalle.First().EstadoOrden;
 
                 foreach (var area in areasDetalle)
                 {
@@ -582,6 +614,7 @@ else
                     {
                         var comentarioLocal = await JS.InvokeAsync<string>(
                             "localStorage.getItem", $"comentario_{area.Id}");
+
                         var comentarioSession = await JS.InvokeAsync<string>(
                             "sessionStorage.getItem", $"comentario_{area.Id}");
 
@@ -593,14 +626,13 @@ else
             }
             else
             {
-                Console.WriteLine($"No se encontraron áreas para la orden NroOT {NroOT}");
-                NombreOrden = "(sin nombre)";
-                NombreCliente = "(sin cliente)";
+                // 🔵 4️⃣ Si NO hay áreas
+                await confirmationModal.ShowInfoAsync(
+                    $"No se encontraron áreas para la orden N°: {NroOT}");
             }
         }
-        catch (HttpRequestException ex)
+        catch (HttpRequestException)
         {
-            Console.WriteLine($"Error al obtener áreas: {ex.InnerException}");
             NombreOrden = "(error)";
             NombreCliente = "(error)";
         }
