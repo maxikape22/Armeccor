@@ -12,6 +12,7 @@ namespace DTO.ObjetosDTO
         public int NroOT { get; set; }
         public string NombreOrden { get; set; }  // viene de Orden.FechaEntrega o FechaPactada
         public DateTime? FechaEntrega { get; set; }
+        public DateTime FechaCambioEntrega { get; set; }
         public bool Entregado { get; set; }
         public string MedioDePago { get; set; }
         public DateTime? FechaBaja { get; set; }

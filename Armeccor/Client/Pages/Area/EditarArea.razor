@@ -12,7 +12,7 @@
         </div>
     </div>
     <br />
-    <button class="btn btn-primary" type="submit">Aceptar</button>
+    <button class="btn btn-primary" @onclick="Grabar">Aceptar</button>
     <button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
 </EditForm>
 
@@ -34,9 +34,32 @@
         var respuesta = await http.GetFromJsonAsync<Area>($"api/Areas/{AreaId}");
     }
 
+
+    public class EditarAreaDTO
+    {
+        public string NombreArea { get; set; }
+
+        public bool? EstaActivo { get; set; }
+
+        public DateTime? FechaBaja { get; set; }
+    }
+
+    // private async Task Grabar()
+    // {
+    //     var httpRespuesta = await http.PutAsJsonAsync<Area>($"api/Areas/{AreaId}", Area);
+    //     navigationManager.NavigateTo("/Areas");
+    // }
+
     private async Task Grabar()
     {
-        var httpRespuesta = await http.PutAsJsonAsync<Area>($"api/Areas/{AreaId}", Area);
+        var dto = new EditarAreaDTO
+        {
+            NombreArea = Area.NombreArea
+            // NO mandamos estado si solo editamos nombre
+        };
+
+        var httpRespuesta = await http.PutAsJsonAsync($"api/Areas/{AreaId}", dto);
+
         navigationManager.NavigateTo("/Areas");
     }
 

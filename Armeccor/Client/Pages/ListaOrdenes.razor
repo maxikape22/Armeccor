@@ -587,18 +587,41 @@
         CloseDropdown();
     }
 
+    // private async Task PreviousPage()
+    // {
+    //     if (!CanGoPrevious) return;
+    //     currentPage--;
+    //     await CargarOrdenes();
+    // }
+
+    // private async Task NextPage()
+    // {
+    //     if (!CanGoNext) return;
+    //     currentPage++;
+    //     await CargarOrdenes();
+    // }
+
+    // private async Task GoToPage(int page)
+    // {
+    //     if (page < 1) page = 1;
+    //     if (page > totalPages) page = totalPages;
+    //     currentPage = page;
+    //     await CargarOrdenes();
+    // }
+
+
     private async Task PreviousPage()
     {
         if (!CanGoPrevious) return;
         currentPage--;
-        await CargarOrdenes();
+        await RecargarSegunFiltro();
     }
 
     private async Task NextPage()
     {
         if (!CanGoNext) return;
         currentPage++;
-        await CargarOrdenes();
+        await RecargarSegunFiltro();
     }
 
     private async Task GoToPage(int page)
@@ -606,8 +629,17 @@
         if (page < 1) page = 1;
         if (page > totalPages) page = totalPages;
         currentPage = page;
-        await CargarOrdenes();
+        await RecargarSegunFiltro();
     }
+
+    private async Task RecargarSegunFiltro()
+    {
+        if (!string.IsNullOrWhiteSpace(SelectedStatus))
+            await FiltrarPorEstado();
+        else
+            await CargarOrdenes();
+    }
+
 
     private void ToggleDropdown(int id) => openedDropdownId = openedDropdownId == id ? null : id;
     private void CloseDropdown() => openedDropdownId = null;

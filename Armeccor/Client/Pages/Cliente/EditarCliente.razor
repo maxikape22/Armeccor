@@ -2,13 +2,50 @@
 @inject NavigationManager navigationManager
 @inject HttpClient http
 
-<h3>Editar cliente</h3>
+<style>
+    .info-card {
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+        padding: 1.5rem;
+    }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+        }
+
+        .info-card .titulo {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .info-card .nro-ot {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-left: 10px;
+        }
+</style>
+
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card info-card border-primary text-center">
+            <div class="card-body d-flex justify-content-center align-items-center">
+
+                <span class="titulo text-primary">
+                    Editar cliente
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
 
 <h1>@Edicion</h1>
 
 <EditForm Model="cliente" OnValidSubmit="Grabar">
     <DataAnnotationsValidator />
-    <div class="form-group">
+ @*    <div class="form-group">
         <label>Nombre</label>
         <div>
             <InputText class="form-control" @bind-Value="@cliente.Nombre" />
@@ -22,7 +59,7 @@
             <InputNumber class="form-control" @bind-Value="@cliente.DNI" />
             <ValidationMessage For="@(() => cliente.DNI)" />
         </div>
-    </div>
+    </div> *@
 
     <div class="form-group">
         <label>Dirección</label>
@@ -41,22 +78,33 @@
     </div>
 
     <br />
-    <button class="btn btn-primary" type="submit">Aceptar</button>
-    <button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+@*     <button class="btn btn-primary" type="submit">Aceptar</button>
+ *@ 
+
+  <button class="btn btn-primary" @onclick="Grabar">Aceptar</button>
+ 
+  <button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+
 </EditForm>
+
+<ConfirmationModal @ref="confirmationModal" />
+
+
 
 @code
 {
+    private ConfirmationModal? confirmationModal;
+
     [Parameter] public int clienteId { get; set; }
     private Cliente cliente = new Cliente();
     private string Edicion = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-       //  await base.OnInitializedAsync();
-       // // await Mostrar();
-       //  var respuesta = await http.GetFromJsonAsync<Cliente>($"api/Clientes/{clienteId}");
-       //  cliente = respuesta;
+        //  await base.OnInitializedAsync();
+        // // await Mostrar();
+        //  var respuesta = await http.GetFromJsonAsync<Cliente>($"api/Clientes/{clienteId}");
+        //  cliente = respuesta;
         // await base.OnInitializedAsync();
         // await Mostrar();
         await base.OnInitializedAsync();
@@ -74,10 +122,43 @@
         //navigationManager.NavigateTo("/api/Clientes");  
     }
 
+    // private async Task Grabar()
+    // {
+    //     var httpRespuesta = await http.PutAsJsonAsync<Cliente>($"api/Clientes/{clienteId}", cliente);
+    //     navigationManager.NavigateTo("/Clientes");
+    // }
+
+    public class ActualizarContactoClienteDTO
+    {
+        public string Direccion { get; set; }
+
+        public string Telefono { get; set; }
+    }
+
+
+    private bool guardando = false;
+
     private async Task Grabar()
     {
-        var httpRespuesta = await http.PutAsJsonAsync<Cliente>($"api/Clientes/{clienteId}", cliente);
-        navigationManager.NavigateTo("/Clientes");
+        guardando = true;
+
+        var dto = new ActualizarContactoClienteDTO
+        {
+            Direccion = cliente.Direccion,
+            Telefono = cliente.Telefono
+        };
+
+        var response = await http.PatchAsJsonAsync(
+            $"api/Clientes/{clienteId}/Contacto",
+            dto);
+
+        guardando = false;
+
+        if (response.IsSuccessStatusCode)
+        {
+            await confirmationModal?.ShowInfoAsync("Cliente actualizado correctamente.");
+            navigationManager.NavigateTo("/Clientes");
+        }
     }
 
     private void Cancelar()

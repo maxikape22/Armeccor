@@ -40,6 +40,37 @@ namespace Armeccor.Server.Controllers
             public DateTime Fecha { get; set; }
         }
 
+        [HttpPatch("{entregaId}/FechaEntrega")]
+        public async Task<ActionResult<EntregaDetalleDTO>> CambiarFechaEntrega(
+    int entregaId,
+    [FromBody] ActualizarFechaDTO dto)
+        {
+            var entrega = await context.Entregas
+                .Include(e => e.Orden)
+                .Include(e => e.Medio_De_Pago)
+                .FirstOrDefaultAsync(e => e.Id == entregaId && e.EstaActivo);
+
+            if (entrega == null)
+                return NotFound();
+
+            // 🔥 Ahora sí modificamos la Orden correcta
+            entrega.Orden.FechaEntrega = dto.Fecha;
+
+            try
+            {
+                await context.SaveChangesAsync();
+
+                var entregaDTO = _mapper.Map<EntregaDetalleDTO>(entrega);
+
+                return Ok(entregaDTO);
+            }
+            catch (Exception ex)
+            {
+
+                return Conflict(ex.Message);
+            }
+        }
+
         [HttpPatch("{id}/FechaInicio")]
         public async Task<IActionResult> CambiarFechaInicio(
        int id,
@@ -79,6 +110,8 @@ namespace Armeccor.Server.Controllers
 
             return NoContent();
         }
+
+  
 
 
         [HttpGet("SoloOrdenIdPorNroOT/{nroOT:int}")]
@@ -605,19 +638,68 @@ namespace Armeccor.Server.Controllers
 
 
 
+        //   [HttpGet("FiltroPorEstado")]
+        //   public async Task<ActionResult> GetOrdenesPorEstado(
+        //[FromQuery] string? estado = null,
+        //[FromQuery] int pagina = 1,
+        //[FromQuery] int tamanoPagina = 4)
+        //   {
+        //       var baseQuery = context.Ordenes
+        //           .Where(e => e.EstaActivo == true)
+        //           .Include(o => o.Cliente)
+        //           .Include(o => o.Planos)
+        //           .Include(o => o.Entregas)
+        //           .Include(o => o.AreaDetalleOrdenes.Where(f => f.EstaActivo == true))
+        //           .ThenInclude(ad => ad.Area)
+        //           .AsQueryable();
+
+        //       if (!string.IsNullOrWhiteSpace(estado))
+        //           baseQuery = baseQuery.Where(o => o.Estado == estado);
+
+        //       var totalRegistrosFiltrados = await baseQuery.CountAsync();
+
+        //       var ordenesPage = await baseQuery
+        //           .OrderBy(o => o.Id)
+        //           .Skip((pagina - 1) * tamanoPagina)
+        //           .Take(tamanoPagina)
+        //           .ToListAsync();
+
+        //       var ordenesDto = _mapper.Map<List<OrdenDetalleDTO>>(ordenesPage);
+
+        //       foreach (var dto in ordenesDto)
+        //       {
+        //           var entidad = baseQuery.FirstOrDefault(o => o.Id == dto.Id);
+        //           var areaActual = entidad?.AreaDetalleOrdenes?
+        //               .FirstOrDefault(ad => ad.Estado != null && ad.Estado.Equals("Iniciado", StringComparison.OrdinalIgnoreCase));
+        //           dto.AreaActual = areaActual != null
+        //               ? $"{areaActual.Area?.NombreArea ?? "(Área sin nombre)"} ({areaActual.Estado})"
+        //               : "No hay área cargada con estado inicial";
+        //       }
+
+
+        //       return Ok(new
+        //       {
+        //           totalRegistros = totalRegistrosFiltrados,
+        //           paginaActual = pagina,
+        //           tamanoPagina = tamanoPagina,
+        //           totalPaginas = (int)Math.Ceiling(totalRegistrosFiltrados / (double)tamanoPagina),
+        //           datos = ordenesDto
+        //       });
+        //   }
+
         [HttpGet("FiltroPorEstado")]
         public async Task<ActionResult> GetOrdenesPorEstado(
-     [FromQuery] string? estado = null,
-     [FromQuery] int pagina = 1,
-     [FromQuery] int tamanoPagina = 4)
+    [FromQuery] string? estado = null,
+    [FromQuery] int pagina = 1,
+    [FromQuery] int tamanoPagina = 4)
         {
             var baseQuery = context.Ordenes
-                .Where(e => e.EstaActivo == true)
+                .Where(e => e.EstaActivo)
                 .Include(o => o.Cliente)
                 .Include(o => o.Planos)
                 .Include(o => o.Entregas)
-                .Include(o => o.AreaDetalleOrdenes.Where(f => f.EstaActivo == true))
-                .ThenInclude(ad => ad.Area)
+                .Include(o => o.AreaDetalleOrdenes.Where(f => f.EstaActivo))
+                    .ThenInclude(ad => ad.Area)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(estado))
@@ -633,16 +715,20 @@ namespace Armeccor.Server.Controllers
 
             var ordenesDto = _mapper.Map<List<OrdenDetalleDTO>>(ordenesPage);
 
-            foreach (var dto in ordenesDto)
+            // 🔥 CALCULAMOS AreaActual SIN volver a consultar
+            for (int i = 0; i < ordenesDto.Count; i++)
             {
-                var entidad = baseQuery.FirstOrDefault(o => o.Id == dto.Id);
-                var areaActual = entidad?.AreaDetalleOrdenes?
-                    .FirstOrDefault(ad => ad.Estado != null && ad.Estado.Equals("Iniciado", StringComparison.OrdinalIgnoreCase));
-                dto.AreaActual = areaActual != null
+                var entidad = ordenesPage[i];
+
+                var areaActual = entidad.AreaDetalleOrdenes?
+                    .FirstOrDefault(ad =>
+                        ad.Estado != null &&
+                        ad.Estado.Equals("Iniciado", StringComparison.OrdinalIgnoreCase));
+
+                ordenesDto[i].AreaActual = areaActual != null
                     ? $"{areaActual.Area?.NombreArea ?? "(Área sin nombre)"} ({areaActual.Estado})"
                     : "No hay área cargada con estado inicial";
             }
-
 
             return Ok(new
             {

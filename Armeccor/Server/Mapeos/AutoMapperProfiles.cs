@@ -87,6 +87,8 @@ namespace Armeccor.Server.Mapeos
                    MapFrom(src => src.EstaActivo == true))
                 .ReverseMap();
 
+         
+
             // Para mostrar Entregas (DTO con Nombre del medio)
             CreateMap<Entrega, CrearEntregaDTO>()
                 .ForMember(dest => dest.MedioDePagoId, opt => opt.MapFrom(src => src.Medio_De_Pago.Nombre_Medio));

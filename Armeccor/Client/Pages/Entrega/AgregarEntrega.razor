@@ -5,7 +5,44 @@
 @inject NavigationManager Nav
 @inject IJSRuntime JS
 
-<h3>Nueva entrega</h3>
+<style>
+    .info-card {
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+        padding: 1.5rem;
+    }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+        }
+
+        .info-card .titulo {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .info-card .nro-ot {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-left: 10px;
+        }
+</style>
+
+   
+<div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card info-card border-primary text-center">
+                <div class="card-body d-flex justify-content-center align-items-center">
+
+                    <span class="titulo text-primary">
+                        Registrar entrega
+                    </span>
+                </div>
+            </div>
+        </div>
+</div>
 
 
 @if (OrdenDetalleDTOs is null)
@@ -45,15 +82,15 @@ else
         </div>
 
         <div class="mb-3">
-            <label class="form-label">¿Entregado?</label>
+            <label class="form-label">Valor de entrega por defecto</label>
             <InputSelect @bind-Value="Entrega.Entregado" class="form-select">
-                <option value="false">No</option>
-                <option value="true">Sí</option>
+                <option value="false" disabled>No
+                </option>
             </InputSelect>
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Medio de pago</label>
+            <label class="form-label">Seleccione medio de pago</label>
             <select class="form-select" @onchange="OnMedioChange">
                 <option value="0">-- Seleccione medio --</option>
                 @foreach (var medio in MediosDePago)

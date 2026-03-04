@@ -111,12 +111,54 @@ namespace Armeccor.Server.Controllers
             return Ok(areaDTO);
         }
 
-        [HttpPut("{id:int}")]
-        public async Task<IActionResult> PutArea(int id, CrearAreaDTO dto)
+        //[HttpPut("{id:int}")]
+        //public async Task<IActionResult> PutArea(int id, CrearAreaDTO dto)
+        //{
+        //    var area = await context.Areas.FirstOrDefaultAsync(a => a.Id == id);
+        //    if (area == null) return NotFound();
+        //    _mapper.Map(dto, area);
+        //    await context.SaveChangesAsync();
+        //    return NoContent();
+        //}
+
+        public class EditarAreaDTO
         {
-            var area = await context.Areas.FirstOrDefaultAsync(a => a.Id == id);
-            if (area == null) return NotFound();
-            _mapper.Map(dto, area);
+            public string NombreArea { get; set; }
+
+            public bool? EstaActivo { get; set; }
+
+            public DateTime? FechaBaja { get; set; }
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> PutArea(int id, EditarAreaDTO dto)
+        {
+            var area = await context.Areas
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (area == null)
+                return NotFound();
+
+            // 1️⃣ Siempre actualiza el nombre
+            area.NombreArea = dto.NombreArea;
+
+            // 2️⃣ Solo modifica estado si viene informado
+            if (dto.EstaActivo.HasValue)
+            {
+                if (dto.EstaActivo.Value)
+                {
+                    // Reactivar
+                    area.EstaActivo = true;
+                    area.FechaBaja = null;
+                }
+                else
+                {
+                    // Dar de baja
+                    area.EstaActivo = false;
+                    area.FechaBaja = dto.FechaBaja ?? DateTime.Now;
+                }
+            }
+
             await context.SaveChangesAsync();
             return NoContent();
         }

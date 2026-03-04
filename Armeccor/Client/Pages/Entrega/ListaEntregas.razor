@@ -3,7 +3,45 @@
 @inject NavigationManager Nav
 @inject IJSRuntime JSRuntime
 
-<h3>Listado de entregas</h3>
+<style>
+    .info-card {
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+        padding: 1.5rem;
+    }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+        }
+
+        .info-card .titulo {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .info-card .nro-ot {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-left: 10px;
+        }
+</style>
+
+<div class="mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card info-card border-primary text-center">
+                <div class="card-body d-flex justify-content-center align-items-center">
+
+                    <span class="titulo text-primary">
+                        Listado de entregas
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="toolbar mb-3">
     <input type="text" class="form-control me-2" placeholder="Buscar medio de pago..."
@@ -56,18 +94,28 @@ else
                 <tr>
                     <td>@e.NroOT</td>
                     <td>@e.NombreOrden</td>
-                    <td>@(e.FechaEntrega.HasValue? e.FechaEntrega.Value.ToString("dd/MM/yyyy"): "No hay fecha de entrega")</td>
-                    <td>@(e.Entregado ? "Sí" : "No")
+
+                    <td>
+                        <input type="date"
+                               value="@e.FechaEntrega?.ToString("yyyy-MM-dd")"
+                               min="@DateTime.Today.AddYears(-5).ToString("yyyy-MM-dd")"
+                               max="@DateTime.Today.AddYears(5).ToString("yyyy-MM-dd")"
+                               disabled="@e.Entregado"
+                               @onchange="async ex => await CambiarFechaEntrega(e.Id, ex.Value?.ToString())" />
+                    </td>
+
+                    <td>@(e.Entregado ? " Sí" : "No" )
                         <input type="checkbox"
                                class="form-check-input"
                                checked="@e.Entregado"
+                               disabled="@e.Entregado"
                                @onchange="async args => await CambiarEstadoEntrega(e.Id, args.Value is true)" />
                        </td>
+                 
+
                     <td>@e.MedioDePago</td>
                     <td>
-                      @*   <button class="btn btn-sm btn-danger" @onclick="() => MenuDelete(e.NroOT)">
-                            🗑
-                        </button> *@
+
                         <button class="btn btn-sm btn-danger"
                                 disabled="@(isDeletingNroOT == e.NroOT)"
                                 @onclick="() => MenuDelete(e.NroOT)">
@@ -83,175 +131,95 @@ else
 
 <ConfirmationModal @ref="confirmationModal" OnConfirm="ConfirmDelete" />
 
-@* @code 
+
+@code 
 {
-    private ConfirmationModal? confirmationModal;
-    private int? isDeletingId = null;
-    private int NroOT;
-    [Parameter] public string? MedioDePago { get; set; }
-    private List<EntregaDetalleDTO>? entregas;
-    private List<CrearEntregaDTO> EntregaDTOs;
-    private MedioDePagoDTO MedioDePagoDTO = new MedioDePagoDTO();
-    private List<MedioDePagoDTO> MediosDePago = new List<MedioDePagoDTO>();
-    private AreaDetalleOrdenListaDTO listaDTO = new AreaDetalleOrdenListaDTO();
-    private bool loading = true;
-    private string? error;
-    private string search = string.Empty;
-    private bool filtroEntregado = true;
-    private bool filtroNoEntregado = true;
-    private OrdenDetalleDTO OrdenDetalleDTO = new OrdenDetalleDTO();
-    protected override async Task OnInitializedAsync()
+    private HashSet<int> estadosEnProceso = new();
+
+    public class ActualizarFechaDTO
     {
-        MedioDePagoDTO.Nombre_Medio = MedioDePago;
-        await CargarEntregas();
+        public DateTime Fecha { get; set; }
     }
 
-    private async Task CambiarEstadoEntrega(int id, bool nuevoEstado)
+    private async Task CambiarFechaEntrega(int entregaId, string? nuevaFecha)
     {
-        var response = await Http.PutAsJsonAsync($"api/Entregas/ActualizacionPorEstado?Id={id}&Entregado={nuevoEstado}", new { });
+        if (string.IsNullOrWhiteSpace(nuevaFecha))
+            return;
+
+        if (!DateTime.TryParse(nuevaFecha, out var fecha))
+            return;
+
+        var dto = new ActualizarFechaDTO
+        {
+            Fecha = fecha
+        };
+
+        var response = await Http.PatchAsJsonAsync(
+            $"api/Ordenes/{entregaId}/FechaEntrega",
+            dto);
 
         if (response.IsSuccessStatusCode)
         {
-            var entregaActualizada = await response.Content.ReadFromJsonAsync<EntregaDetalleDTO>();
-            if (entregaActualizada != null)
+            var entregaActualizada =
+                await response.Content.ReadFromJsonAsync<EntregaDetalleDTO>();
+
+            if (entregaActualizada != null && entregas != null)
             {
-                var index = entregas?.FindIndex(e => e.Id == id);
-                if (index is not null and >= 0)
+                var index = entregas.FindIndex(e => e.Id == entregaActualizada.Id);
+
+                if (index >= 0)
                 {
-                    entregas![index.Value] = entregaActualizada;
+                    entregas[index] = entregaActualizada;
+                    StateHasChanged();
                 }
             }
         }
         else
         {
-            error = $"Error al actualizar entrega #{id}";
+            var error = await response.Content.ReadAsStringAsync();
+            await confirmationModal.ShowInfoAsync(error);
         }
     }
 
 
-
-    private async Task CargarEntregas()
+    private async Task CambiarEstadoEntrega(int id, bool nuevoEstado)
     {
+        if (estadosEnProceso.Contains(id))
+            return;
+
+        estadosEnProceso.Add(id);
+
         try
         {
-            entregas = await Http.GetFromJsonAsync<List<EntregaDetalleDTO>>("api/Entregas");
-        }
-        catch (Exception ex)
-        {
-            error = ex.Message;
-        }
-        loading = false;
-    }
+            var response = await Http.PutAsJsonAsync(
+                $"api/Entregas/ActualizacionPorEstado?Id={id}&Entregado={nuevoEstado}",
+                new { });
 
-    private IEnumerable<EntregaDetalleDTO> Filtrar(IEnumerable<EntregaDetalleDTO> lista)
-    {
-        var query = lista;
-
-        if (!string.IsNullOrWhiteSpace(search))
-            query = query.Where(e => e.MedioDePago.Contains(search, StringComparison.OrdinalIgnoreCase));
-
-        if (!filtroEntregado)
-            query = query.Where(e => !e.Entregado);
-
-        if (!filtroNoEntregado)
-            query = query.Where(e => e.Entregado);
-
-        return query;
-    }
-
-    private async Task ConfirmDelete(bool confirmed)
-    {
-        if (confirmed && confirmationModal != null)
-        {
-            await Eliminar(confirmationModal.CurrentItemId);
-        }
-        else
-        {
-            Cancelar();
-        }
-    }
-
-    private void Cancelar()
-    {
-        Nav.NavigateTo("/Entregas");
-    }
-
-    // private async Task Eliminar(int id)
-    // {
-    //     var resp = await Http.DeleteAsync($"api/Entregas/{id}");
-    //     if (resp.IsSuccessStatusCode)
-    //     {
-    //         entregas = entregas?.Where(e => e.Id != id).ToList();
-    //     }
-    //     await CargarEntregas();
-    // }
-
-
-    private async Task MenuDelete(int id)
-    {
-        if (confirmationModal != null)
-        {
-            await confirmationModal.ShowAsync(
-                $"¿Está seguro que desea eliminar la entrega {id}?",
-                id);
-        }
-    }
-
-    private async Task Eliminar(int NroOT)
-    {
-        try
-        {
-            isDeletingId = NroOT;
-
-            if (confirmationModal != null)
-                await confirmationModal.HideAsync();
-
-            var resp = await Http.DeleteAsync($"api/Entregas/{NroOT}");
-
-            if (resp.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                // Remover visualmente
-                entregas = entregas?.Where(e => e.NroOT != NroOT).ToList();
+                var entregaActualizada =
+                    await response.Content.ReadFromJsonAsync<EntregaDetalleDTO>();
 
-                // Recargar desde backend
-                await CargarEntregas();
+                if (entregaActualizada != null)
+                {
+                    var index = entregas?.FindIndex(e => e.Id == id);
 
-                await JSRuntime.InvokeVoidAsync("alert", "Entrega eliminada con éxito.");
+                    if (index is >= 0)
+                        entregas![index.Value] = entregaActualizada;
+                }
             }
             else
             {
-                var errorContent = await resp.Content.ReadAsStringAsync();
-                await JSRuntime.InvokeVoidAsync("alert",
-                    $"Error al eliminar la entrega: {resp.StatusCode} - {errorContent}");
+                await confirmationModal.ShowInfoAsync("No se pudo actualizar el estado de la entrega");
             }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error al eliminar entrega: {ex.Message}");
-            await JSRuntime.InvokeVoidAsync("alert",
-                $"Ocurrió un error al intentar eliminar la entrega: {ex.Message}");
         }
         finally
         {
-            isDeletingId = null;
+            estadosEnProceso.Remove(id);
         }
     }
 
-}
 
-<style>
-    .toolbar 
-    {
-        display: flex;
-        align-items: center;
-        gap: .5rem;
-    }
-</style>
- *@
-
-
-
-@code {
 
     private ConfirmationModal? confirmationModal;
     private List<EntregaDetalleDTO>? entregas;
@@ -270,39 +238,7 @@ else
         await CargarEntregas();
     }
 
-    // =============================
-    // CAMBIAR ESTADO ENTREGADO
-    // =============================
-
-    private async Task CambiarEstadoEntrega(int id, bool nuevoEstado)
-    {
-        var response = await Http.PutAsJsonAsync(
-            $"api/Entregas/ActualizacionPorEstado?Id={id}&Entregado={nuevoEstado}",
-            new { });
-
-        if (response.IsSuccessStatusCode)
-        {
-            var entregaActualizada =
-                await response.Content.ReadFromJsonAsync<EntregaDetalleDTO>();
-
-            if (entregaActualizada != null)
-            {
-                var index = entregas?.FindIndex(e => e.Id == id);
-
-                if (index is >= 0)
-                    entregas![index.Value] = entregaActualizada;
-            }
-        }
-        else
-        {
-            //error = $"Error al actualizar entrega #{id}";
-            await confirmationModal.ShowInfoAsync("No se pudo actualizar el estado de la entrega");
-        }
-    }
-
-    // =============================
-    // CARGAR
-    // =============================
+  
 
     private async Task CargarEntregas()
     {
@@ -319,9 +255,42 @@ else
         loading = false;
     }
 
-    // =============================
-    // FILTROS
-    // =============================
+
+    private async Task CambiarEstado(EntregaDetalleDTO e)
+    {
+        if (estadosEnProceso.Contains(e.Id))
+            return;
+
+        estadosEnProceso.Add(e.Id);
+        StateHasChanged(); // bloquea inmediatamente
+
+        try
+        {
+            var nuevoEstado = !e.Entregado;
+
+            var response = await Http.PutAsJsonAsync(
+                $"api/Entregas/ActualizacionPorEstado?Id={e.Id}&Entregado={nuevoEstado}",
+                new { });
+
+            if (response.IsSuccessStatusCode)
+            {
+                e.Entregado = nuevoEstado;
+            }
+            else
+            {
+                await confirmationModal.ShowInfoAsync("No se pudo actualizar el estado");
+            }
+        }
+        catch
+        {
+            await confirmationModal.ShowInfoAsync("Error en el servidor");
+        }
+        finally
+        {
+            estadosEnProceso.Remove(e.Id);
+            StateHasChanged();
+        }
+    }
 
     private IEnumerable<EntregaDetalleDTO> Filtrar(
         IEnumerable<EntregaDetalleDTO> lista)
@@ -342,10 +311,6 @@ else
         return query;
     }
 
-    // =============================
-    // MODAL ELIMINAR
-    // =============================
-
     private async Task MenuDelete(int nroOT)
     {
         if (confirmationModal != null)
@@ -364,7 +329,6 @@ else
         }
         else
         {
-            // SOLO cerrar modal (igual que en Ordenes)
             if (confirmationModal != null)
                 await confirmationModal.HideAsync();
         }
@@ -383,14 +347,10 @@ else
 
             if (resp.IsSuccessStatusCode)
             {
-                // Quitar de la lista sin recargar todo
                 entregas = entregas?
                     .Where(e => e.NroOT != nroOT)
                     .ToList();
 
-                // await JSRuntime.InvokeVoidAsync(
-                //     "alert",
-                //     "Entrega eliminada con éxito.");
                 await confirmationModal.ShowInfoAsync("Entrega eliminada exitosamente");
 
             }
@@ -398,17 +358,12 @@ else
             {
                 var errorContent = await resp.Content.ReadAsStringAsync();
 
-                // await JSRuntime.InvokeVoidAsync(
-                //     "alert",
-                //     $"Error al eliminar: {resp.StatusCode} - {errorContent}");
+                
                 await confirmationModal.ShowInfoAsync("No se pudo eliminar la entrega");
             }
         }
         catch (Exception ex)
         {
-            // await JSRuntime.InvokeVoidAsync(
-            //     "alert",
-            //     $"Error inesperado: {ex.Message}");
             await confirmationModal.ShowInfoAsync("Error en el servidor");
         }
         finally

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,6 +24,34 @@ namespace Armeccor.Server.Controllers
             this.context = context;
             this._mapper = mapper;
         }
+
+        public class ActualizarContactoClienteDTO
+        {
+            [Required]
+            public string Direccion { get; set; }
+
+            [Required]
+            public string Telefono { get; set; }
+        }
+
+        [HttpPatch("{id:int}/Contacto")]
+        public async Task<IActionResult> ActualizarContacto(
+           int id,
+           [FromBody] ActualizarContactoClienteDTO dto)
+        {
+            var filas = await context.Clientes
+                .Where(x => x.Id == id && x.EstaActivo)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(x => x.Direccion, dto.Direccion)
+                    .SetProperty(x => x.Telefono, dto.Telefono)
+                );
+
+            if (filas == 0)
+                return NotFound();
+
+            return NoContent();
+        }
+
 
         [HttpPut("{id:int}")]
         public async Task<IActionResult> PutCliente(int id, CrearClienteDTO dto)
